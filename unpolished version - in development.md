@@ -1,282 +1,269 @@
-# Network-Based Reconstruction of Galaxy Structure (In Development)
+# Local Galaxy Group Recovery via Network Methods (In Development)
 
-## Phase 1: Importing data from SDSS DR12 database.
+This notebook implements a systematic network-based analysis to recover local galaxy groups using the Tempel et al. 2014 catalog as a benchmark. 
+
+**Objective:** Test if network topology alone, using varied graph constructions and community detection algorithms, can recover physical galaxy groups.
+
+## Phase 1: Data Acquisition and Preprocessing
+
+We fetch galaxy and group data from the Tempel et al. 2014 catalog (VizieR `J/A+A/566/A1`).
 
 ```python
-# importing the labeled Galaxy Clusters via Vizier from Tempel's SDSS DR12 catalog
 from astroquery.vizier import Vizier
 import pandas as pd
-vizier = Vizier(row_limit=-1)
-print("Querying Vizier for galaxy cluster data...")
-catalogs = vizier.get_catalogs("J/A+A/602/A100")
-print("Found these tables: \n")
-print(catalogs.keys())
-
-#defines the cosmology
-from astropy.cosmology import FlatLambdaCDM
-cosmo = FlatLambdaCDM(H0=70, Om0=0.3) 
-
-# SDSS apparent magnitude limit for the main galaxy sample
-apparent_magnitude_limit = 17.77
-
-# Since we can't work with the entire database, we choose a limited volume of the space to work with.(Redshifts between 0.04 and 0.1)
-z_min = 0.04
-z_max = 0.1
-
-# then we must Calculate the absolute magnitude limit at the FAR edge of our limited volume.
-# Any galaxy fainter than this wouldn't be detectable at z_max. (M = m - mu)
-mu_max = cosmo.distmod(z_max).value
-M_limit = apparent_magnitude_limit - mu_max
-print(f"Absolute magnitude limit at z={z_max}: {M_limit:.2f}")
-
-# 1. Grab the first table (the galaxy list)
-df = catalogs[0].to_pandas()
-
-# 2. Keep only the columns we actually need for the math and the network
-cosmic_df = df[['objID', 'RAJ2000', 'DEJ2000', 'zobs', 'rmag', 'GroupID']].copy()
-
-# 3. Rename them to simple, standard variables
-cosmic_df.rename(columns={
-    'RAJ2000': 'ra', 
-    'DEJ2000': 'dec', 
-    'zobs': 'z', 
-    'GroupID': 'True_Cluster_ID',
-    'rmag': 'm'
-}, inplace=True)
-
-# calculate the absolute magnitude for each galaxy (M = m - mu)
-cosmic_df['M'] = cosmic_df['m'] - cosmo.distmod(cosmic_df['z']).value
-
-# 4. Filter the data to a specific "slice" of the universe (Redshift between 0.04 and 0.1)
-# also filter to only include galaxies brighter than the derived absolute magnitude limit
-
-my_galaxies = cosmic_df[
-    (cosmic_df['z'] >= z_min) & 
-    (cosmic_df['z'] <= z_max) &
-    (cosmic_df['M'] <= M_limit)
-    ].copy()
-
-# Reset the index to be clean
-my_galaxies.reset_index(drop=True, inplace=True)
-
-print("Data prepped! Here are the first 5 galaxies:")
-print(my_galaxies.head())
-```
-
-## Phase 2: Coordinate Transformation
-
-```python
+import numpy as np
+from astropy.cosmology import Planck18
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 
-#calculate distance from redshift
-my_galaxies['distance_mpc'] = cosmo.comoving_distance(my_galaxies['z']).to(u.Mpc).value
+# 1. Fetch tables from VizieR
+v = Vizier(row_limit=-1)
+print("Fetching tables from J/A+A/566/A1...")
+catalogs = v.get_catalogs("J/A+A/566/A1")
 
-#summon the skycoord and let it do its magic
-coords = SkyCoord(
-    ra=my_galaxies['ra'].values * u.degree,
-    dec=my_galaxies['dec'].values * u.degree,
-    distance=my_galaxies['distance_mpc'].values * u.Mpc
-)
+# Table 0: Galaxies | Table 1: Groups
+gal_df = catalogs[0].to_pandas()
+grp_df = catalogs[1].to_pandas()
 
-#extract the 3D coordinates
-my_galaxies['X'] = coords.cartesian.x.value
-my_galaxies['Y'] = coords.cartesian.y.value
-my_galaxies['Z'] = coords.cartesian.z.value
+# 2. Join to attach group size (Ngal) to each galaxy
+gal_df = gal_df.merge(grp_df[['Grp', 'Ngal']], on='Grp', how='left')
 
-print("Phase 2 Complete! Here are the 3D coordinates:")
-print(my_galaxies[['objID', 'X', 'Y', 'Z', 'True_Cluster_ID']].head())
+# 3. Redshift Cut (Targeting local volume 0.02 < z < 0.06)
+z_min, z_max = 0.02, 0.06
+gal_sample = gal_df[(gal_df['z'] >= z_min) & (gal_df['z'] <= z_max)].copy()
+gal_sample.reset_index(drop=True, inplace=True)
+print(f"Sample size after redshift cut: {len(gal_sample)}")
+
+# 4. Coordinate Conversion to Comoving Cartesian (Mpc)
+cosmo = Planck18
+d_c = cosmo.comoving_distance(gal_sample['z']).value
+ra_rad = np.radians(gal_sample['RAJ2000'])
+dec_rad = np.radians(gal_sample['DEJ2000'])
+
+gal_sample['X'] = d_c * np.cos(dec_rad) * np.cos(ra_rad)
+gal_sample['Y'] = d_c * np.cos(dec_rad) * np.sin(ra_rad)
+gal_sample['Z'] = d_c * np.sin(dec_rad)
+
+coords = gal_sample[['X', 'Y', 'Z']].values
+
+# 5. Define Evaluation Mask (Ngal >= 3)
+gal_sample['eval_mask'] = gal_sample['Ngal'] >= 3
+
+print("Data preparation complete.")
+gal_sample.head()
 ```
 
-## Phase 3: Network Construction
+## Phase 2: Graph Construction
+
+We construct two types of graphs:
+1. **Epsilon-ball (FoF Baseline):** Unweighted graph where edges exist if distance < $r_c$.
+2. **Weighted Decay Graph:** Same edges, but weighted by $w_{ij} = \exp(-d_{ij}/r_0)$.
 
 ```python
+from scipy.spatial import cKDTree
 import networkx as nx
-import numpy as np
-from scipy.spatial import KDTree
+
+def build_graphs(coords, rc, r0=None):
+    if r0 is None: r0 = rc / 3.0
+    
+    tree = cKDTree(coords)
+    pairs = list(tree.query_pairs(r=rc))
+    
+    G_unweighted = nx.Graph()
+    G_unweighted.add_nodes_from(range(len(coords)))
+    G_unweighted.add_edges_from(pairs)
+    
+    G_weighted = nx.Graph()
+    G_weighted.add_nodes_from(range(len(coords)))
+    
+    for i, j in pairs:
+        dist = np.linalg.norm(coords[i] - coords[j])
+        G_weighted.add_edge(i, j, weight=np.exp(-dist / r0))
+        
+    return G_unweighted, G_weighted
+
+print("Graph construction functions defined.")
+```
+
+## Phase 3: Linking Length ($r_c$) Selection
+
+We use two diagnostics to choose $r_c$:
+1. **Percolation Knee:** Finding the point where the Giant Connected Component begins to dominate.
+2. **ARI Scan:** Maximizing the Adjusted Rand Index against Tempel groups on the evaluation subset.
+
+```python
+from sklearn.metrics import adjusted_rand_score
 import matplotlib.pyplot as plt
-# build a KDTree for efficient neighbor searching
-coordinates = my_galaxies[['X', 'Y', 'Z']].values
-tree = KDTree(coordinates)
-number_of_galaxies = len(my_galaxies)
 
-#find the rc to determine edge connections
-rc_values = np.arange(.1, 12, .2)
-gcc_coverage_percentages = []
+rc_values = np.arange(0.3, 3.1, 0.2)
+percolation_results = []
+ari_results = []
 
+true_labels = gal_sample['Grp'].values
+eval_mask = gal_sample['eval_mask'].values
+
+print("Scanning rc values...")
 for rc in rc_values:
-    # find neighbors within the connection radius
-    edges = tree.query_pairs(rc)
+    G_unweighted, _ = build_graphs(coords, rc)
+    
+    # Percolation stats
+    comps = sorted(nx.connected_components(G_unweighted), key=len, reverse=True)
+    f_giant = len(comps[0]) / len(coords)
+    
+    # ARI calculation on evaluation subset
+    pred_labels = np.zeros(len(coords), dtype=int)
+    for gid, comp in enumerate(comps):
+        for node in comp: pred_labels[node] = gid
+        
+    ari = adjusted_rand_score(true_labels[eval_mask], pred_labels[eval_mask])
+    
+    percolation_results.append(f_giant)
+    ari_results.append(ari)
+    print(f"rc={rc:.1f} | f_giant={f_giant:.3f} | ARI={ari:.3f}")
 
-    # create a temporary graph and add edges
-    temp_graph = nx.Graph()
-    temp_graph.add_nodes_from(range(number_of_galaxies))
-    temp_graph.add_edges_from(edges)
+# Plotting diagnostics
+fig, ax1 = plt.subplots(figsize=(10, 5))
+ax2 = ax1.twinx()
+ax1.plot(rc_values, percolation_results, 'g-o', label='GCC Fraction')
+ax2.plot(rc_values, ari_results, 'b-s', label='ARI (Benchmark Recovery)')
 
-    # find the largest connected component
-    if len(temp_graph.edges) > 0:
-        largest_cluster = max(nx.connected_components(temp_graph), key=len)
-        gcc_coverage = len(largest_cluster)
-    else:
-        gcc_coverage = 1  # if no edges, the largest cluster is just one galaxy
-
-    # calculate the percentage of galaxies in the largest cluster
-    gcc_coverage_percentage = (gcc_coverage / number_of_galaxies) * 100
-    gcc_coverage_percentages.append(gcc_coverage_percentage)
-
-# finding the optimal rc using the maximum gradient method
-gradients = np.gradient(gcc_coverage_percentages)
-r_c = rc_values[np.argmax(gradients)]
-print("Optimal connection radius (rc) for percolation threshold:", r_c)
-```
-
-```python
-# Visualizing the percolation threshold
-plt.figure(figsize=(10, 6))
-plt.plot(rc_values, gcc_coverage_percentages, marker='o', linestyle='-', color='#45A29E', linewidth=2)
-plt.axvline(x=r_c, color='#66FCF1', linestyle='--', label=f'Percolation Threshold ({r_c} Mpc)')
-
-plt.title("Network Phase Transition: Finding the Cosmic Web", fontsize=14, color='white')
-plt.xlabel("Linking Length (Mpc)", fontsize=12, color='white')
-plt.ylabel("Size of Giant Component (% of Galaxies)", fontsize=12, color='white')
-plt.grid(color='#1F2833', linestyle='--', linewidth=0.5)
-plt.legend()
-
-# Dark theme styling
-plt.gca().set_facecolor('#0B0C10')
-plt.gcf().patch.set_facecolor('#050608')
-plt.tick_params(colors='white')
-
+ax1.set_xlabel('Linking Length rc (Mpc)')
+ax1.set_ylabel('GCC Fraction', color='g')
+ax2.set_ylabel('Adjusted Rand Index', color='b')
+plt.title("rc Calibration: Percolation vs Benchmark Agreement")
 plt.show()
+
+optimal_rc = rc_values[np.argmax(ari_results)]
+print(f"Selected rc for analysis: {optimal_rc:.2f} Mpc")
 ```
 
-## Phase 4: Community Detection and Validation
+## Phase 4: Community Detection
+
+We run three methods using the optimal $r_c$:
+1. **Connected Components (CC)** - FoF Baseline
+2. **Louvain** (Weighted)
+3. **Leiden** (Weighted)
 
 ```python
-from networkx.algorithms import community as nx_comm
-from sklearn.metrics import normalized_mutual_info_score
-#Build the Graph using the optimal linking length
-pairs = tree.query_pairs(r= r_c)
+import community as louvain_module
+import leidenalg
+import igraph as ig
 
-# Initialize the NetworkX Graph
-G = nx.Graph()
-G.add_nodes_from(range(len(my_galaxies)))
-G.add_edges_from(pairs)
+G_eps, G_weight = build_graphs(coords, optimal_rc)
 
-print(f"Network built! Nodes: {G.number_of_nodes()} | Edges: {G.number_of_edges()}")
+# 1. Connected Components
+comps = list(nx.connected_components(G_eps))
+labels_cc = np.zeros(len(coords), dtype=int)
+for gid, comp in enumerate(comps):
+    for node in comp: labels_cc[node] = gid
 
-# Run Louvain Algorithm
-print("\nRunning Louvain Algorithm...")
-communities = nx_comm.louvain_communities(G)
-modularity = nx_comm.modularity(G, communities)
+# 2. Louvain
+partition_louvain = louvain_module.best_partition(G_weight, weight='weight')
+labels_louvain = np.array([partition_louvain[i] for i in range(len(coords))])
 
-print(f"Superclusters (Communities) found: {len(communities)}")
-print(f"Modularity Score (Q): {modularity:.3f}")
+# 3. Leiden
+G_ig = ig.Graph.from_networkx(G_weight)
+partition_leiden = leidenalg.find_partition(G_ig, leidenalg.ModularityVertexPartition, weights='weight')
+labels_leiden = np.array(partition_leiden.membership)
 
-# Statistical Validation
-predicted_labels = [0] * len(my_galaxies)
-for comm_id, comm in enumerate(communities):
-    for node in comm:
-        predicted_labels[node] = comm_id
-my_galaxies['Louvain_Community_ID'] = predicted_labels
-
-true_labels = my_galaxies['True_Cluster_ID'] != 0
-nmi_score = normalized_mutual_info_score(my_galaxies.loc[true_labels, 'True_Cluster_ID'],
-                                          my_galaxies.loc[true_labels, 'Louvain_Community_ID'])
-
-print(f"Normalized Mutual Information (NMI): {nmi_score:.3f}")
+print("Community detection complete.")
 ```
 
-## Phase 5: Visualizing Filaments and Nodes
+## Phase 5: Validation and Metric Analysis
+
+We compare the three methods against the Tempel catalog labels on the evaluation subset ($N_{gal} \ge 3$).
 
 ```python
-import matplotlib.pyplot as plt
-from matplotlib.collections import LineCollection
-import numpy as np
+from sklearn.metrics import normalized_mutual_info_score, adjusted_mutual_info_score
 
-print("Generating publication-ready filament plot...")
+t = true_labels[eval_mask]
+results_metrics = []
 
-fig, ax = plt.subplots(figsize=(14, 7), dpi=150)
-plt.rcParams.update({'xtick.direction': 'in', 'ytick.direction': 'in', 'axes.linewidth': 1.2})
+for name, pred in [('FoF/CC', labels_cc), ('Louvain', labels_louvain), ('Leiden', labels_leiden)]:
+    p = pred[eval_mask]
+    ari = adjusted_rand_score(t, p)
+    nmi = normalized_mutual_info_score(t, p)
+    ami = adjusted_mutual_info_score(t, p)
+    results_metrics.append({'Method': name, 'ARI': ari, 'NMI': nmi, 'AMI': ami})
 
-# Plot Background
-ax.scatter(my_galaxies['X'], my_galaxies['Y'], s=0.5, color='black', alpha=0.5, zorder=1)
-
-# Plot Massive Nodes
-top_cluster_ids = my_galaxies['Louvain_Community_ID'].value_counts().head(75).index
-cluster_centers_x = []
-cluster_centers_y = []
-
-for cid in top_cluster_ids:
-    cluster_data = my_galaxies[my_galaxies['Louvain_Community_ID'] == cid]
-    cluster_centers_x.append(cluster_data['X'].mean())
-    cluster_centers_y.append(cluster_data['Y'].mean())
-
-ax.scatter(cluster_centers_x, cluster_centers_y, s=70, color='red', zorder=3)
-
-# Draw Filaments
-edges_list = list(G.edges())
-np.random.seed(42)
-sampled_indices = np.random.choice(len(edges_list), 15000, replace=False)
-
-lines = []
-for idx in sampled_indices:
-    u, v = edges_list[idx]
-    x0, y0 = my_galaxies.iloc[u]['X'], my_galaxies.iloc[u]['Y']
-    x1, y1 = my_galaxies.iloc[v]['X'], my_galaxies.iloc[v]['Y']
-    lines.append([(x0, y0), (x1, y1)])
-
-lc = LineCollection(lines, colors='#3b82f6', linewidths=0.8, alpha=0.6, zorder=2)
-ax.add_collection(lc)
-
-ax.set_xlabel('X [Mpc]', fontsize=14)
-ax.set_ylabel('Y [Mpc]', fontsize=14)
-ax.set_title('2D Projected Cosmic Web: Filaments and Nodes', fontsize=14, pad=10)
-ax.set_aspect('equal')
-
-plt.tight_layout()
-plt.show()
+metrics_df = pd.DataFrame(results_metrics)
+print("Validation Summary:")
+print(metrics_df)
 ```
 
-## Phase 6: Richness Distribution Analysis
+### Completeness vs Purity Analysis
 
-In this phase, we compare the **richness** (the number of galaxies per cluster) of our detected Louvain communities against the ground truth from the Tempel et al. (2017) catalog.
+```python
+from collections import Counter
 
-### Why this matters:
-1. **Physical Scale Validation**: It verifies if our network-based clusters match the expected size distribution of real astronomical groups.
-2. **Linking Length Audit**: It helps determine if our chosen linking length ($r_c$) is physically appropriate. If our clusters are systematically much larger or smaller than the catalog, it suggests we may be over-linking or under-linking the data.
-3. **Scaling Behavior**: Cosmic structures typically follow a power-law distribution in richness. We will visualize this on a log-log plot to see if our network captures this fundamental scaling property of the Cosmic Web.
+def get_purity_completeness(true, pred):
+    completeness = []
+    unique_true = np.unique(true)
+    for ut in unique_true:
+        mask = (true == ut)
+        preds_for_group = pred[mask]
+        most_common = Counter(preds_for_group).most_common(1)[0][1]
+        completeness.append(most_common / len(preds_for_group))
+        
+    purity = []
+    unique_pred = np.unique(pred)
+    for up in unique_pred:
+        mask = (pred == up)
+        trues_for_comm = true[mask]
+        most_common = Counter(trues_for_comm).most_common(1)[0][1]
+        purity.append(most_common / len(trues_for_comm))
+        
+    return np.mean(completeness), np.mean(purity)
+
+print("Mean Completeness and Purity for Leiden:")
+c, p = get_purity_completeness(t, labels_leiden[eval_mask])
+print(f"Completeness: {c:.3f} | Purity: {p:.3f}")
+```
+
+## Phase 6: Network Feature Analysis
+
+We test if weighted degree and local clustering coefficients distinguish group members from field galaxies.
 
 ```python
 import seaborn as sns
+from scipy.stats import ks_2samp
 
-print("Calculating richness distributions...")
+# 1. Compute Features
+weighted_degrees = dict(G_weight.degree(weight='weight'))
+clustering_coeffs = nx.clustering(G_weight, weight='weight')
 
-# 1. Calculate richness
-louvain_richness = my_galaxies['Louvain_Community_ID'].value_counts().values
-catalog_richness = my_galaxies[my_galaxies['True_Cluster_ID'] != 0]['True_Cluster_ID'].value_counts().values
+gal_sample['weighted_degree'] = [weighted_degrees[i] for i in range(len(gal_sample))]
+gal_sample['clustering_coeff'] = [clustering_coeffs[i] for i in range(len(gal_sample))]
 
-# 2. Plotting
-plt.figure(figsize=(10, 6), dpi=150)
-sns.histplot(catalog_richness, label='Tempel et al. (2017) Catalog', element="step", fill=False, color='#F5BDE6', log_scale=(True, True), linewidth=2)
-sns.histplot(louvain_richness, label='Louvain Communities (Predicted)', element="step", fill=False, color='#8AADF4', log_scale=(True, True), linewidth=2)
+# 2. Analysis: Field (Ngal==1) vs Group (Ngal>=3)
+field_mask = gal_sample['Ngal'] == 1
+group_mask = gal_sample['eval_mask']
 
-plt.title("Richness Distribution: Catalog vs. Network Communities", fontsize=14, color='white')
-plt.xlabel("Richness (Galaxies per Cluster)", fontsize=12, color='white')
-plt.ylabel("Frequency (Count)", fontsize=12, color='white')
-plt.legend()
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+sns.kdeplot(gal_sample.loc[field_mask, 'weighted_degree'], ax=axes[0], label='Field', fill=True)
+sns.kdeplot(gal_sample.loc[group_mask, 'weighted_degree'], ax=axes[0], label='Group', fill=True)
+axes[0].set_title("Weighted Degree Distribution")
+axes[0].legend()
 
-plt.gca().set_facecolor('#0B0C10')
-plt.gcf().patch.set_facecolor('#050608')
-plt.tick_params(colors='white')
-plt.grid(color='#1F2833', linestyle='--', linewidth=0.5, alpha=0.3)
-
+sns.kdeplot(gal_sample.loc[field_mask, 'clustering_coeff'], ax=axes[1], label='Field', fill=True)
+sns.kdeplot(gal_sample.loc[group_mask, 'clustering_coeff'], ax=axes[1], label='Group', fill=True)
+axes[1].set_title("Clustering Coefficient Distribution")
+axes[1].legend()
 plt.show()
 
-# Summary Statistics
-print("\n--- Richness Summary Statistics ---")
-print(f"Average Catalog Richness: {catalog_richness.mean():.2f}")
-print(f"Average Louvain Richness: {louvain_richness.mean():.2f}")
-print(f"Max Catalog Richness: {catalog_richness.max()}")
-print(f"Max Louvain Richness: {louvain_richness.max()}")
+ks_stat, p_val = ks_2samp(gal_sample.loc[field_mask, 'weighted_degree'], gal_sample.loc[group_mask, 'weighted_degree'])
+print(f"KS Test (Degree) p-value: {p_val:.3e}")
+```
+
+## Final Output
+
+```python
+gal_sample['pred_cc'] = labels_cc
+gal_sample['pred_louvain'] = labels_louvain
+gal_sample['pred_leiden'] = labels_leiden
+
+output_cols = ['objID', 'RAJ2000', 'DEJ2000', 'z', 'X', 'Y', 'Z', 'Grp', 'Ngal', 
+               'pred_cc', 'pred_louvain', 'pred_leiden', 'weighted_degree', 'clustering_coeff']
+gal_sample[output_cols].to_csv('Course Materials/Complex networks/PROJECT/CWN_Final_Results.csv', index=False)
+print("Final results saved to CWN_Final_Results.csv.")
 ```

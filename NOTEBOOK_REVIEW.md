@@ -60,3 +60,139 @@ The current notebook is already strong enough for a course report if you present
 - and with NMI used as an external validation against catalog labels.
 
 That framing is both defensible and aligned with what the code actually does.
+
+## How To Make This Stronger Than Riazi's Report
+
+To make your project stronger than hers across the board, you do not need to copy her style. You need to make your pipeline more defensible, better validated, and more tightly argued.
+
+Right now, your project is already more ambitious technically. The places where her work is stronger are mostly about discipline: the question is sharper, the method matches the question closely, and the validation is easier to trust. So the path forward is to keep your richer pipeline and tighten the weak links.
+
+### What to improve first
+
+`1. Make your research question brutally clear`
+
+Her report wins because it has one crisp claim: communities correspond to subfields.
+You should define one equally sharp claim, for example:
+
+- a proximity-based galaxy network can recover known cluster structure from SDSS data
+- community detection on a spatial galaxy graph identifies meaningful large-scale structure
+- graph topology captures physically relevant cosmic organization beyond simple spatial clustering
+
+Pick one and make every section serve that claim.
+
+`2. Strengthen the linking-length choice`
+
+This is your biggest methodological weakness right now. Your whole graph depends on `r_c`, and the current choice is heuristic.
+
+To beat her here, do this:
+
+- run a sensitivity analysis over several `r_c` values
+- show how `NMI`, number of communities, giant component size, and modularity change with `r_c`
+- justify your final `r_c` using both percolation behavior and validation performance
+
+If you do that, your graph construction becomes more rigorous than her ready-made citation graph workflow.
+
+`3. Clean up the validation`
+
+Your validation idea is actually stronger than hers, but it needs to be executed more carefully.
+
+Improve it by:
+
+- making the catalog-vs-predicted comparison symmetric
+- clearly defining which galaxies are included in the score
+- reporting more than one metric: `NMI`, `ARI`, purity, maybe size-matched overlap
+- comparing against a baseline method, not just Louvain alone
+
+If you do that, your validation becomes clearly better than her Fisher test.
+
+`4. Compare methods, not just run one`
+
+She uses one method and explains why it fits.
+You can go further by comparing alternatives.
+
+For example:
+
+- Louvain vs Leiden vs connected components vs DBSCAN / FoF-style grouping
+- different linking lengths
+- maybe weighted vs unweighted graphs
+
+Then report:
+
+- which method best matches catalog structure
+- which method gives the most stable communities
+- which method is most physically interpretable
+
+That would make your methods section much stronger than hers.
+
+`5. Be more careful with interpretation`
+
+A place where her report is stronger is restraint. She usually says only what the evidence supports.
+
+To improve yours:
+
+- do not call the degree plot evidence of a power law unless you fit it properly
+- do not treat high modularity as proof of physical truth
+- clearly separate exploratory observations from validated conclusions
+
+Paradoxically, sounding a little more cautious will make the project feel more scientific and therefore stronger.
+
+### How to make each field better
+
+`Data`
+
+You are already strong here. To go further:
+
+- explain why your redshift slice is chosen
+- justify the magnitude cut more explicitly
+- mention selection effects and redshift-space distortions
+
+This can become better than hers without much extra work.
+
+`Methods`
+
+This is where you can win decisively if you:
+
+- justify `r_c`
+- compare community methods
+- explain why Louvain is appropriate for your graph
+- discuss limitations of graph construction
+
+`Validation`
+
+This is the highest upside section. Add:
+
+- symmetric filtering
+- multiple validation metrics
+- baseline comparison
+- sensitivity across parameters
+
+`Results`
+
+Keep your rich figures, but organize them around the main claim:
+
+- does the method recover real structure?
+- where does it succeed?
+- where does it fail?
+
+That will make your results more convincing than just visually impressive.
+
+`Discussion`
+
+You can outperform her by explicitly discussing:
+
+- what graph-based recovery captures well
+- where it diverges from catalog truth
+- whether communities correspond to clusters, superclusters, or something in between
+
+That kind of conceptual clarity will lift the whole project.
+
+### The shortest honest answer
+
+If you want your work to be better than hers in all areas, focus on these four upgrades:
+
+1. Sharpen the main question.
+2. Justify `r_c` with a sensitivity study.
+3. Make validation cleaner and more extensive.
+4. Interpret results more cautiously and precisely.
+
+You already have more technical depth. What you need now is stronger scientific control.
