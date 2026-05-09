@@ -1,1 +1,10 @@
 *.pdf
+*.md
+*.txt
+*.csv
+*.json
+*.jpg
+*.png
+*.jpeg
+*.svg
+Complex networks/cylinder fof.py
