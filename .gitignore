@@ -1,11 +1,7 @@
-*.pdf
 *.md
-*.txt
-*.csv
-*.json
-*.jpg
-*.png
-*.jpeg
-*.svg
-Complex networks/cylinder fof.py
+*.pdf
+.jpg
+.png
+.svg
+Notebook/observational_surveys_redshift_0-1.txt
 .Ds_Store

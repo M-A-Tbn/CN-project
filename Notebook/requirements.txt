@@ -1,0 +1,8 @@
+ipython
+astropy
+astroquery
+scipy
+matplotlib
+networkx
+numpy
+pandas
