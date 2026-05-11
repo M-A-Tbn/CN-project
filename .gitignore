@@ -1,7 +1,7 @@
 *.md
 *.pdf
-.jpg
-.png
-.svg
+*.jpg
+*.png
+*.svg
 Notebook/observational_surveys_redshift_0-1.txt
 .Ds_Store
