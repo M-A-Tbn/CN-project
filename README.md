@@ -1,4 +1,4 @@
-# Complex Networks Project: Galaxy Cluster Identification
+# Complex Networks Project: Galaxy Group Identification
 
 This repository contains the codebase and data analysis for a course project in **Complex Networks**, focusing on identifying and analyzing galaxy groups and clusters. 
 
