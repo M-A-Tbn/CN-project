@@ -27,8 +27,8 @@ Ensure you have Python installed. It is recommended to use a virtual environment
 
 1. Clone this repository:
    ```bash
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone https://github.com/M-A-Tbn/CWN-project.git
+   cd CWN-project
    ```
 
 2. Install the required dependencies:
