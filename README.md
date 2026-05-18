@@ -1,10 +1,10 @@
 # Complex Networks Project: Galaxy Group Identification
 
-This repository contains the codebase and data analysis for a course project in **Complex Networks**, focusing on identifying and analyzing galaxy groups and clusters. 
+This repository contains the codebase and data analysis for a course project in **Complex Networks**, focusing on identifying and analyzing galaxy groups. 
 
 ## Project Overview
 
-The project aims to construct a network representation of galaxies and apply complex network methodologies (such as percolation scanning and susceptibility analysis) to detect galaxy clusters. The results are then evaluated against the ground-truth labeled galaxy clusters from the Tempel et al. (2014) SDSS DR10 catalog.
+The project aims to construct a network representation of galaxies and apply complex network methodologies (such as percolation scanning and susceptibility analysis) to detect galaxy groups. The results are then evaluated against the ground-truth labeled galaxy groups from the Tempel et al. (2014) SDSS DR10 catalog.
 
 ### Key Phases:
 1. **Data Acquisition:** Querying the Tempel et al. SDSS DR10 catalog via Vizier to obtain a volume-limited main galaxy sample.
