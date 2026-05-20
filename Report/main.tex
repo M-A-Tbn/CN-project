@@ -39,22 +39,21 @@
 
 \corres{\textsuperscript{\textasteriskcentered}\href{mailto:m.a.tabaeian@gmail.com}{m.a.tabaeian@gmail.com}}
 
-\docinfo{Course project for Complex Networks, Spring 2026. Code: \href{https://github.com/M-A-Tbn/CN-project}{github.com/M-A-Tbn/CN-project}. The linking length is derived entirely from network topology; no external calibration was used.}
+\docinfo{Course project for Complex Networks, Spring 2026. Code: \href{https://github.com/M-A-Tbn/CN-project}{github.com/M-A-Tbn/CN-project}.}
 
 %----------------------------------------------------------
 
 \journalname{Complex Networks}
 \journal{Università di Bologna, 2026}
-\theday{\today}
-\vol{1}
-\no{1}
+\theday{\ifcase\month\or January\or February\or March\or April\or May\or June\or July\or August\or September\or October\or November\or December\fi~\the\year}
+
 
 %----------------------------------------------------------
 % Abstract
 %----------------------------------------------------------
 
 \begin{abstract}
-Galaxy groups are the fundamental bound units of large-scale structure, yet their detection traditionally relies on a linking length calibrated against N-body simulations or adopted from prior surveys. We present an unsupervised cylindrical Friends-of-Friends (FoF) algorithm that derives its transverse linking length entirely from network topology, without physical calibration. Applied to a volume-limited sample of 75,042 galaxies from SDSS DR10 ($0.02 \leq z \leq 0.06$), a percolation scan over the transverse linking length $r_\perp$ identifies two topological markers: the susceptibility peak ($r_{\rm critical}^\perp = 1.34\,h^{-1}$ Mpc), which locates the percolation phase transition, and the fragmentation maximum ($r_{\rm groups}^\perp = 0.54\,h^{-1}$ Mpc), which locates the group scale. The sub-critical inequality $r_{\rm groups}/r_{\rm critical} \approx 0.40$ confirms a genuinely group-scale linking length. Validated against the Tempel et al. (2014) reference catalog, the detected groups achieve an Adjusted Rand Index of 0.807, Normalized Mutual Information of 0.983, and pair recall of 0.982. The inferred dimensionless linking parameter $b = 0.144$ is consistent with the classical FoF literature. Completeness exceeds 98\% at all richness scales; purity declines from 82\% at $N=2$ to 75\% at $N>50$, a predictable signature of the fixed line-of-sight stretch factor.
+
 \end{abstract}
 
 \keywords{galaxy groups, Friends-of-Friends, network percolation, SDSS, large-scale structure, complex networks}
@@ -106,6 +105,7 @@ as the group scale $r_{\rm groups}$. The sub-critical inequality
 \begin{equation}
     r_{\rm groups} < r_{\rm critical}
 \end{equation}
+\medskip
 is the defining property of the method and must be verified explicitly for every
 sample.
 
@@ -126,257 +126,45 @@ their paper.
 
 \subsection{Source catalog}
 
-We query the Tempel et al. (2014) catalog from VizieR \cite{tempel2014}, table \inlinecode{J/A+A/566/A1/galaxies}. This table provides, per galaxy: sky coordinates $(\alpha, \delta)$, observed redshift $z_{\rm obs}$, apparent $r$-band magnitude $m$, and Tempel's group membership labels (\inlinecode{GroupID}, \inlinecode{Ngal}). The group labels are retained only for post-hoc validation and never enter the network construction.
-
 \subsection{Cosmology}
-
-We adopt a flat $\Lambda$CDM cosmology with $H_0 = 100\,{\rm km\,s^{-1}\,Mpc^{-1}}$ and $\Omega_m = 0.27$. All distances are in $h^{-1}$ Mpc by construction. Comoving distances are computed via \inlinecode{astropy.cosmology.FlatLambdaCDM}.
 
 \subsection{Volume-limited sample}
 
-SDSS is a flux-limited survey: at a fixed apparent magnitude limit, faint galaxies are only visible at low redshift, making the raw catalog inhomogeneous in depth. We apply two cuts to produce a uniform volume-limited sample.
-
-\textbf{Redshift slice.} We retain galaxies with $0.02 \leq z \leq 0.06$. The lower bound avoids local peculiar-velocity contamination; the upper bound keeps the comoving volume compact enough that a single linking length is physically meaningful across the full depth. Extending to higher redshift would require a redshift-dependent linking length and luminosity evolution corrections, both of which we set aside for this project.
-
-\textbf{Absolute magnitude cut.} We define the absolute magnitude limit at $z_{\max}$:
-\begin{equation}\label{eq:maglim}
-    M_{\rm lim} = m_{\rm lim} - \mu(z_{\max}),
-\end{equation}
-where $\mu$ is the distance modulus and $m_{\rm lim} = 17.77$ (SDSS Main Galaxy Sample). Galaxies fainter than $M_{\rm lim}$ are discarded at all redshifts in the slice, ensuring uniform completeness across the volume. After both cuts the Main Galaxy Sample contains $N = 75{,}042$ galaxies, reduced from a raw catalog of 588,193.
-
 \subsection{Coordinate conversion}
-
-Each galaxy is converted from equatorial coordinates $(\alpha, \delta, d_{\rm com})$ to Cartesian $h^{-1}$ Mpc:
-\begin{equation}\label{eq:cartesian}
-    \mathbf{r} = d_{\rm com}\!\left(\cos\delta\cos\alpha,\; \cos\delta\sin\alpha,\; \sin\delta\right),
-\end{equation}
-where $\alpha \equiv$ \inlinecode{ra} and $\delta \equiv$ \inlinecode{dec}. With Earth at the origin, the unit line-of-sight vector $\hat{r}_i = \mathbf{r}_i / |\mathbf{r}_i|$ is used in the cylindrical linking criterion.
 
 \section{Method}
 
 \subsection{Cylindrical linking criterion}
 
-A pair $(i, j)$ is linked if it satisfies a two-condition cylindrical criterion:
-\begin{equation}\label{eq:cylinder}
-    d_\perp \leq r_\perp \quad \text{and} \quad d_\parallel \leq r_\parallel = S \cdot r_\perp,
-\end{equation}
-with $S = 10$ following Tempel et al. \cite{tempel2014}. The perpendicular and parallel separations are decomposed along the midpoint line-of-sight direction $\hat{\ell}_{ij} = (\mathbf{r}_i + \mathbf{r}_j)/|\mathbf{r}_i + \mathbf{r}_j|$:
-\begin{equation}\label{eq:decomp}
-    d_\parallel = \left|(\mathbf{r}_i - \mathbf{r}_j) \cdot \hat{\ell}_{ij}\right|, \quad
-    d_\perp = \sqrt{|\mathbf{r}_i - \mathbf{r}_j|^2 - d_\parallel^2}.
-\end{equation}
-
-Candidate pairs within the bounding sphere $r_{\max} = \sqrt{r_\perp^2 + r_\parallel^2}$ are found efficiently via a KD-tree on the Cartesian coordinates (scipy \inlinecode{KDTree}), and then filtered precisely by \equref{eq:cylinder}.
-
 \subsection{Percolation scan}
-
-We sweep $r_\perp$ from 0.1 to 2.5 $h^{-1}$ Mpc in steps of 0.02 $h^{-1}$ Mpc, and at each step build the cylindrical graph and compute two topological observables simultaneously.
-
-\textbf{Susceptibility.} The percolation order parameter is:
-\begin{equation}\label{eq:chi}
-    \chi(r_\perp) = \frac{1}{N} \sum_{s \neq {\rm GCC}} s^2\, n_s,
-\end{equation}
-where the sum runs over all finite components (excluding the GCC), $s$ is component size, $n_s$ is the count of components of size $s$, and $N$ is the total galaxy count. $\chi$ peaks at the percolation threshold $r_{\rm critical}$, the linking length at which the GCC first percolates across the system.
-
-\textbf{Fragmentation count.} We count finite components of size $2 \leq s < |{\rm GCC}|$:
-\begin{equation}\label{eq:ngroups}
-    N_{\rm groups}(r_\perp) = \left|\{c \in G_{r_\perp} \mid 2 \leq |c| < |{\rm GCC}|\}\right|.
-\end{equation}
-This counts components that are neither isolated singletons nor the GCC. Because small structures vastly outnumber rich clusters, $N_{\rm groups}$ is unimodal in the sub-critical regime and its maximum is unambiguous. The peak marks the linking length at which the network is most fragmented into distinct, finite groups — just before they begin merging into the percolating structure. We call this $r_{\rm groups}$ and use it as the working linking length $r_{\rm link}$.
-
-\figref{fig:phase_transition} shows both observables for our sample. The susceptibility peak ($r_{\rm critical} = 1.34\,h^{-1}$ Mpc) and the fragmentation maximum ($r_{\rm groups} = 0.54\,h^{-1}$ Mpc) are well-separated, confirming \equref{eq:inequality}:
-\begin{equation}\label{eq:inequality}
-    r_{\rm groups}^\perp = 0.54 \;<\; 1.34 = r_{\rm critical}^\perp \quad [h^{-1}{\rm\,Mpc}].
-\end{equation}
-
-\begin{figure}[htbp]
-    \centering
-    \placefig{figures/fig_phase_transition.pdf}
-    \caption{Percolation scan over $r_\perp$. Teal curve: susceptibility $\chi$ (left axis). Blue curve: fragmentation count $N_{\rm groups}$ (right axis). Dashed black line: $r_{\rm critical}^\perp = 1.34\,h^{-1}$ Mpc. Dotted red line: $r_{\rm groups}^\perp = 0.54\,h^{-1}$ Mpc. The sub-critical inequality $r_{\rm groups} < r_{\rm critical}$ confirms that the chosen scale targets groups rather than filaments or clusters.}
-    \label{fig:phase_transition}
-\end{figure}
 
 \subsection{GCC diagnostic}
 
-\figref{fig:gcc_diagnostic} shows the GCC fraction as a function of $r_\perp$ and its numerical derivative. The maximum gradient, a classical heuristic for the percolation threshold \cite{newman2010}, lies at $r \approx 1.26\,h^{-1}$ Mpc — slightly below the susceptibility peak, consistent with finite-size effects in a bounded survey volume. All three markers (maximum fragmentation, susceptibility peak, maximum gradient) are well-separated, confirming that they correspond to distinct physical regimes: groups, onset of clustering, and the supercluster network.
-
-\begin{figure}[htbp]
-    \centering
-    \placefig{figures/fig_gcc_diagnostic.pdf}
-    \caption{GCC diagnostic. Top: GCC coverage as a function of $r_\perp$, with vertical markers. Bottom: derivative $d({\rm GCC})/dr_\perp$. The maximum gradient (orange) lies near the susceptibility peak (blue), both of which correspond to the cluster/supercluster scale.}
-    \label{fig:gcc_diagnostic}
-\end{figure}
-
 \subsection{Linking parameter $b$}
 
-As a post-hoc sanity check, we compute the dimensionless linking parameter $b \equiv r_{\rm link}/\bar{d}$, where $\bar{d} = n^{-1/3}$ is the mean inter-galaxy spacing and $n = N/V_{\rm shell}$ is the number density. The shell volume accounts for the SDSS footprint:
-\begin{equation}
-    V_{\rm shell} = \frac{4\pi}{3}(d_{\max}^3 - d_{\min}^3)\,f_{\rm sky}, \quad f_{\rm sky} = \frac{7221}{41252.96},
-\end{equation}
-where $f_{\rm sky}$ corresponds to the SDSS Main Galaxy Sample coverage of $\sim 7221\,{\rm deg}^2$ \cite{tempel2014}. This yields:
-\begin{equation}
-    b = 0.144,
-\end{equation}
-within the classical FoF range $b \in [0.14, 0.20]$ \cite{davis1985, berlind2002} and $\sim 25\%$ above Tempel's redshift-dependent value $b \approx 0.113$–$0.115$ for our redshift slice \cite{tempel2014}. This parameter is not used as an input — it is computed only to place the result in the context of prior work.
-
 \subsection{Final network}
-
-The final network $G$ is built by running the cylindrical FoF once at $r_\perp = r_{\rm groups} = 0.54\,h^{-1}$ Mpc. Connected components of $G$ are the galaxy groups by definition. Each galaxy receives a \inlinecode{Detected\_GroupID} label, including singletons. The network properties are summarised in \tabref{tab:topology}.
 
 \section{Results}
 
 \subsection{Phase-transition figure}
 
-The ratio $r_{\rm groups}/r_{\rm critical} = 0.54/1.34 \approx 0.40$ characterises the network's position in the percolation phase diagram. A ratio of 0.40 places the group scale well within the sub-critical regime — approximately at the onset of local clustering, before the connectivity transitions to global percolation. The fragmentation count reaches its maximum of $\sim\!15{,}000$ distinct groups at $r_{\rm groups}$, then falls rapidly as groups merge.
-
 \subsection{Group catalogue: sky projection}
 
-\figref{fig:radec_catalogue} shows the detected groups projected onto the RA–Dec plane in four redshift bins of width $\Delta z = 0.01$, alongside Tempel's reference in the bottom row. Grouped galaxies are colour-coded by group ID and sized by $\log_{10}$ richness; field galaxies appear in grey.
-
-\begin{figure*}[htbp]
-    \centering
-    \IfFileExists{figures/fig_radec_catalogue.pdf}%
-        {\includegraphics[width=\textwidth]{figures/fig_radec_catalogue.pdf}}%
-        {\fbox{\rule{0pt}{5cm}\rule{\textwidth}{0pt}}}
-    \caption{Galaxy distribution and groups in the (RA, Dec) plane, in four redshift bins $\Delta z = 0.01$. Top row: detected groups (this work). Bottom row: Tempel et al. (2014) reference. Grouped galaxies are coloured by group ID and scaled by $\log_{10}$ richness. Field galaxies appear in grey. The spatial distributions and group sizes are consistent across all four bins and between the two catalogs, with no systematic trend with redshift.}
-    \label{fig:radec_catalogue}
-\end{figure*}
-
-The two catalogs are visually consistent in spatial distribution across all bins. No systematic increase in group richness toward higher redshift is visible, confirming that the fixed $r_\perp$ does not over-link at larger distances within the narrow slice.
-
 \subsection{Group richness distribution}
-
-\figref{fig:richness_dist} compares the group richness distributions of the two catalogs on a log-log scale, restricted to $N \geq 2$. Both distributions follow a steeply falling power law consistent with the galaxy group mass function. The detected distribution is shifted slightly toward higher $N$ relative to Tempel's, indicating mild over-merging at the rich end — the expected consequence of a linking parameter $b = 0.144$ that exceeds Tempel's $b \approx 0.113$ by $\sim 25\%$.
-
-\begin{figure}[htbp]
-    \centering
-    \placefig{figures/fig_richness_dist.pdf}
-    \caption{Log-log group richness distribution for the detected catalog (blue filled) and Tempel et al. (2014) (red step), both restricted to $N \geq 2$. The slight shift toward higher $N$ in the detected catalog reflects mild over-merging consistent with a larger effective linking length.}
-    \label{fig:richness_dist}
-\end{figure}
 
 \section{Validation \& Assessment}
 
 \subsection{Completeness and purity by richness}
 
-For each Tempel group with $N \geq 2$, we identify the detected component with the largest membership overlap and compute:
-\begin{equation}
-    C = \frac{|T \cap D|}{|T|}, \qquad P = \frac{|T \cap D|}{|D|},
-\end{equation}
-where $T$ is the set of Tempel members and $D$ is the best-matching detected group. Completeness is the fraction of a true group recovered; purity is the fraction of the detected group that genuinely belongs to it. \tabref{tab:cp_richness} reports mean completeness and purity in five richness bins.
-
-\begin{table}[htbp]
-    \caption{Mean completeness and purity by richness bin.}
-    \label{tab:cp_richness}
-    \begin{tabular}{
-        >{\raggedright\arraybackslash}p{0.22\columnwidth}
-        >{\centering\arraybackslash}p{0.30\columnwidth}
-        >{\centering\arraybackslash}p{0.28\columnwidth}
-    }
-    \toprule
-    $N_{\rm true}$ & Completeness & Purity \\
-    \midrule
-    $(1,\,2]$    & 0.995 & 0.824 \\
-    $(2,\,5]$    & 0.992 & 0.805 \\
-    $(5,\,10]$   & 0.984 & 0.778 \\
-    $(10,\,50]$  & 0.984 & 0.757 \\
-    $(50,\,500]$ & 0.989 & 0.753 \\
-    \bottomrule
-    \end{tabular}
-    \tabletext{Completeness exceeds 98\% across all richness bins. Purity declines at high $N$ due to the fixed stretch factor, which cannot fully accommodate the large velocity dispersions of massive clusters.}
-\end{table}
-
-Completeness is uniformly high ($>98\%$) across all bins: the cylindrical criterion captures almost all members of every group regardless of richness. Purity declines monotonically from 82\% to 75\% as $N$ increases. This is the expected signature of a fixed stretch factor: the velocity dispersion of a bound system scales as $\sigma \propto M^{1/3}$, so a fixed $r_\parallel = S \cdot r_\perp$ becomes progressively too generous for the most massive systems, merging adjacent structures into single detected groups.
-
 \subsection{Completeness and purity by redshift}
-
-\figref{fig:cp_redshift} repeats the matched-group analysis binned by mean group redshift rather than richness. Both completeness and purity are stable across $z \in [0.02, 0.06]$, confirming that the fixed $r_\perp$ performs uniformly across the full depth of the slice. There is no systematic drop in either metric with increasing redshift, ruling out a redshift-dependent over- or under-linking bias.
-
-\begin{figure}[htbp]
-    \centering
-    \placefig{figures/fig_completeness_redshift.pdf}
-    \caption{Mean completeness (blue circles) and purity (red squares) as a function of mean group redshift. Both metrics are stable across $z \in [0.02, 0.06]$, confirming that the fixed linking length performs uniformly across the volume.}
-    \label{fig:cp_redshift}
-\end{figure}
 
 \subsection{Global partition metrics}
 
-We compute three global clustering-quality scores on the galaxies with Tempel group membership ($N_{\rm gal} \geq 2$), comprising 45,934 galaxies in 15,411 Tempel groups and 13,508 detected groups. Results are reported in \tabref{tab:global_metrics}.
-
-\begin{table}[htbp]
-    \caption{Global partition quality metrics.}
-    \label{tab:global_metrics}
-    \begin{tabular}{
-        >{\raggedright\arraybackslash}p{0.52\columnwidth}
-        >{\centering\arraybackslash}p{0.32\columnwidth}
-    }
-    \toprule
-    Metric & Score \\
-    \midrule
-    Adjusted Rand Index (ARI)      & 0.807 \\
-    Norm. Mutual Information (NMI) & 0.983 \\
-    Fowlkes-Mallows (FM)           & 0.820 \\
-    \midrule
-    Pair precision                 & 0.685 \\
-    Pair recall                    & 0.982 \\
-    Pair F1                        & 0.807 \\
-    \bottomrule
-    \end{tabular}
-    \tabletext{ARI and FM are chance-corrected. NMI is normalised to $[0,1]$. Pair precision and recall are equivalent to mean purity and completeness, respectively.}
-\end{table}
-
-The NMI of 0.983 is particularly striking: the two labelings share 98.3\% of their mutual information, indicating near-perfect structural correspondence. The lower ARI (0.807) and FM (0.820) reflect sensitivity to the purity deficit at high $N$. Pair recall of 0.982 is consistent with the $>98\%$ completeness in \tabref{tab:cp_richness}.
-
 \subsection{Network topology}
-
-\tabref{tab:topology} summarises the topological properties of the final network. The clustering coefficient is strongly elevated relative to the Erd\H{o}s-R\'enyi baseline at the same edge density:
-
-\begin{table}[htbp]
-    \caption{Topology of the final group-finding network.}
-    \label{tab:topology}
-    \begin{tabular}{
-        >{\raggedright\arraybackslash}p{0.52\columnwidth}
-        >{\centering\arraybackslash}p{0.32\columnwidth}
-    }
-    \toprule
-    Property & Value \\
-    \midrule
-    Nodes                     & 75,042 \\
-    Edges                     & 95,310 \\
-    Mean degree $\langle k \rangle$  & 2.54 \\
-    Max degree                & 43 \\
-    Transitivity              & 0.646 \\
-    Avg.\ local clustering    & 0.322 \\
-    ER baseline               & $\approx 0$ \\
-    Ratio (obs / ER)          & $9{,}520\times$ \\
-    Connected components      & 37,500 \\
-    GCC size                  & 585 (0.8\%) \\
-    \bottomrule
-    \end{tabular}
-    \tabletext{The clustering coefficient is $\sim 10^4\times$ the ER random graph baseline, reflecting the clique-like structure of virialized galaxy groups.}
-\end{table}
-
-The $9{,}520\times$ excess over the ER baseline is the topological signature of virialized groups: within a group, all members are mutually close, and the cylindrical criterion links them to each other, forming near-complete subgraphs. The low GCC fraction (0.8\%) confirms the sub-critical regime independently of the susceptibility result.
 
 \section{Discussion}
 
-The central result is that the maximum fragmentation criterion — derived entirely from the topology of the galaxy network — selects a linking length that closely reproduces a carefully calibrated observational catalog. The inferred $b = 0.144$ is within the classical FoF range and only $\sim 25\%$ above Tempel's $b \approx 0.113$, a difference consistent with the mild over-merging visible in \figref{fig:richness_dist}. That the method recovers the correct scale without reading any parameter from the literature suggests that the group scale is genuinely encoded in the network topology, not merely recoverable from it.
-
-The high completeness ($>98\%$) across all richness bins and the stable redshift performance confirm two things. First, the cylindrical criterion is generous enough in the transverse direction to capture nearly all members of every group. Second, the fixed $r_\perp$ does not introduce a systematic redshift-dependent bias within the narrow slice, validating the volume-limited selection. These two results together indicate that the method is self-consistent within its domain of applicability.
-
-The declining purity at high $N$ is a known, predictable limitation of a fixed stretch factor. The velocity dispersion of a virialized system scales as $\sigma \propto M^{1/3}$: a group with $N = 100$ members has a velocity spread $\sim 3$–$5\times$ larger than a pair, and a fixed $r_\parallel = S \cdot r_\perp$ merges it with neighboring structures along the line of sight. The clean resolution is a 2D joint scan over $(r_\perp, S)$: find the maximum fragmentation peak in the full two-parameter space. This approach is fully unsupervised, as it makes no assumption about what the stretch factor should be. Implementing this scan is the natural next step for this project.
-
-The choice of $S = 10$, adopted from Tempel et al. \cite{tempel2014}, is the only external input to the current algorithm. In a strictly unsupervised implementation it should be either derived from the velocity dispersion of the detected components themselves, or jointly optimised with $r_\perp$ in the 2D scan.
-
-The network topology results are informative independently of the validation against Tempel. The $9{,}520\times$ excess clustering over the ER baseline is exactly what one expects from a sub-critical FoF: galaxy groups are near-complete subgraphs (cliques) embedded in a sparse background graph. Their internal edges form triangles freely, while the background is connected only by narrow chains. This topological signature is the microscopic counterpart of the macroscopic sub-critical regime identified by the percolation scan.
-
 \section{Conclusion}
-
-We have shown that the maximum fragmentation criterion provides a self-consistent, unsupervised estimate of the galaxy group scale in a redshift-space spectroscopic survey. Applied to the SDSS DR10 volume-limited sample, the method recovers 98\% of Tempel et al.'s group memberships with an ARI of 0.807 and NMI of 0.983, without using any of their calibration inputs. The linking length emerges from the network itself, not from prior knowledge of what the answer should be.
-
-The percolation framework offers two assets beyond the group catalog. First, the susceptibility peak $r_{\rm critical}$ provides a principled upper bound on the group scale and simultaneously identifies the cluster/supercluster regime, placing the full hierarchy of large-scale structure in a single topological picture. Second, the sub-critical ratio $r_{\rm groups}/r_{\rm critical} \approx 0.40$ is a measurable quantity that characterises the network's position in the phase diagram, comparable across surveys and redshifts.
-
-The primary limitation is the fixed stretch factor $S = 10$. Its extension to a jointly optimised 2D scan over $(r_\perp, S)$ would remove the last external parameter and complete the unsupervised method. A second natural extension is a redshift-dependent $r_\perp$, necessary for deeper surveys where the mean inter-galaxy spacing varies significantly with depth.
 
 %----------------------------------------------------------
 
