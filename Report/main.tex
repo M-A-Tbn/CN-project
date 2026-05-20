@@ -1,421 +1,346 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% --------------------------------------------------------
-%  ____  _           
-% |  _ \| |__   ___  
-% | |_) | '_ \ / _ \ 
-% |  _ <| | | | (_) |
-% |_| \_\_| |_|\___/ 
-%
-% LaTeX2e Template
-% Version 3.0.1 (15/04/2026)
-%
-% Author: 
-% Guillermo Jimenez (memo.notess1@gmail.com)
-% 
-% Contributor:
-% Eduardo Gracidas (eduardo.gracidas29@gmail.com)
-%
-% License:
-% Creative Commons CC BY 4.0
-% --------------------------------------------------------
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% --------------------------------------------------------
-% Find the latest version on GitHub:
-% https://github.com/MemoJimenez/Rho-class
-% --------------------------------------------------------
+% CN-Project — Course Report
+% Complex Networks, Spring 2026
+% Università di Bologna
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[9pt,a4paper,twocolumn,twoside]{rho-class/rho}
 \usepackage[english]{babel}
 
-%% Spanish babel recomendation
-% \usepackage[spanish,es-nodecimaldot,es-noindentfirst]{babel}
+% Graceful figure fallback: shows a placeholder box if the PDF has not been
+% generated yet (i.e. the notebook has not been run). Once figures/fig_*.pdf
+% exist, they replace the boxes automatically on the next compile.
+\newcommand{\placefig}[2][width=\columnwidth]{%
+    \IfFileExists{#2}%
+        {\includegraphics[#1]{#2}}%
+        {\fbox{\rule{0pt}{4.5cm}\rule{\columnwidth}{0pt}}}%
+}
 
 %----------------------------------------------------------
 % Title
 %----------------------------------------------------------
 
-\doctype{Project Report}
-\title{Reproducing the (Tempel et al. 2014) SDSS DR10 Galaxy Group Catalog with an Unsupervised Cylindrical FoF Driven by Network Properties.}
+\doctype{Project Report — Complex Networks}
+\title{Reproducing the Tempel et al. (2014) SDSS DR10 Galaxy Group Catalog with an Unsupervised Cylindrical FoF Driven by Network Percolation}
 
 %----------------------------------------------------------
-% Authors, Affiliations and dates
+% Authors and affiliations
 %----------------------------------------------------------
 
-\author[{\textasteriskcentered},a,1]{Ali Tabaeian}
-
-%----------------------------------------------------------
+\author[{\textasteriskcentered},a]{Ali Tabaeian}
 
 \affil[a]{Dipartimento di Fisica \& Astronomia, Università di Bologna}
-
-%----------------------------------------------------------
 
 \dates{Spring, 2026}
 
 %----------------------------------------------------------
-% Corresponding author-, Document- information
+% Corresponding author and document info
 %----------------------------------------------------------
 
-\corres{\textsuperscript{\textasteriskcentered}Corresponding author: \href{mailto:author.one@institute.org}{author.one@institute.org} (A. One).}
-\corres{\textsuperscript{\textdagger}These authors contributed equally to this work.}
+\corres{\textsuperscript{\textasteriskcentered}\href{mailto:m.a.tabaeian@gmail.com}{m.a.tabaeian@gmail.com}}
 
-%----------------------------------------------------------
-
-\docinfo{This document class was prepared on Overleaf and compiled with pdf\LaTeX{}. No errors were found during the compilation process. Rho-class supports external editors, though additional setup may be required.} 
+\docinfo{Course project for Complex Networks, Spring 2026. Code: \href{https://github.com/M-A-Tbn/CN-project}{github.com/M-A-Tbn/CN-project}. The linking length is derived entirely from network topology; no external calibration was used.}
 
 %----------------------------------------------------------
 
-\journalname{LATEX}
-\journal{Rho-class (v.3) 2026}
+\journalname{Complex Networks}
+\journal{Università di Bologna, 2026}
 \theday{\today}
-\vol{X}
-\no{X}
+\vol{1}
+\no{1}
 
 %----------------------------------------------------------
-% Abstract and Keywords
+% Abstract
 %----------------------------------------------------------
 
 \begin{abstract}
-    Rho-class was designed for creating professional \LaTeX{} documents, including research articles, technical reports, and academic documentation. It enhances the writing experience through intuitive custom environments, multilingual support, and refined typography. The class integrates Fira Sans for headings and highlighted elements, Fira Mono for code listings, and STIX2 for body text, ensuring consistent styling across tables, figures, equations, listings, and captions. It is worth to mention that this template is inspired by an earlier work, the \href{https://es.overleaf.com/latex/templates/tau-class-lab-report-template/chhshmhxstsq}{tau-class}. \textit{New or updated features are marked with an asterisk (*)}.
+Galaxy groups are the fundamental bound units of large-scale structure, yet their detection traditionally relies on a linking length calibrated against N-body simulations or adopted from prior surveys. We present an unsupervised cylindrical Friends-of-Friends (FoF) algorithm that derives its transverse linking length entirely from network topology, without physical calibration. Applied to a volume-limited sample of 75,042 galaxies from SDSS DR10 ($0.02 \leq z \leq 0.06$), a percolation scan over the transverse linking length $r_\perp$ identifies two topological markers: the susceptibility peak ($r_{\rm critical}^\perp = 1.34\,h^{-1}$ Mpc), which locates the percolation phase transition, and the fragmentation maximum ($r_{\rm groups}^\perp = 0.54\,h^{-1}$ Mpc), which locates the group scale. The sub-critical inequality $r_{\rm groups}/r_{\rm critical} \approx 0.40$ confirms a genuinely group-scale linking length. Validated against the Tempel et al. (2014) reference catalog, the detected groups achieve an Adjusted Rand Index of 0.807, Normalized Mutual Information of 0.983, and pair recall of 0.982. The inferred dimensionless linking parameter $b = 0.144$ is consistent with the classical FoF literature. Completeness exceeds 98\% at all richness scales; purity declines from 82\% at $N=2$ to 75\% at $N>50$, a predictable signature of the fixed line-of-sight stretch factor.
 \end{abstract}
 
-%----------------------------------------------------------
-
-\keywords{Rho-class, Research Article, Laboratory Report, Academic Writing, Journal}
+\keywords{galaxy groups, Friends-of-Friends, network percolation, SDSS, large-scale structure, complex networks}
 
 %----------------------------------------------------------
 
 \begin{document}
 
-    \maketitle
-    \thispagestyle{firststyle}
+\maketitle
+\thispagestyle{firststyle}
 
 %----------------------------------------------------------
 
-\section{Rho Class}
+\section{Introduction}
 
-    \rhostart{R}ho-class is specially designed for research articles, technical/lab reports, and academic documentation. This guide will help you understand the features and proper use of the template, enabling you to efficiently structure and format your documents with clarity and precision.
+\rhostart{G}alaxy groups, gravitationally bound systems of $2$–$\sim\!100$ members, are the most common environment for galaxies in the universe and the fundamental node of the cosmic web \cite{tempel2014}. Their identification from spectroscopic redshift surveys relies on the Friends-of-Friends (FoF) algorithm \cite{huchra1982, davis1985}: link every pair of galaxies within a chosen linking length $\ell$; the connected components of the resulting graph are the groups. The method is structurally elegant — it maps a physical criterion (spatial proximity) directly onto a graph-theoretic object (connected components) — yet its central parameter, the dimensionless linking length $b = \ell / \bar{d}$, has traditionally required calibration against N-body simulations \cite{berlind2002, eke2004} or adoption from prior surveys \cite{tempel2014}.
 
-    This class includes the following files in the rho-class folder:
-	
-	\begin{itemize}
-		\item \inlinecode{rho.cls} — The main class file.
-		\item \inlinecode{rhoenvs.sty} — A package containing custom environments.
-		\item \inlinecode{rhobabel.sty} — A support package for multilingual.
-		\item \inlinecode{README.md} — With essential information.
-	\end{itemize}
+The core question of this project is whether the galaxy spatial network itself encodes the group scale — whether a purely topological analysis of the graph, without any external calibration, can identify the physically correct linking length.
 
-    Additionally, this template includes a sample document \inlinecode{main.tex}, a bibliography file \inlinecode{rho.bib}, as well as figures, tables and code examples to help you get started quickly.
+Percolation theory provides the natural framework \cite{newman2010, stauffer1994}. In a random geometric graph, connectivity transitions sharply at a critical linking length $r_c$: below $r_c$ the network fragments into isolated finite clusters, above $r_c$ a single giant connected component (GCC) percolates across the system. The susceptibility $\chi$ — the mean-square size of finite components, excluding the GCC — diverges at $r_c$ and acts as the order parameter of the transition. Below $r_c$, the finite components are precisely the structures we call galaxy groups. Above $r_c$, they merge into clusters, filaments, and superclusters.
 
-    \subsection{License}
+Two topological observables are therefore available as unsupervised estimators of the group scale. The susceptibility peak locates the percolation threshold $r_{\rm critical}$, the hard upper bound above which group finding is no longer meaningful. The fragmentation count $N_{\rm groups}(r_\perp)$ — the number of finite components in the sub-GCC size range — peaks at the linking length where the network is most fragmented into distinct, finite groups. We identify this peak as the group scale $r_{\rm groups}$. The sub-critical inequality
+\begin{equation}
+    r_{\rm groups} < r_{\rm critical}
+\end{equation}
+is the defining property of the method and must be verified explicitly for every sample.
 
-        This template was developed by Guillermo Jimenez, licensed under Creative Commons CC BY 4.0. You are free to adapt, share, and distribute it, provided that proper credit is given to the original author.
+Redshift-space distortions require an anisotropic (cylindrical) FoF. Virialized galaxies have peculiar velocities of $\sim 300$–$500$ km/s that displace them by several Mpc along the line of sight (Fingers of God effect), while their true transverse extent is $\sim 0.5\,h^{-1}$ Mpc. We follow Tempel et al. \cite{tempel2014} in using a fixed stretch factor $S = r_\parallel / r_\perp = 10$.
 
-\section{Document Styling}
+Throughout this work, we use the Tempel et al. (2014) SDSS DR10 group catalog \cite{tempel2014} as both the data source and the validation reference. Galaxy positions, redshifts, and magnitudes come from their catalog; their group assignments serve as ground truth for validation. The linking length is derived entirely from the topology of the network we construct — it is never read from their paper.
 
-    \subsection{Document Type}
+\section{Data}
 
-        Before the main title, a brief descriptor indicates the type of document (e.g., Lab Report, Research Article, etc). This is controlled by the \inlinecode{\doctype{}} command. 
-        
-        If no such label is needed, omit the command and the title will automatically reposition itself to maintain proper vertical spacing and visual alignment.
+\subsection{Source catalog}
 
-    \subsection{Abstract and Keywords}
+We query the Tempel et al. (2014) catalog from VizieR \cite{tempel2014}, table \inlinecode{J/A+A/566/A1/galaxies}. This table provides, per galaxy: sky coordinates $(\alpha, \delta)$, observed redshift $z_{\rm obs}$, apparent $r$-band magnitude $m$, and Tempel's group membership labels (\inlinecode{GroupID}, \inlinecode{Ngal}). The group labels are retained only for post-hoc validation and never enter the network construction.
 
-        The abstract and keywords are declared in the preamble of the document with \inlinecode{\begin{abstract}...\end{abstract}} environment alongside the dedicated \inlinecode{\keywords{}} command to allow the class file to automatically handle their formatting and positioning during the title creation process.
+\subsection{Cosmology}
 
-    \subsection{Lettrine}
+We adopt a flat $\Lambda$CDM cosmology with $H_0 = 100\,{\rm km\,s^{-1}\,Mpc^{-1}}$ and $\Omega_m = 0.27$. All distances are in $h^{-1}$ Mpc by construction. Comoving distances are computed via \inlinecode{astropy.cosmology.FlatLambdaCDM}.
 
-		The \inlinecode{\rhostart{}} command, provides a personalized lettrine for the beginning of the first paragraph as shown in this example.
+\subsection{Volume-limited sample}
 
-	\subsection{Table of Contents}
+SDSS is a flux-limited survey: at a fixed apparent magnitude limit, faint galaxies are only visible at low redshift, making the raw catalog inhomogeneous in depth. We apply two cuts to produce a uniform volume-limited sample.
 
-        This class includes a customized design for the table of contents, which is disabled by default. To enable it, insert the \inlinecode{\tableofcontents} command before your first section.
+\textbf{Redshift slice.} We retain galaxies with $0.02 \leq z \leq 0.06$. The lower bound avoids local peculiar-velocity contamination; the upper bound keeps the comoving volume compact enough that a single linking length is physically meaningful across the full depth. Extending to higher redshift would require a redshift-dependent linking length and luminosity evolution corrections, both of which we set aside for this project.
 
-\section{Cross-Reference Commands*}
+\textbf{Absolute magnitude cut.} We define the absolute magnitude limit at $z_{\max}$:
+\begin{equation}\label{eq:maglim}
+    M_{\rm lim} = m_{\rm lim} - \mu(z_{\max}),
+\end{equation}
+where $\mu$ is the distance modulus and $m_{\rm lim} = 17.77$ (SDSS Main Galaxy Sample). Galaxies fainter than $M_{\rm lim}$ are discarded at all redshifts in the slice, ensuring uniform completeness across the volume. After both cuts the Main Galaxy Sample contains $N = 75{,}042$ galaxies, reduced from a raw catalog of 588,193.
 
-    Rho-class provides shorthand commands for cross-referencing figures, tables, code listings, and equations. To customize the label format, edit the \inlinecode{rhobabel.sty} file. Label translations for Spanish are handled automatically.
+\subsection{Coordinate conversion}
 
-        \begin{itemize}
-            \item \inlinecode{\figref{}} — Uses the label style defined by \inlinecode{\figlabel}.
-            \item \inlinecode{\figsref{}} — Uses the label style defined by \inlinecode{\figslabel}.
-            \item \inlinecode{\tabref{}} — Uses the label style defined by \inlinecode{\tablabel}.
-            \item \inlinecode{\coderef{}}  — Uses the label style defined by \inlinecode{\captionlabelcode}.
-            \item \inlinecode{\equref{}} — Uses the label style defined by \inlinecode{\eqlabel}.
-        \end{itemize}
-        
-    These commands generate fully hyperlinked references, both the label and the number, ensuring navigation to the referenced element when clicked in the PDF.
+Each galaxy is converted from equatorial coordinates $(\alpha, \delta, d_{\rm com})$ to Cartesian $h^{-1}$ Mpc:
+\begin{equation}\label{eq:cartesian}
+    \mathbf{r} = d_{\rm com}\!\left(\cos\delta\cos\alpha,\; \cos\delta\sin\alpha,\; \sin\delta\right),
+\end{equation}
+where $\alpha \equiv$ \inlinecode{ra} and $\delta \equiv$ \inlinecode{dec}. With Earth at the origin, the unit line-of-sight vector $\hat{r}_i = \mathbf{r}_i / |\mathbf{r}_i|$ is used in the cylindrical linking criterion.
 
-\section{Figures}
-		
-    \figref{fig:figure} shows a 3D surface visualization of a bivariate function.
-    		
-    \begin{figure}[H]
-    	\centering
-    	\includegraphics[width=0.7\columnwidth]{example-image-a}
-    	\caption{3D surface obtained from PGFPlots \cite{PFGPlots}.}
-    	\label{fig:figure}
-    \end{figure}
+\section{Method}
 
-\section{Tables}
-	
-        \tabref{tab:table} shows an example table of some astronomical objects. 
+\subsection{Cylindrical linking criterion}
 
-        \begin{table}[H]
-        	\caption{Astronomical Object Data}
-        	\label{tab:table}
-        	\begin{tabular}{
-        		>{\raggedright\arraybackslash}p{0.25\columnwidth}
-        		>{\raggedright\arraybackslash}p{0.29\columnwidth}
-        		>{\raggedright\arraybackslash}p{0.31\columnwidth}
-        	}
-        	\toprule
-        	\textbf{Object} & \textbf{Type} & \textbf{Distance (Light Years)} \\
-        	\midrule
-        	Alpha Centauri & Star system & 4.37 \\
-        	Betelgeuse & Red supergiant star & 642.5 \\
-        	Andromeda & Spiral galaxy & 2.537 million \\
-        	Earth & Planet & 0 \\
-        	Sirius & Binary star system & 8.6 \\
-        	\bottomrule
-        	\end{tabular}
-        	\tabletext{Note: The table contains data of some famous celestial objects.}
-        \end{table}
-
-        The \inlinecode{\tabletext{}} command is used to add notes to tables easily. 
-
-\section{Document Data}
-
-    \subsection{Front-Matter Footer Block*}
-
-        A new block called \inlinecode{\docinfo{}}, has been added to the bottom right of the first page, acting as a floating element which stays fixed in place. This replaces the corresponding author block previously located above the abstract in earlier versions.
-
-        The \inlinecode{\docinfo{}} block was created to give you greater control over supplementary document data, such as publication dates, licensing information, extended author details, and other front-matter notes. You can fully customize its content to suit your needs.
-
-        Additionally, the new \inlinecode{\corres{}} command serves as a flexible alternative to \inlinecode{\thanks{}}. Since modifying the standard \inlinecode{\thanks{}} command can be complex and its positioning is often rigid, \inlinecode{\corres{}} was introduced to offer a more adaptable solution without sacrificing functionality. 
-        
-        \begin{note}
-            You can use \verb|\corres{}| as many times as needed since it automatically ensures that each entry remains correctly associated. For best results, I recommend using text symbols rather than mathematical ones (e.g., \verb|\textasteriskcentered|, \verb|\textdagger|, etc.). 
-        \end{note}
-
-        If \inlinecode{\corres{}} is not used, \inlinecode{\docinfo{}} will automatically adjust its position. The implementation was designed to handle any combination of front-matter elements you might need when starting your document. In this example template, you’ll find a minimal demonstration that combines both to illustrate their interaction.
-
-    \subsection{Headers and Footers*}
-
-        \subsubsection{Headers}
-
-            On all pages except the first, the document title and journal appear in the header. Since twoside layout is enabled, its position alternates depending on whether the page is odd or even.
-
-        \subsubsection{Footers}
-
-            In the first page, six elements display supplementary information for your document:
-
-            \begin{itemize}
-                \item \inlinecode{\journalname{}} — Displays the journal name, university, institute, company, or any institutional affiliation.
-                \item \inlinecode{\theday{}} — Displays the current date.
-                \item \inlinecode{\vol{}} — Specifies the volume number of the publication.
-                \item \inlinecode{\no{}} — Specifies the issue number within the volume.
-                \item \inlinecode{\journal{}} — Defines the full journal title.
-                \item \inlinecode{\thepage} — Shows the current page number and the total count.
-            \end{itemize}
-
-             In all cases, you can freely rearrange or customize the order of these elements by modifying the class file to suit your needs. If any of them are not required, simply omit the corresponding command — the remaining elements will automatically adjust their spacing to remain evenly distributed.
-
-\section{Rho Custom Packages}
-
-    \subsection{Rhobabel.sty}
-		
-		This package have all the commands that automatically translate from English to Spanish when this custom package is defined. 
-		
-		By default, this document has its content in English. However, at the beginning of the document you will find a recommendation when writing in Spanish. 
-		
-		You may modify this package if you want to use other language than English or Spanish. This will make easier to translate your document without having to modify the class document.
-
-    \subsection{Rhoenvs.sty}
-
-        This package provides custom environments designed to enhance the visual presentation and structure of your document. Key examples include rhoenv, info, and note.
-        
-		Their style is defined by \inlinecode{rhoenvstyle} — allowing you to customize their appearance according to your document’s requirements.
-
-		An example using the \inlinecode{rhoenv} environment is shown below.
-		
-		\begin{rhoenv}[frametitle=Custom Title]
-			This is an example of the custom title environment. To add a title type this command \verb|[frametitle=Custom Title]| next to the beginning of this environment (as shown in this example).
-		\end{rhoenv}
-
-        The \inlinecode{info} and \inlinecode{note} are environments which have a predefined title and translate their title to Spanish automatically when this language is defined.
-
-\section{Equations}
-
-	\equref{eq:equation} shows the Schrödinger equation as an example. 
-
-    \begin{equation}\label{eq:equation}
-        i\hbar \frac{\partial }{\partial t}\Psi(\mathbf{r},t) = \left[\frac{-\hbar^2}{2m}\nabla^2 + V(\mathbf{r},t) \right]\Psi(\mathbf{r},t)
-    \end{equation}
-	
-	The \inlinecode{amssymb} and \inlinecode{amsmath} packages were not required, as \href{https://ctan.org/pkg/stix2-otf/}{STIX2} font incorporates mathematical symbols for writing quality equations.
-	
-	\begin{note}
-		If you would like to change the values that adjust the spacing above and below the equations, change the \verb|\eqskip| value until the preferred spacing is set. The default value is set to 9pt.
-	\end{note}
-
-\section{Codes}
-
-	\subsection{Coding with Minted*}
-	
-		The \inlinecode{minted} package offers customized features for adding codes. In addition, the template is designed to work seamlessly with Fira Code, a monospaced font specially crafted for programming environments.
-
-        If your are using a desktop app as \href{https://www.texstudio.org/}{TeXstudio}, try these steps to make this package work on Windows:
-		
-		\begin{enumerate}
-			\item Install Python — A stable version (e.g., v.3.11)
-			\item Open the terminal and type \inlinecode{pip install Pygments}.
-			\item Update if a newer version is available.
-			\item Go to TeXStudio settings and change the default compiler to \inlinecode{pdflatex --shell-escape -interaction=nonstopmode \%.tex}.
-			\item Compile and wait for the result.
-		\end{enumerate}
-        
-		\vspace*{-9pt}
-        
-		\begin{rhoenv}[frametitle=Caution]
-			Ensure that \textbf{pygments} is properly installed and added to your system’s PATH. Otherwise, you may encounter compilation errors. Additionally, enable shell escape when compiling, as it is required for minted to process and highlight code.
-		\end{rhoenv}
-		
-		In \href{https://es.overleaf.com/}{Overleaf}, this package is easier to use since it does not require any additional installations or modifications — just add the code as shown in the example. \coderef{lst:example} shows a Python example.
-		
-		\begin{code}
-			\inputminted{python}{example.py}
-            \caption{Python code example with minted.}
-			\label{lst:example}
-		\end{code}
-		
-		You can customize its design changing \inlinecode{\usemintedstyle} command. The different styles offered by the \href{https://ctan.org/pkg/minted}{minted package} can be preview through this link — \url{https://pygments.org/styles/}.
-
-    \subsection{Coding with Listings}
-	
-		Since \inlinecode{minted} requires additional installations and can be complex in some desktop \TeX\ editors, you can use the \inlinecode{listings} package instead, which provides a simpler way to include code.
-		
-		\begin{code}
-			\lstinputlisting[language=python]{example.py}
-			\label{lst:example2}
-            \caption{Python code example with listings.}
-		\end{code}
-		
-		While \inlinecode{listings} is a simpler and widely supported package for code formatting, \inlinecode{minted} offers a more modern and powerful approach. It leverages the Pygments syntax highlighter to deliver superior coloring, language support, and styling options. One of its key advantages is the ability to easily switch between built-in color styles.
-		
-		In contrast, \inlinecode{listings} requires manual setup for colors, fonts, and formatting rules.
-		For users who prefer fine-tuned customization, the styling options for \inlinecode{listings} are organized in \inlinecode{rho.cls} file and can be modified at any time to suit individual preferences.
-
-	\subsection{Inline Code*}
-	
-		As shown in this template, inline code has a custom style for improved visual appeal. To use it, simply add \inlinecode{\inlinecode{}} command and place your code inside the braces.
-
-\section*{Numberless section}
-\addcontentsline{toc}{section}{Numberless section}
-
-    Declaring a numberless section automatically inserts a square symbol before the title. This unique feature is specific to first-level sections within this class.
-    
-    As this symbol also affects the table of contents and references titles, users who prefer to disable it may edit the section styling parameters in \inlinecode{rho.cls}.
-
-\section{Bibliography}
-		
-	Bibliography management is handled by \inlinecode{biblatex}, with the default citation and reference style set to IEEE. The \inlinecode{citestyle=numeric-comp} option is enabled, allowing multiple citations to be grouped within a single bracket (e.g., \cite{davis2023signalflow,bell2022codefont}). The citation format can be customized directly in \inlinecode{rho.cls} to suit any preferred style.
-
-\section*{FAQ}
-\addcontentsline{toc}{section}{FAQ}
-
-    \subsection*{How do I manage my references?}
-    \addcontentsline{toc}{subsection}{How do I manage my references?}
-        
-        To manage your references, I recommend using the tool \href{https://www.scribbr.es/citar/generador/folders/73QOXYsCwMRu4ifQaN65mx/lists/msTfx7GJjIAOUkufbISnA/}{scribbr}. You can simply enter the URL or create your own citation, and then export it to \LaTeX{} using the options in the three-dot menu.
-            
-        The generated citation can be copied and pasted into \inlinecode{rho.bib}, the file designated for bibliography management. You may rename this file, but if you do, remember to update the \inlinecode{\addbibresource} command in \inlinecode{rho.cls} under the biblatex section.
-    
-        \begin{note}
-            Some platforms, such as Google Scholar or scientific journals, provide citations directly in BibTeX format. Therefore, check if there is a ``how to cite this document'' section to streamline the citation process even further.
-        \end{note}
-
-        If you have any further questions, you can refer to the following page — \href{https://es.overleaf.com/learn/latex/Bibliography_management_with_biblatex}{Bibliography management with biblatex}.
-        
-    \subsection*{What should I do with the example files?}
-    \addcontentsline{toc}{subsection}{What should I do with the example files?}
-
-        The template includes sample content — such as an example figure, bibliography entries, and the \inlinecode{example.py} script — to demonstrate how the layout and features work. Once you start customizing the document for your own use, feel free to delete all example files and entries you don’t need.
-
-    \subsection*{How do I place equations easily?}
-    \addcontentsline{toc}{subsection}{How do I place equations easily?}
-
-        For equations, we have two options: inline or on its own line. For inline equations, simply place a dollar sign (\$) at the beginning and end of the equation. However, if you want the equation to be displayed on its own line, you need to use the equation environment.
-        
-        If you find it challenging to write formulas directly in \LaTeX, you can use text editors like Word. In the equations menu, you can select \LaTeX\ in the conversion section and copy and paste the equation you wrote into one of these two environments.
-
-    \subsection*{How do I change the paper size?}
-    \addcontentsline{toc}{subsection}{How do I change the paper size?}
-
-        By default, this class was adapted for a4paper and test it with letterpaper. The following paper sizes are available in \LaTeX:
-
-        \begin{itemize}
-            \item letterpaper (11 $\times$ 8.5 in)
-            \item legalpaper (14 $\times$ 8.5 in)
-            \item executivepaper (10.5 $\times$ 7.25 in)
-            \item a4paper (21 $\times$ 29.7 cm)
-            \item a5paper (21 $\times$ 14.8 cm)
-            \item b5paper (25 $\times$ 17.6 cm)
-       \end{itemize}
-
-\section*{Contact me}
-\addcontentsline{toc}{section}{Contact me}
-    
-    Have questions, suggestions, or an idea for a new feature? Found a bug or working on a project you’d like to invite me to?  
-    
-    Feel free to reach out — I’d be happy to help, collaborate, or fix the issue.  Your feedback helps me improve my templates!
-
-    \AtBeginEnvironment{tabular}{\normalsize\sffamily\selectfont}
-    \begin{center}
-        \setlength{\tabcolsep}{3pt}
-        \begin{tabular}{cl}
-            \faEnvelope & \href{mailto:memo.notess1@gmail.com}{memo.notess1@gmail.com} \\
-            \faGlobe{} & \href{https://memonotess1.wixsite.com/memonotess}{memonotess.com} \\
-            \faInstagram{} & \href{https://www.instagram.com/memo.notess/}{@memo.notess}
-        \end{tabular}
-    \end{center}
-
-\section*{Github Repository}
-\addcontentsline{toc}{section}{Github Repository}
-
-    Visit the repository to access the source code, track ongoing development, report issues, and stay up to date with the latest changes.
-
-    \begin{center}
-        \setlength{\tabcolsep}{3pt}
-        \begin{tabular}{cl}
-             \faGithub &  \url{https://github.com/MemoJimenez/Rho-class}\\
-        \end{tabular}
-    \end{center}
-
-\section*{Supporting}
-\addcontentsline{toc}{section}{Supporting}
-
-    Enjoyed this document class? Check out tau-class, my very first \LaTeX{} template.
-
-    \begin{center}
-        \setlength{\tabcolsep}{3pt}
-        \begin{tabular}{cl}
-             \faLink &  \href{https://es.overleaf.com/latex/templates/tau-class-lab-report-template/chhshmhxstsq}{https://es.overleaf.com/latex/templates/tau-class}\\
-        \end{tabular}
-    \end{center}
-    
-    \subsection*{Any contributions are welcome!}
-    \addcontentsline{toc}{subsection}{Any contributions are welcome!}
-    
-        Coffee keeps me awake and helps me create better \LaTeX\ templates. If you wish to support my work, you can do so through PayPal: 
-
-        \begin{center}
-            \setlength{\tabcolsep}{3pt}
-            \begin{tabular}{cl}
-                 \faPaypal & \textbf{\url{https://www.paypal.me/GuillermoJimeenez}}\\
-            \end{tabular}
-            \vskip9pt
-            Enjoy writing with rho-class!
-        \end{center}
+A pair $(i, j)$ is linked if it satisfies a two-condition cylindrical criterion:
+\begin{equation}\label{eq:cylinder}
+    d_\perp \leq r_\perp \quad \text{and} \quad d_\parallel \leq r_\parallel = S \cdot r_\perp,
+\end{equation}
+with $S = 10$ following Tempel et al. \cite{tempel2014}. The perpendicular and parallel separations are decomposed along the midpoint line-of-sight direction $\hat{\ell}_{ij} = (\mathbf{r}_i + \mathbf{r}_j)/|\mathbf{r}_i + \mathbf{r}_j|$:
+\begin{equation}\label{eq:decomp}
+    d_\parallel = \left|(\mathbf{r}_i - \mathbf{r}_j) \cdot \hat{\ell}_{ij}\right|, \quad
+    d_\perp = \sqrt{|\mathbf{r}_i - \mathbf{r}_j|^2 - d_\parallel^2}.
+\end{equation}
+
+Candidate pairs within the bounding sphere $r_{\max} = \sqrt{r_\perp^2 + r_\parallel^2}$ are found efficiently via a KD-tree on the Cartesian coordinates (scipy \inlinecode{KDTree}), and then filtered precisely by \equref{eq:cylinder}.
+
+\subsection{Percolation scan}
+
+We sweep $r_\perp$ from 0.1 to 2.5 $h^{-1}$ Mpc in steps of 0.02 $h^{-1}$ Mpc, and at each step build the cylindrical graph and compute two topological observables simultaneously.
+
+\textbf{Susceptibility.} The percolation order parameter is:
+\begin{equation}\label{eq:chi}
+    \chi(r_\perp) = \frac{1}{N} \sum_{s \neq {\rm GCC}} s^2\, n_s,
+\end{equation}
+where the sum runs over all finite components (excluding the GCC), $s$ is component size, $n_s$ is the count of components of size $s$, and $N$ is the total galaxy count. $\chi$ peaks at the percolation threshold $r_{\rm critical}$, the linking length at which the GCC first percolates across the system.
+
+\textbf{Fragmentation count.} We count finite components of size $2 \leq s < |{\rm GCC}|$:
+\begin{equation}\label{eq:ngroups}
+    N_{\rm groups}(r_\perp) = \left|\{c \in G_{r_\perp} \mid 2 \leq |c| < |{\rm GCC}|\}\right|.
+\end{equation}
+This counts components that are neither isolated singletons nor the GCC. Because small structures vastly outnumber rich clusters, $N_{\rm groups}$ is unimodal in the sub-critical regime and its maximum is unambiguous. The peak marks the linking length at which the network is most fragmented into distinct, finite groups — just before they begin merging into the percolating structure. We call this $r_{\rm groups}$ and use it as the working linking length $r_{\rm link}$.
+
+\figref{fig:phase_transition} shows both observables for our sample. The susceptibility peak ($r_{\rm critical} = 1.34\,h^{-1}$ Mpc) and the fragmentation maximum ($r_{\rm groups} = 0.54\,h^{-1}$ Mpc) are well-separated, confirming \equref{eq:inequality}:
+\begin{equation}\label{eq:inequality}
+    r_{\rm groups}^\perp = 0.54 \;<\; 1.34 = r_{\rm critical}^\perp \quad [h^{-1}{\rm\,Mpc}].
+\end{equation}
+
+\begin{figure}[htbp]
+    \centering
+    \placefig{figures/fig_phase_transition.pdf}
+    \caption{Percolation scan over $r_\perp$. Teal curve: susceptibility $\chi$ (left axis). Blue curve: fragmentation count $N_{\rm groups}$ (right axis). Dashed black line: $r_{\rm critical}^\perp = 1.34\,h^{-1}$ Mpc. Dotted red line: $r_{\rm groups}^\perp = 0.54\,h^{-1}$ Mpc. The sub-critical inequality $r_{\rm groups} < r_{\rm critical}$ confirms that the chosen scale targets groups rather than filaments or clusters.}
+    \label{fig:phase_transition}
+\end{figure}
+
+\subsection{GCC diagnostic}
+
+\figref{fig:gcc_diagnostic} shows the GCC fraction as a function of $r_\perp$ and its numerical derivative. The maximum gradient, a classical heuristic for the percolation threshold \cite{newman2010}, lies at $r \approx 1.26\,h^{-1}$ Mpc — slightly below the susceptibility peak, consistent with finite-size effects in a bounded survey volume. All three markers (maximum fragmentation, susceptibility peak, maximum gradient) are well-separated, confirming that they correspond to distinct physical regimes: groups, onset of clustering, and the supercluster network.
+
+\begin{figure}[htbp]
+    \centering
+    \placefig{figures/fig_gcc_diagnostic.pdf}
+    \caption{GCC diagnostic. Top: GCC coverage as a function of $r_\perp$, with vertical markers. Bottom: derivative $d({\rm GCC})/dr_\perp$. The maximum gradient (orange) lies near the susceptibility peak (blue), both of which correspond to the cluster/supercluster scale.}
+    \label{fig:gcc_diagnostic}
+\end{figure}
+
+\subsection{Linking parameter $b$}
+
+As a post-hoc sanity check, we compute the dimensionless linking parameter $b \equiv r_{\rm link}/\bar{d}$, where $\bar{d} = n^{-1/3}$ is the mean inter-galaxy spacing and $n = N/V_{\rm shell}$ is the number density. The shell volume accounts for the SDSS footprint:
+\begin{equation}
+    V_{\rm shell} = \frac{4\pi}{3}(d_{\max}^3 - d_{\min}^3)\,f_{\rm sky}, \quad f_{\rm sky} = \frac{7221}{41252.96},
+\end{equation}
+where $f_{\rm sky}$ corresponds to the SDSS Main Galaxy Sample coverage of $\sim 7221\,{\rm deg}^2$ \cite{tempel2014}. This yields:
+\begin{equation}
+    b = 0.144,
+\end{equation}
+within the classical FoF range $b \in [0.14, 0.20]$ \cite{davis1985, berlind2002} and $\sim 25\%$ above Tempel's redshift-dependent value $b \approx 0.113$–$0.115$ for our redshift slice \cite{tempel2014}. This parameter is not used as an input — it is computed only to place the result in the context of prior work.
+
+\subsection{Final network}
+
+The final network $G$ is built by running the cylindrical FoF once at $r_\perp = r_{\rm groups} = 0.54\,h^{-1}$ Mpc. Connected components of $G$ are the galaxy groups by definition. Each galaxy receives a \inlinecode{Detected\_GroupID} label, including singletons. The network properties are summarised in \tabref{tab:topology}.
+
+\section{Results}
+
+\subsection{Phase-transition figure}
+
+The ratio $r_{\rm groups}/r_{\rm critical} = 0.54/1.34 \approx 0.40$ characterises the network's position in the percolation phase diagram. A ratio of 0.40 places the group scale well within the sub-critical regime — approximately at the onset of local clustering, before the connectivity transitions to global percolation. The fragmentation count reaches its maximum of $\sim\!15{,}000$ distinct groups at $r_{\rm groups}$, then falls rapidly as groups merge.
+
+\subsection{Group catalogue: sky projection}
+
+\figref{fig:radec_catalogue} shows the detected groups projected onto the RA–Dec plane in four redshift bins of width $\Delta z = 0.01$, alongside Tempel's reference in the bottom row. Grouped galaxies are colour-coded by group ID and sized by $\log_{10}$ richness; field galaxies appear in grey.
+
+\begin{figure*}[htbp]
+    \centering
+    \IfFileExists{figures/fig_radec_catalogue.pdf}%
+        {\includegraphics[width=\textwidth]{figures/fig_radec_catalogue.pdf}}%
+        {\fbox{\rule{0pt}{5cm}\rule{\textwidth}{0pt}}}
+    \caption{Galaxy distribution and groups in the (RA, Dec) plane, in four redshift bins $\Delta z = 0.01$. Top row: detected groups (this work). Bottom row: Tempel et al. (2014) reference. Grouped galaxies are coloured by group ID and scaled by $\log_{10}$ richness. Field galaxies appear in grey. The spatial distributions and group sizes are consistent across all four bins and between the two catalogs, with no systematic trend with redshift.}
+    \label{fig:radec_catalogue}
+\end{figure*}
+
+The two catalogs are visually consistent in spatial distribution across all bins. No systematic increase in group richness toward higher redshift is visible, confirming that the fixed $r_\perp$ does not over-link at larger distances within the narrow slice.
+
+\subsection{Group richness distribution}
+
+\figref{fig:richness_dist} compares the group richness distributions of the two catalogs on a log-log scale, restricted to $N \geq 2$. Both distributions follow a steeply falling power law consistent with the galaxy group mass function. The detected distribution is shifted slightly toward higher $N$ relative to Tempel's, indicating mild over-merging at the rich end — the expected consequence of a linking parameter $b = 0.144$ that exceeds Tempel's $b \approx 0.113$ by $\sim 25\%$.
+
+\begin{figure}[htbp]
+    \centering
+    \placefig{figures/fig_richness_dist.pdf}
+    \caption{Log-log group richness distribution for the detected catalog (blue filled) and Tempel et al. (2014) (red step), both restricted to $N \geq 2$. The slight shift toward higher $N$ in the detected catalog reflects mild over-merging consistent with a larger effective linking length.}
+    \label{fig:richness_dist}
+\end{figure}
+
+\section{Validation \& Assessment}
+
+\subsection{Completeness and purity by richness}
+
+For each Tempel group with $N \geq 2$, we identify the detected component with the largest membership overlap and compute:
+\begin{equation}
+    C = \frac{|T \cap D|}{|T|}, \qquad P = \frac{|T \cap D|}{|D|},
+\end{equation}
+where $T$ is the set of Tempel members and $D$ is the best-matching detected group. Completeness is the fraction of a true group recovered; purity is the fraction of the detected group that genuinely belongs to it. \tabref{tab:cp_richness} reports mean completeness and purity in five richness bins.
+
+\begin{table}[htbp]
+    \caption{Mean completeness and purity by richness bin.}
+    \label{tab:cp_richness}
+    \begin{tabular}{
+        >{\raggedright\arraybackslash}p{0.22\columnwidth}
+        >{\centering\arraybackslash}p{0.30\columnwidth}
+        >{\centering\arraybackslash}p{0.28\columnwidth}
+    }
+    \toprule
+    $N_{\rm true}$ & Completeness & Purity \\
+    \midrule
+    $(1,\,2]$    & 0.995 & 0.824 \\
+    $(2,\,5]$    & 0.992 & 0.805 \\
+    $(5,\,10]$   & 0.984 & 0.778 \\
+    $(10,\,50]$  & 0.984 & 0.757 \\
+    $(50,\,500]$ & 0.989 & 0.753 \\
+    \bottomrule
+    \end{tabular}
+    \tabletext{Completeness exceeds 98\% across all richness bins. Purity declines at high $N$ due to the fixed stretch factor, which cannot fully accommodate the large velocity dispersions of massive clusters.}
+\end{table}
+
+Completeness is uniformly high ($>98\%$) across all bins: the cylindrical criterion captures almost all members of every group regardless of richness. Purity declines monotonically from 82\% to 75\% as $N$ increases. This is the expected signature of a fixed stretch factor: the velocity dispersion of a bound system scales as $\sigma \propto M^{1/3}$, so a fixed $r_\parallel = S \cdot r_\perp$ becomes progressively too generous for the most massive systems, merging adjacent structures into single detected groups.
+
+\subsection{Completeness and purity by redshift}
+
+\figref{fig:cp_redshift} repeats the matched-group analysis binned by mean group redshift rather than richness. Both completeness and purity are stable across $z \in [0.02, 0.06]$, confirming that the fixed $r_\perp$ performs uniformly across the full depth of the slice. There is no systematic drop in either metric with increasing redshift, ruling out a redshift-dependent over- or under-linking bias.
+
+\begin{figure}[htbp]
+    \centering
+    \placefig{figures/fig_completeness_redshift.pdf}
+    \caption{Mean completeness (blue circles) and purity (red squares) as a function of mean group redshift. Both metrics are stable across $z \in [0.02, 0.06]$, confirming that the fixed linking length performs uniformly across the volume.}
+    \label{fig:cp_redshift}
+\end{figure}
+
+\subsection{Global partition metrics}
+
+We compute three global clustering-quality scores on the galaxies with Tempel group membership ($N_{\rm gal} \geq 2$), comprising 45,934 galaxies in 15,411 Tempel groups and 13,508 detected groups. Results are reported in \tabref{tab:global_metrics}.
+
+\begin{table}[htbp]
+    \caption{Global partition quality metrics.}
+    \label{tab:global_metrics}
+    \begin{tabular}{
+        >{\raggedright\arraybackslash}p{0.52\columnwidth}
+        >{\centering\arraybackslash}p{0.32\columnwidth}
+    }
+    \toprule
+    Metric & Score \\
+    \midrule
+    Adjusted Rand Index (ARI)      & 0.807 \\
+    Norm. Mutual Information (NMI) & 0.983 \\
+    Fowlkes-Mallows (FM)           & 0.820 \\
+    \midrule
+    Pair precision                 & 0.685 \\
+    Pair recall                    & 0.982 \\
+    Pair F1                        & 0.807 \\
+    \bottomrule
+    \end{tabular}
+    \tabletext{ARI and FM are chance-corrected. NMI is normalised to $[0,1]$. Pair precision and recall are equivalent to mean purity and completeness, respectively.}
+\end{table}
+
+The NMI of 0.983 is particularly striking: the two labelings share 98.3\% of their mutual information, indicating near-perfect structural correspondence. The lower ARI (0.807) and FM (0.820) reflect sensitivity to the purity deficit at high $N$. Pair recall of 0.982 is consistent with the $>98\%$ completeness in \tabref{tab:cp_richness}.
+
+\subsection{Network topology}
+
+\tabref{tab:topology} summarises the topological properties of the final network. The clustering coefficient is strongly elevated relative to the Erd\H{o}s-R\'enyi baseline at the same edge density:
+
+\begin{table}[htbp]
+    \caption{Topology of the final group-finding network.}
+    \label{tab:topology}
+    \begin{tabular}{
+        >{\raggedright\arraybackslash}p{0.52\columnwidth}
+        >{\centering\arraybackslash}p{0.32\columnwidth}
+    }
+    \toprule
+    Property & Value \\
+    \midrule
+    Nodes                     & 75,042 \\
+    Edges                     & 95,310 \\
+    Mean degree $\langle k \rangle$  & 2.54 \\
+    Max degree                & 43 \\
+    Transitivity              & 0.646 \\
+    Avg.\ local clustering    & 0.322 \\
+    ER baseline               & $\approx 0$ \\
+    Ratio (obs / ER)          & $9{,}520\times$ \\
+    Connected components      & 37,500 \\
+    GCC size                  & 585 (0.8\%) \\
+    \bottomrule
+    \end{tabular}
+    \tabletext{The clustering coefficient is $\sim 10^4\times$ the ER random graph baseline, reflecting the clique-like structure of virialized galaxy groups.}
+\end{table}
+
+The $9{,}520\times$ excess over the ER baseline is the topological signature of virialized groups: within a group, all members are mutually close, and the cylindrical criterion links them to each other, forming near-complete subgraphs. The low GCC fraction (0.8\%) confirms the sub-critical regime independently of the susceptibility result.
+
+\section{Discussion}
+
+The central result is that the maximum fragmentation criterion — derived entirely from the topology of the galaxy network — selects a linking length that closely reproduces a carefully calibrated observational catalog. The inferred $b = 0.144$ is within the classical FoF range and only $\sim 25\%$ above Tempel's $b \approx 0.113$, a difference consistent with the mild over-merging visible in \figref{fig:richness_dist}. That the method recovers the correct scale without reading any parameter from the literature suggests that the group scale is genuinely encoded in the network topology, not merely recoverable from it.
+
+The high completeness ($>98\%$) across all richness bins and the stable redshift performance confirm two things. First, the cylindrical criterion is generous enough in the transverse direction to capture nearly all members of every group. Second, the fixed $r_\perp$ does not introduce a systematic redshift-dependent bias within the narrow slice, validating the volume-limited selection. These two results together indicate that the method is self-consistent within its domain of applicability.
+
+The declining purity at high $N$ is a known, predictable limitation of a fixed stretch factor. The velocity dispersion of a virialized system scales as $\sigma \propto M^{1/3}$: a group with $N = 100$ members has a velocity spread $\sim 3$–$5\times$ larger than a pair, and a fixed $r_\parallel = S \cdot r_\perp$ merges it with neighboring structures along the line of sight. The clean resolution is a 2D joint scan over $(r_\perp, S)$: find the maximum fragmentation peak in the full two-parameter space. This approach is fully unsupervised, as it makes no assumption about what the stretch factor should be. Implementing this scan is the natural next step for this project.
+
+The choice of $S = 10$, adopted from Tempel et al. \cite{tempel2014}, is the only external input to the current algorithm. In a strictly unsupervised implementation it should be either derived from the velocity dispersion of the detected components themselves, or jointly optimised with $r_\perp$ in the 2D scan.
+
+The network topology results are informative independently of the validation against Tempel. The $9{,}520\times$ excess clustering over the ER baseline is exactly what one expects from a sub-critical FoF: galaxy groups are near-complete subgraphs (cliques) embedded in a sparse background graph. Their internal edges form triangles freely, while the background is connected only by narrow chains. This topological signature is the microscopic counterpart of the macroscopic sub-critical regime identified by the percolation scan.
+
+\section{Conclusion}
+
+We have shown that the maximum fragmentation criterion provides a self-consistent, unsupervised estimate of the galaxy group scale in a redshift-space spectroscopic survey. Applied to the SDSS DR10 volume-limited sample, the method recovers 98\% of Tempel et al.'s group memberships with an ARI of 0.807 and NMI of 0.983, without using any of their calibration inputs. The linking length emerges from the network itself, not from prior knowledge of what the answer should be.
+
+The percolation framework offers two assets beyond the group catalog. First, the susceptibility peak $r_{\rm critical}$ provides a principled upper bound on the group scale and simultaneously identifies the cluster/supercluster regime, placing the full hierarchy of large-scale structure in a single topological picture. Second, the sub-critical ratio $r_{\rm groups}/r_{\rm critical} \approx 0.40$ is a measurable quantity that characterises the network's position in the phase diagram, comparable across surveys and redshifts.
+
+The primary limitation is the fixed stretch factor $S = 10$. Its extension to a jointly optimised 2D scan over $(r_\perp, S)$ would remove the last external parameter and complete the unsupervised method. A second natural extension is a redshift-dependent $r_\perp$, necessary for deeper surveys where the mean inter-galaxy spacing varies significantly with depth.
 
 %----------------------------------------------------------
 

@@ -2377,10 +2377,24 @@
     <bcf:datasource type="file" datatype="bibtex" glob="false">rho.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
-    <bcf:citekey order="1" intorder="1">PFGPlots</bcf:citekey>
-    <bcf:citekey order="2" intorder="1">PFGPlots</bcf:citekey>
-    <bcf:citekey order="3" intorder="1">davis2023signalflow</bcf:citekey>
-    <bcf:citekey order="3" intorder="2">bell2022codefont</bcf:citekey>
+    <bcf:citekey order="1" intorder="1">tempel2014</bcf:citekey>
+    <bcf:citekey order="2" intorder="1">huchra1982</bcf:citekey>
+    <bcf:citekey order="2" intorder="2">davis1985</bcf:citekey>
+    <bcf:citekey order="3" intorder="1">berlind2002</bcf:citekey>
+    <bcf:citekey order="3" intorder="2">eke2004</bcf:citekey>
+    <bcf:citekey order="4" intorder="1">tempel2014</bcf:citekey>
+    <bcf:citekey order="5" intorder="1">newman2010</bcf:citekey>
+    <bcf:citekey order="5" intorder="2">stauffer1994</bcf:citekey>
+    <bcf:citekey order="6" intorder="1">tempel2014</bcf:citekey>
+    <bcf:citekey order="7" intorder="1">tempel2014</bcf:citekey>
+    <bcf:citekey order="8" intorder="1">tempel2014</bcf:citekey>
+    <bcf:citekey order="9" intorder="1">tempel2014</bcf:citekey>
+    <bcf:citekey order="10" intorder="1">newman2010</bcf:citekey>
+    <bcf:citekey order="11" intorder="1">tempel2014</bcf:citekey>
+    <bcf:citekey order="12" intorder="1">davis1985</bcf:citekey>
+    <bcf:citekey order="12" intorder="2">berlind2002</bcf:citekey>
+    <bcf:citekey order="13" intorder="1">tempel2014</bcf:citekey>
+    <bcf:citekey order="14" intorder="1">tempel2014</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="ynt">
