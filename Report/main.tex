@@ -102,8 +102,8 @@ changes as the linking length is varied. Such a graph undergoes a percolation
 transition: below a critical linking length the network is a collection of small
 finite clusters; above it a single giant component spans the volume \cite{newman2010,
 stauffer1994}. Two scales emerge from the transition, defined purely topologically.
-The susceptibility, the mean-square size of the finite
-clusters, peaks at the percolation threshold $r_{\mathrm{critical}}$, above
+The susceptibility, the second moment of the finite-cluster size distribution,
+peaks at the percolation threshold $r_{\mathrm{critical}}$, above
 which only superclusters and filaments survive. The number of distinct finite
 groups peaks at a smaller scale $r_{\mathrm{groups}}$, where the network is broken
 into the largest number of bound systems. We adopt $r_{\mathrm{groups}}$ as the
@@ -261,9 +261,9 @@ The first is the \emph{susceptibility}, borrowed from percolation theory
 \end{equation}
 where $n_s$ is the number of components containing $s$ galaxies and the sum runs
 over every component except the giant connected component (GCC). The
-susceptibility is the mean-square size of the finite clusters; in the
-thermodynamic limit it diverges at the percolation threshold, and for a finite
-system it peaks there. We denote this peak location $r_{\mathrm{critical}}$. It
+susceptibility is proportional to the second moment of the finite-cluster size
+distribution; in the thermodynamic limit it diverges at the percolation
+threshold, and for a finite system it peaks there. We denote this peak location $r_{\mathrm{critical}}$. It
 is the scale at which a single component first spans the survey volume: above it
 the analysis recovers filaments and superclusters rather than groups.
 
@@ -312,7 +312,7 @@ than the percolating cosmic web.
     \label{fig:gcc}
 \end{figure}
 
-\subsection{Linking parameter $b$}
+\subsection{Linking parameter \texorpdfstring{$b$}{b}}
 
 To connect the topologically derived scale to the conventional FoF literature,
 we express it as the dimensionless linking parameter
@@ -355,10 +355,10 @@ close pair can merge two otherwise distinct systems.
 
 \figref{fig:phase} shows the two topological observables of \equref{eq:chi} and
 \equref{eq:nfrag} as the transverse linking length is scanned. The susceptibility
-$\chi(r_\perp)$ rises steeply and peaks sharply at $r_{\mathrm{critical}} =
-1.34\,h^{-1}$ Mpc: this is the signature of a percolation phase transition, with
-$\chi$ acting as the order parameter and its near-divergence marking the linking
-length at which a single component first percolates across the survey volume. The
+$\chi(r_\perp)$ rises steeply and peaks at $r_{\mathrm{critical}} =
+1.34\,h^{-1}$ Mpc, the signature of a percolation phase transition. Here $\chi$
+acts as the order parameter, and its near-divergence marks the linking length at
+which a single component first percolates across the survey volume. The
 fragmentation count $N_{\mathrm{groups}}(r_\perp)$ peaks earlier, at
 $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc, where the network is partitioned into
 the largest number of finite groups.
@@ -373,8 +373,7 @@ mean degree is already $\langle k\rangle = 2.54$; an Erd\H{o}s--R\'enyi graph of
 the same mean degree would carry roughly $90\%$ of its nodes in a single giant
 component, yet our spatially embedded graph has only $0.8\%$. Connectivity in the
 FoF network builds locally, assembling bound groups, long before it percolates
-globally. This separation of scales is what makes the group-finding criterion
-meaningful.
+globally. This separation of scales makes the group-finding criterion meaningful.
 
 The sharpness of the peak is itself a finite-size effect. A true divergence
 occurs only in the thermodynamic limit; for a finite graph the transition is a
@@ -434,7 +433,7 @@ small to span their velocity dispersion. Neither is present at the level of the
 global distribution; the mild excess of rich detected groups is quantified in the
 validation that follows.
 
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     \placefig{figures/Group_Richness_Distribution.pdf}
     \caption{Group richness distribution (members per group, $N \ge 2$) for the
@@ -446,10 +445,9 @@ validation that follows.
 
 \section{Validation \& Assessment}
 
-Validating the catalogue against Tempel et al.\ is not a classification problem
-but a \emph{graph-partition comparison}: both catalogues partition the same set
-of galaxies into groups, and the question is how closely the two partitions
-agree. We address it at three levels: individual matched groups, the global
+Validating the catalogue against Tempel et al.\ is a \emph{graph-partition
+comparison}: both catalogues partition the same set of galaxies into groups, and
+the question is how closely the two partitions agree. We address it at three levels: individual matched groups, the global
 partition, and the topology of the network itself.
 
 \subsection{Completeness and purity by richness}
@@ -509,11 +507,12 @@ range, consistent with the sky projection of \figref{fig:radec}.
 
 \subsection{Global partition metrics}
 
-For the global comparison, the two partitions are evaluated on the subset
-of $41{,}430$ galaxies that Tempel places in groups of at least two members
-($10{,}907$ Tempel groups, $9{,}739$ detected groups); the $26{,}189$ field
-galaxies are excluded because both partitions agree on them trivially and their
-inclusion would inflate every score. Three standard partition-comparison scores
+For the global comparison, the two partitions are evaluated on the $41{,}430$
+galaxies that Tempel places in groups of at least two members ($10{,}907$ Tempel
+groups, $9{,}739$ detected groups). The remaining $75{,}042 - 41{,}430 =
+33{,}612$ galaxies include both our isolated nodes and Tempel's field galaxies;
+both partitions agree on them trivially, so their inclusion would inflate every
+score. Three standard partition-comparison scores
 are reported in \tabref{tab:metrics}: the Adjusted Rand Index (ARI)
 \cite{hubert1985}, the fraction of galaxy pairs co-classified by both partitions,
 corrected for chance; the Normalized Mutual Information (NMI) \cite{vinh2010},
@@ -529,7 +528,7 @@ repeats the richness-analysis conclusion: the catalogue is highly complete but
 mildly over-merged. We also test whether the agreement is significant. Permuting
 the detected labels $1000$ times and recomputing the ARI yields a null
 distribution centred at zero with standard deviation $5.7\times10^{-5}$; the
-observed value lies more than a hundred standard deviations above it ($p <
+observed value lies far outside the null ($z \approx 1.4\times10^4$; $p <
 0.001$).
 
 \begin{table}[H]
@@ -560,7 +559,7 @@ connected components; the largest spans only $585$ nodes ($0.8\%$), confirming
 the sub-critical operating point. The mean degree is $\langle k\rangle = 2.54$.
 Against this sits the central topological result. The Erd\H{o}s--R\'enyi null
 (a random graph with the same number of nodes and edges, hence the same edge
-probability $p_{\mathrm{ER}} = 2E/N(N-1) = 3.4\times10^{-5}$) has an expected
+probability $p_{\mathrm{ER}} = 2E/[N(N-1)] = 3.4\times10^{-5}$) has an expected
 clustering coefficient equal to $p_{\mathrm{ER}}$. The measured transitivity is
 $0.646$ (\tabref{tab:clustering}): a galaxy's two neighbours are themselves
 linked nearly two-thirds of the time, exceeding the random expectation by a
@@ -605,9 +604,9 @@ galaxies are either isolated in the field or embedded in a dense group, with few
 in between. The hubs are the brightest central galaxies of rich systems.
 
 The double-logarithmic panel shows the tail is not a pure power law: it is
-concave and truncated at $k_{\max}$, the cutoff being geometric in origin: the
-degree is bounded by the number of galaxies that can physically occupy a single
-linking cylinder. The network is therefore heavy-tailed but not scale-free,
+concave and truncated at $k_{\max}$. The cutoff is geometric in origin, since
+the degree is bounded by the number of galaxies that can physically occupy a
+single linking cylinder. The network is therefore heavy-tailed but not scale-free,
 consistent with a random geometric graph rather than a preferential-attachment
 network \cite{penrose2003, barabasi2016}.
 
@@ -631,9 +630,9 @@ emerges: the internal edge density rises as groups shrink, from $0.02$ for the
 largest to $0.08$ for the smallest tabulated, while the transitivity stays in the
 range $0.54$–$0.64$. Yet even the richest groups are far from compact: their
 diameters (the longest internal shortest path) reach $16$ to $36$ links
-across only a few hundred members. These are not clique-like balls but extended,
-filamentary chains, exactly the structures single-linkage clustering produces and
-a direct manifestation of its bridging sensitivity. The giant connected component
+across only a few hundred members. These are extended, filamentary chains rather than clique-like balls, exactly
+the structures single-linkage clustering produces and a direct manifestation of
+its bridging sensitivity. The giant connected component
 ($585$ members, diameter $22$) is the largest such chain; group $1017$, with a
 diameter of $36$ across $226$ members, is the most filamentary of all.
 
@@ -702,11 +701,11 @@ reproduces the Tempel groups at ARI $= 0.82$ and NMI $= 0.98$ ($p < 0.001$),
 showing that the spatial galaxy network encodes its own group scale. The network
 is itself far from random: a clustering coefficient four orders of magnitude above
 the Erd\H{o}s--R\'enyi null, and a degree distribution heavy-tailed at both ends,
-the topological imprint of gravity on the cosmic web. The percolation transition
-does double duty: it locates the group-finding scale and provides an internal
-consistency check on any catalogue produced this way. The broader lesson is that
-network-science diagnostics, from the percolation threshold to the clustering
-coefficient, are not supplementary checks here but the operative quantities.
+the topological imprint of gravity on the cosmic web. The percolation transition serves two purposes: it locates the group-finding
+scale and provides an internal consistency check on any catalogue produced this
+way. The operative quantities throughout are network-science diagnostics, from
+the percolation threshold to the clustering coefficient, doing work that
+external calibration does elsewhere.
 
 %----------------------------------------------------------
 
