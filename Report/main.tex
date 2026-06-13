@@ -8,8 +8,8 @@
 \usepackage[english]{babel}
 
 % Graceful figure fallback: shows a placeholder box if the PDF has not been
-% generated yet (i.e. the notebook has not been run). Once figures/fig_*.pdf
-% exist, they replace the boxes automatically on the next compile.
+% generated yet (i.e. the notebook has not been run). Once the figure PDFs
+% exist in figures/, they replace the boxes automatically on the next compile.
 \newcommand{\placefig}[2][width=\columnwidth]{%
     \IfFileExists{#2}%
         {\includegraphics[#1]{#2}}%
@@ -68,59 +68,6 @@
 %----------------------------------------------------------
 
 \section{Introduction}
-
-\rhostart{G}alaxy groups, gravitationally bound systems of $2$--$\sim\!100$ members,
-are the most common environment for galaxies in the universe and the fundamental
-node of the cosmic web \cite{tempel2014}. Their identification from spectroscopic
-redshift surveys relies on the Friends-of-Friends (FoF) algorithm
-\cite{huchra1982, davis1985}: link every pair of galaxies within a chosen linking
-length $\ell$; the connected components of the resulting graph are the groups.
-The method maps a physical criterion (spatial proximity) directly onto a
-graph-theoretic object (connected components), yet its central parameter, the
-dimensionless linking length $b = \ell / \bar{d}$, has traditionally required
-calibration against N-body simulations \cite{berlind2002, eke2004} or adoption
-from prior surveys \cite{tempel2014}.
-
-The question driving this project is whether the galaxy spatial network itself
-encodes the group scale: can a purely topological analysis of the graph, without
-external calibration, identify the physically correct linking length?
-
-Percolation theory is the natural framework for this purpose \cite{newman2010,
-stauffer1994}. In a random geometric graph, connectivity transitions sharply at a
-critical linking length $r_c$: below $r_c$ the network fragments into isolated
-finite clusters; above $r_c$ a single giant connected component (GCC) percolates
-across the system. The susceptibility $\chi$ (the mean-square size of finite
-components, excluding the GCC) diverges at $r_c$ and is the order parameter of
-the transition. Below $r_c$, the finite components are precisely the structures we
-call galaxy groups. Above $r_c$, they merge into clusters, filaments, and
-superclusters.
-
-Two topological observables are therefore available as unsupervised estimators of
-the group scale. The susceptibility peak locates the percolation threshold
-$r_{\rm critical}$, the hard upper bound above which group finding is no longer
-meaningful. The fragmentation count $N_{\rm groups}(r_\perp)$ (the number of
-finite components in the sub-GCC size range) peaks at the linking length at which
-the network is most fragmented into distinct, finite groups. We identify this peak
-as the group scale $r_{\rm groups}$. The sub-critical inequality
-\begin{equation}
-    r_{\rm groups} < r_{\rm critical}
-\end{equation}
-\medskip
-is the defining property of the method and must be verified explicitly for every
-sample.
-
-Redshift-space distortions require an anisotropic (cylindrical) FoF. Virialized
-galaxies have peculiar velocities of $\sim 300$--$500$ km/s that displace them by
-several Mpc along the line of sight (Fingers of God effect), while their true
-transverse extent is $\sim 0.5\,h^{-1}$ Mpc. We follow Tempel et al.\
-\cite{tempel2014} in using a fixed stretch factor $S = r_\parallel / r_\perp = 10$.
-
-Throughout this work, we use the Tempel et al.\ (2014) SDSS DR10 group catalog
-\cite{tempel2014} as both the data source and the validation reference. Galaxy
-positions, redshifts, and magnitudes come from their catalog; their group
-assignments are the ground truth for validation. The linking length is derived
-entirely from the topology of the network we construct; it is never read from
-their paper.
 
 \section{Data}
 
