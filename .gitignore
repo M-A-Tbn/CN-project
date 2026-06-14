@@ -5,3 +5,20 @@
 *.svg
 Notebook/observational_surveys_redshift_0-1.txt
 .Ds_Store
+.DS_Store
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+_minted/
+_minted-*/
+*.minted
