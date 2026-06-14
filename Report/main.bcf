@@ -2378,15 +2378,11 @@
   </bcf:bibdata>
   <bcf:section number="0">
     <bcf:citekey order="1" intorder="1">tempel2014</bcf:citekey>
-    <bcf:citekey order="2" intorder="1">huchra1982</bcf:citekey>
-    <bcf:citekey order="2" intorder="2">davis1985</bcf:citekey>
+    <bcf:citekey order="2" intorder="1">davis1985</bcf:citekey>
     <bcf:citekey order="3" intorder="1">berlind2002</bcf:citekey>
-    <bcf:citekey order="3" intorder="2">eke2004</bcf:citekey>
     <bcf:citekey order="4" intorder="1">tempel2014</bcf:citekey>
     <bcf:citekey order="5" intorder="1">newman2010</bcf:citekey>
-    <bcf:citekey order="5" intorder="2">stauffer1994</bcf:citekey>
     <bcf:citekey order="6" intorder="1">tempel2014</bcf:citekey>
-    <bcf:citekey order="6" intorder="2">lambert2020</bcf:citekey>
     <bcf:citekey order="7" intorder="1">tempel2014</bcf:citekey>
     <bcf:citekey order="8" intorder="1">tempel2014</bcf:citekey>
     <bcf:citekey order="9" intorder="1">ahn2014</bcf:citekey>
@@ -2394,23 +2390,20 @@
     <bcf:citekey order="11" intorder="1">penrose2003</bcf:citekey>
     <bcf:citekey order="12" intorder="1">jackson1972</bcf:citekey>
     <bcf:citekey order="13" intorder="1">tempel2014</bcf:citekey>
-    <bcf:citekey order="13" intorder="2">lambert2020</bcf:citekey>
     <bcf:citekey order="14" intorder="1">tempel2014</bcf:citekey>
     <bcf:citekey order="15" intorder="1">newman2010</bcf:citekey>
-    <bcf:citekey order="15" intorder="2">stauffer1994</bcf:citekey>
     <bcf:citekey order="16" intorder="1">davis1985</bcf:citekey>
     <bcf:citekey order="16" intorder="2">berlind2002</bcf:citekey>
     <bcf:citekey order="17" intorder="1">erdos1960</bcf:citekey>
     <bcf:citekey order="17" intorder="2">newman2010</bcf:citekey>
     <bcf:citekey order="18" intorder="1">penrose2003</bcf:citekey>
-    <bcf:citekey order="19" intorder="1">stauffer1994</bcf:citekey>
+    <bcf:citekey order="19" intorder="1">newman2010</bcf:citekey>
     <bcf:citekey order="20" intorder="1">hubert1985</bcf:citekey>
     <bcf:citekey order="21" intorder="1">vinh2010</bcf:citekey>
-    <bcf:citekey order="22" intorder="1">fowlkes1983</bcf:citekey>
-    <bcf:citekey order="23" intorder="1">barabasi2016</bcf:citekey>
-    <bcf:citekey order="24" intorder="1">gausmann2024</bcf:citekey>
-    <bcf:citekey order="25" intorder="1">penrose2003</bcf:citekey>
-    <bcf:citekey order="25" intorder="2">barabasi2016</bcf:citekey>
+    <bcf:citekey order="22" intorder="1">barabasi2016</bcf:citekey>
+    <bcf:citekey order="23" intorder="1">gausmann2024</bcf:citekey>
+    <bcf:citekey order="24" intorder="1">penrose2003</bcf:citekey>
+    <bcf:citekey order="24" intorder="2">barabasi2016</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="ynt">

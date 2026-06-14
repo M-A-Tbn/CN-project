@@ -1,13 +1,12 @@
 # Fdb version 4
-["biber main"] 1781369417.84293 "main.bcf" "main.bbl" "main" 1781408619.00124 0
-  "main.bcf" 1781408618.81633 110948 5d9486d67efb07e52e40f9ae02d07ca2 "pdflatex"
-  "rho.bib" 1781369334.1385 5007 3bc74aec83d24ca73d43d2faaa7fc604 ""
+["biber main"] 1781412854.26715 "main.bcf" "main.bbl" "main" 1781413455.94826 0
+  "main.bcf" 1781413455.76839 110484 e1c5fd17945782cb6022780c9f0951e3 "pdflatex"
+  "rho.bib" 1781412842.52626 3470 efb6865601f8600ca62cf517f430ac73 ""
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1781408616.79211 "/Users/ali/Course Materials/Complex networks/PROJECT-in-dev/Report/main.tex" "main.pdf" "main" 1781408619.0015 0
-  "/Users/ali/Course Materials/Complex networks/PROJECT-in-dev/Report/main.tex" 1781406515.04254 39047 b67742b0a00987f09fadb0bbe7b52a2f ""
+["pdflatex"] 1781413454.06852 "main.tex" "main.pdf" "main" 1781413455.94848 0
   "/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/fira/fir_d4q673.enc" 1570828436 2978 6d777d1174162fa94ff58f36782f4570 ""
   "/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/fira/fir_d67aat.enc" 1570828436 3385 21a7e8c8dac3c39de5acda2c56e7bd7e ""
   "/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/fira/fir_iln36p.enc" 1570828436 3071 cfa92ee28d698dd9275559d9d1c3a233 ""
@@ -327,10 +326,10 @@
   "figures/GCC_Diagnostic_Cylindrical_r_perp_Scan.pdf" 1781408602.62122 28487 03d7b26c278c7010f16eb171f05b562e ""
   "figures/Galaxy_distribution_and_groups_in_RA_Dec_detected_vs_Tempel_2014_per_redshift_bin.pdf" 1781408604.65261 3705486 7b92e30d7d35fc3f568dc119707512cd ""
   "figures/Group_Richness_Distribution.pdf" 1781408605.62664 14231 1a7d8bb92f387d0d299882ede666fb13 ""
-  "main.aux" 1781408618.80904 23866 5261d6aadb80ccc64932c9206998b016 "pdflatex"
-  "main.bbl" 1781369419.18068 27314 79d06f0475d0ccbf69e234054a2e7a42 "biber main"
-  "main.run.xml" 1781408618.81716 2367 2e318f80a120c1aafa417bafd8a14358 "pdflatex"
-  "main.tex" 1781406515.04254 39047 b67742b0a00987f09fadb0bbe7b52a2f ""
+  "main.aux" 1781413455.76269 23046 469810300258e6f3f87e84c3be7cfe0e "pdflatex"
+  "main.bbl" 1781412855.49097 18698 ce44ae4fa905d2c5901ae66ae255bd08 "biber main"
+  "main.run.xml" 1781413455.76893 2367 2e318f80a120c1aafa417bafd8a14358 "pdflatex"
+  "main.tex" 1781413443.31024 39793 84a9b4aaeb0c7446b26bc5dafbed6452 ""
   "rho-class/rho.cls" 1781216820.01184 17763 26c0f83bcf4a9b6345bef8f9a1dcd71a ""
   "rho-class/rhobabel.sty" 1781216820.01193 3824 058f7913dfd25dec044ef79d638dd649 ""
   "rho-class/rhoenvs.sty" 1781216820.01199 2971 6453957dec95b12ee09023bcd913f644 ""

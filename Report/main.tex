@@ -7,20 +7,38 @@
 \documentclass[9pt,a4paper,twocolumn,twoside]{rho-class/rho}
 \usepackage[english]{babel}
 
-% The rho class sets rigid, slightly negative display-equation skips, which
-% crowds tall displays (fractions, integrals, roots) and — under flushbottom
-% column balancing — forces the slack onto inter-paragraph gaps instead.
-% Re-patch \normalsize with small positive, stretchable skips: this spaces
-% every display consistently and gives the balancer rubber to work with.
+% ===== Uniform publication spacing ==========================================
+% Display equations: identical glue above and below every formula. The class
+% sets these to a rigid, slightly negative value inside \normalsize, so we
+% re-patch \normalsize (ours runs last and wins). Crucially the two "short"
+% skips are set equal to the regular ones, so a formula's spacing does not
+% depend on whether the line before it was full or short. A small symmetric
+% rubber lets flushbottom balance columns without opening paragraph gaps.
 \makeatletter
 \expandafter\def\expandafter\normalsize\expandafter{%
     \normalsize%
-    \setlength\abovedisplayskip{0pt plus 3pt minus 2pt}%
-    \setlength\belowdisplayskip{0pt plus 3pt minus 2pt}%
-    \setlength\abovedisplayshortskip{0pt plus 3pt minus 2pt}%
-    \setlength\belowdisplayshortskip{3pt plus 2pt minus 2pt}%
+    \setlength\abovedisplayskip{6pt plus 2pt minus 1pt}%
+    \setlength\belowdisplayskip{6pt plus 2pt minus 1pt}%
+    \setlength\abovedisplayshortskip{6pt plus 2pt minus 1pt}%
+    \setlength\belowdisplayshortskip{6pt plus 2pt minus 1pt}%
 }
 \makeatother
+
+% Floats: a single separation value for in-text [H] floats (\intextsep),
+% top/bottom [t] floats (\textfloatsep), stacked floats (\floatsep) and the
+% full-width figure* floats (\dbltextfloatsep, \dblfloatsep). Every figure and
+% table therefore sits the same distance from the surrounding text.
+\setlength\floatsep{14pt plus 2pt minus 2pt}
+\setlength\textfloatsep{14pt plus 2pt minus 2pt}
+\setlength\intextsep{14pt plus 2pt minus 2pt}
+\setlength\dblfloatsep{14pt plus 2pt minus 2pt}
+\setlength\dbltextfloatsep{14pt plus 2pt minus 2pt}
+
+% Captions: identical gap between every caption and its figure/table body,
+% whether the caption sits above (tables) or below (figures).
+\captionsetup[figure]{skip=7pt}
+\captionsetup[table]{skip=7pt}
+% ============================================================================
 
 % Tighten the gap between bibliography entries slightly (the default list
 % itemsep is generous); keeps the reference list on a single page.
@@ -60,9 +78,9 @@
 
 %----------------------------------------------------------
 % Corresponding author and document info
-%----------------------------------------------------------
+%---------------------------------------------------------- 
 
-\corres{\textsuperscript{\textasteriskcentered}\href{mailto:m.a.tabaeian@gmail.com}{m.a.tabaeian@gmail.com}}
+\corres{\textsuperscript{\textasteriskcentered}\href{mailto:mohamadali.tabaeian@studio.unibo.it}{mohamadali.tabaeian@studio.unibo.it}}
 
 \docinfo{Course project for Complex Networks, Spring 2026. Code: \href{https://github.com/M-A-Tbn/CN-project}{github.com/M-A-Tbn/CN-project}.}
 
@@ -116,19 +134,19 @@ members, are the environment of most galaxies and the building blocks of the
 cosmic web \cite{tempel2014}. Identifying them from a redshift survey is, at
 heart, a graph problem: place an edge between every pair of galaxies closer than a
 chosen linking length, and read the groups off as the connected components. This
-Friends-of-Friends (FoF) prescription \cite{huchra1982, davis1985} maps a
+Friends-of-Friends (FoF) prescription \cite{davis1985} maps a
 physical criterion, spatial proximity, directly onto a graph-theoretic
 object, but it leaves one parameter undetermined: the linking length itself,
 conventionally written as the dimensionless $b = \ell/\bar d$. Traditionally $b$
-has been fixed by calibration against $N$-body simulations \cite{berlind2002,
-eke2004} or adopted wholesale from an earlier survey \cite{tempel2014}.
+has been fixed by calibration against $N$-body simulations \cite{berlind2002}
+or adopted wholesale from an earlier survey \cite{tempel2014}.
 
 This work asks whether the galaxy network can supply that scale itself. We treat
 the FoF construction as a random geometric graph and study how its connectivity
 changes as the linking length is varied. Such a graph undergoes a percolation
 transition: below a critical linking length the network is a collection of small
-finite clusters; above it a single giant component spans the volume \cite{newman2010,
-stauffer1994}. Two scales emerge from the transition, defined purely topologically.
+finite clusters; above it a single giant component spans the volume
+\cite{newman2010}. Two scales emerge from the transition, defined purely topologically.
 The susceptibility, the second moment of the finite-cluster size distribution,
 peaks at the percolation threshold $r_{\mathrm{critical}}$, above
 which only superclusters and filaments survive. The number of distinct finite
@@ -140,7 +158,7 @@ $r_{\mathrm{groups}} < r_{\mathrm{critical}}$.
 Because the line-of-sight coordinate is reconstructed from redshift, peculiar
 velocities stretch groups into radial filaments (the Fingers-of-God effect),
 so the linking volume must be an anisotropic cylinder rather than a sphere
-\cite{tempel2014, lambert2020}. The scale $r_{\mathrm{groups}}$ and the group
+\cite{tempel2014}. The scale $r_{\mathrm{groups}}$ and the group
 catalogue it produces then follow from the network topology alone.
 
 We apply the method to the SDSS DR10 Main Galaxy Sample and validate it against
@@ -247,7 +265,7 @@ enough to absorb this elongation would over-link in the transverse direction and
 merge physically distinct systems.
 
 The usual fix is an anisotropic, cylindrical linking volume
-\cite{tempel2014, lambert2020}. For a pair $(i,j)$ with comoving positions
+\cite{tempel2014}. For a pair $(i,j)$ with comoving positions
 $\vec r_i, \vec r_j$, the separation is decomposed along the line of sight. With
 the observer at the origin, the local line-of-sight direction at the pair
 midpoint is $\hat{\ell}_{ij} = (\vec r_i + \vec r_j)/|\vec r_i + \vec r_j|$, and
@@ -282,7 +300,7 @@ rebuilding $G(r_\perp)$ and extracting its connected components at each step, an
 we monitor two complementary topological observables.
 
 The first is the \emph{susceptibility}, borrowed from percolation theory
-\cite{newman2010, stauffer1994},
+\cite{newman2010},
 \begin{equation}\label{eq:chi}
     \chi(r_\perp) = \frac{1}{N}\sum_{s\,\neq\,\mathrm{GCC}} s^2\, n_s,
 \end{equation}
@@ -399,7 +417,7 @@ globally. This separation of scales makes the group-finding criterion meaningful
 
 The sharpness of the peak is itself a finite-size effect. A true divergence
 occurs only in the thermodynamic limit; for a finite graph the transition is a
-smooth crossover whose width narrows as $N$ grows \cite{stauffer1994}. The
+smooth crossover whose width narrows as $N$ grows \cite{newman2010}. The
 volume-limited sample of $\sim 7.5\times10^4$ galaxies, drawn from a parent
 catalogue of $\sim 6\times10^5$, is large enough that the peak is well localised
 and $r_{\mathrm{critical}}$ can be read off unambiguously.
@@ -534,14 +552,13 @@ galaxies that Tempel places in groups of at least two members ($10{,}907$ Tempel
 groups, $9{,}739$ detected groups). The remaining $75{,}042 - 41{,}430 =
 33{,}612$ galaxies include both our isolated nodes and Tempel's field galaxies;
 both partitions agree on them trivially, so their inclusion would inflate every
-score. Three standard partition-comparison scores
+score. Two standard partition-comparison scores
 are reported in \tabref{tab:metrics}: the Adjusted Rand Index (ARI)
 \cite{hubert1985}, the fraction of galaxy pairs co-classified by both partitions,
-corrected for chance; the Normalized Mutual Information (NMI) \cite{vinh2010},
-the information one partition carries about the other; and the Fowlkes--Mallows
-index (FM) \cite{fowlkes1983}, the geometric mean of pair precision and recall.
-All three lie on $[0,1]$, with $0$ for chance agreement and $1$ for identity. The
-detected partition scores ARI $= 0.82$, NMI $= 0.98$ and FM $= 0.83$.
+corrected for chance; and the Normalized Mutual Information (NMI) \cite{vinh2010},
+the information one partition carries about the other. Both lie on $[0,1]$, with
+$0$ for chance agreement and $1$ for identity. The detected partition scores
+ARI $= 0.82$ and NMI $= 0.98$.
 
 The pair confusion matrix makes the asymmetry concrete. Pair recall, the fraction
 of Tempel co-group pairs recovered, is $0.98$, while pair precision, the fraction
@@ -564,7 +581,6 @@ observed value lies far outside the null ($z \approx 1.4\times10^4$; $p <
         \midrule
         Adjusted Rand Index (ARI)          & 0.824 \\
         Normalized Mutual Information (NMI) & 0.983 \\
-        Fowlkes--Mallows (FM)              & 0.835 \\
         \midrule
         Pair precision                     & 0.710 \\
         Pair recall                        & 0.982 \\

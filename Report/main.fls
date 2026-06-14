@@ -2,7 +2,7 @@ PWD /Users/ali/Course Materials/Complex networks/PROJECT-in-dev/Report
 INPUT /usr/local/texlive/2026/texmf.cnf
 INPUT /usr/local/texlive/2026/texmf-dist/web2c/texmf.cnf
 INPUT /usr/local/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt
-INPUT /Users/ali/Course Materials/Complex networks/PROJECT-in-dev/Report/main.tex
+INPUT main.tex
 OUTPUT main.log
 INPUT ./rho-class/rho.cls
 INPUT rho-class/rho.cls
