@@ -7,6 +7,31 @@
 \documentclass[9pt,a4paper,twocolumn,twoside]{rho-class/rho}
 \usepackage[english]{babel}
 
+% The rho class sets rigid, slightly negative display-equation skips, which
+% crowds tall displays (fractions, integrals, roots) and — under flushbottom
+% column balancing — forces the slack onto inter-paragraph gaps instead.
+% Re-patch \normalsize with small positive, stretchable skips: this spaces
+% every display consistently and gives the balancer rubber to work with.
+\makeatletter
+\expandafter\def\expandafter\normalsize\expandafter{%
+    \normalsize%
+    \setlength\abovedisplayskip{0pt plus 3pt minus 2pt}%
+    \setlength\belowdisplayskip{0pt plus 3pt minus 2pt}%
+    \setlength\abovedisplayshortskip{0pt plus 3pt minus 2pt}%
+    \setlength\belowdisplayshortskip{3pt plus 2pt minus 2pt}%
+}
+\makeatother
+
+% Tighten the gap between bibliography entries slightly (the default list
+% itemsep is generous); keeps the reference list on a single page.
+\setlength\bibitemsep{1pt plus 1pt minus 1pt}
+
+% The class forces tabular content into Fira Sans (\sffamily), whose geometric
+% digits clash with the serif STIX figures used in the body and inline math.
+% Append a hook (runs after the class's) to switch table content to the roman
+% face, so every number shares one academic, lining-figure style.
+\AtBeginEnvironment{tabular}{\rmfamily}
+
 % Graceful figure fallback: shows a placeholder box if the PDF has not been
 % generated yet (i.e. the notebook has not been run). Once the figure PDFs
 % exist in figures/, they replace the boxes automatically on the next compile.
@@ -79,6 +104,8 @@ consistency check, with no reference to the Tempel assignments.
 
 \maketitle
 \thispagestyle{firststyle}
+% Override the default header (full title overflows in two-column layout)
+\fancyhead[RO,LE]{\footerfont Cylindrical FoF Galaxy Groups via Network Percolation}
 
 %----------------------------------------------------------
 
@@ -377,7 +404,7 @@ volume-limited sample of $\sim 7.5\times10^4$ galaxies, drawn from a parent
 catalogue of $\sim 6\times10^5$, is large enough that the peak is well localised
 and $r_{\mathrm{critical}}$ can be read off unambiguously.
 
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     \placefig{figures/Anisotropic_Phase_Transition_Cylindrical_r_perp.pdf}
     \caption{The anisotropic percolation transition. The susceptibility

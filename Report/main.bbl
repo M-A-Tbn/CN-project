@@ -19,6 +19,65 @@
 
 \refsection{0}
   \datalist[entry]{ynt/global//global/global/global}
+    \entry{erdos1960}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=e0d0e2888dbc45cf93a1050ca44edf47}{%
+           family={{Erdős}},
+           familyi={E\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=521964110ba87bcde0674f8657ab7287}{%
+           family={{Rényi}},
+           familyi={R\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{d89a6052835ef5b877e93f78f0832cfc}
+      \strng{fullhash}{d89a6052835ef5b877e93f78f0832cfc}
+      \strng{fullhashraw}{d89a6052835ef5b877e93f78f0832cfc}
+      \strng{bibnamehash}{d89a6052835ef5b877e93f78f0832cfc}
+      \strng{authorbibnamehash}{d89a6052835ef5b877e93f78f0832cfc}
+      \strng{authornamehash}{d89a6052835ef5b877e93f78f0832cfc}
+      \strng{authorfullhash}{d89a6052835ef5b877e93f78f0832cfc}
+      \strng{authorfullhashraw}{d89a6052835ef5b877e93f78f0832cfc}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Publ. Math. Inst. Hung. Acad. Sci.}
+      \field{title}{{On the evolution of random graphs}}
+      \field{volume}{5}
+      \field{year}{1960}
+      \field{pages}{17\bibrangedash 61}
+      \range{pages}{45}
+    \endentry
+    \entry{jackson1972}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=2a0074c932dc6b5ccd66c39969c277f8}{%
+           family={{Jackson}},
+           familyi={J\bibinitperiod},
+           given={J.\bibnamedelimi C.},
+           giveni={J\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \strng{namehash}{2a0074c932dc6b5ccd66c39969c277f8}
+      \strng{fullhash}{2a0074c932dc6b5ccd66c39969c277f8}
+      \strng{fullhashraw}{2a0074c932dc6b5ccd66c39969c277f8}
+      \strng{bibnamehash}{2a0074c932dc6b5ccd66c39969c277f8}
+      \strng{authorbibnamehash}{2a0074c932dc6b5ccd66c39969c277f8}
+      \strng{authornamehash}{2a0074c932dc6b5ccd66c39969c277f8}
+      \strng{authorfullhash}{2a0074c932dc6b5ccd66c39969c277f8}
+      \strng{authorfullhashraw}{2a0074c932dc6b5ccd66c39969c277f8}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{MNRAS}
+      \field{title}{{Fingers of God: A Problem with the Virgo Redshift Survey}}
+      \field{volume}{156}
+      \field{year}{1972}
+      \field{pages}{1P\bibrangedash 5P}
+      \range{pages}{-1}
+    \endentry
     \entry{huchra1982}{article}{}{}
       \name{author}{2}{}{%
         {{hash=93d743b838cd363453ef893b16f8c7fb}{%
@@ -53,6 +112,39 @@
       \verb{doi}
       \verb 10.1086/160000
       \endverb
+    \endentry
+    \entry{fowlkes1983}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=95beeac09319a4852ed0196573cac04c}{%
+           family={{Fowlkes}},
+           familyi={F\bibinitperiod},
+           given={E.\bibnamedelimi B.},
+           giveni={E\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=cfc4d3605bd45e63fa549702822c8d20}{%
+           family={{Mallows}},
+           familyi={M\bibinitperiod},
+           given={C.\bibnamedelimi L.},
+           giveni={C\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \strng{namehash}{f7a2b9f0dc39db5361b1dd3eda3421db}
+      \strng{fullhash}{f7a2b9f0dc39db5361b1dd3eda3421db}
+      \strng{fullhashraw}{f7a2b9f0dc39db5361b1dd3eda3421db}
+      \strng{bibnamehash}{f7a2b9f0dc39db5361b1dd3eda3421db}
+      \strng{authorbibnamehash}{f7a2b9f0dc39db5361b1dd3eda3421db}
+      \strng{authornamehash}{f7a2b9f0dc39db5361b1dd3eda3421db}
+      \strng{authorfullhash}{f7a2b9f0dc39db5361b1dd3eda3421db}
+      \strng{authorfullhashraw}{f7a2b9f0dc39db5361b1dd3eda3421db}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{JASA}
+      \field{number}{383}
+      \field{title}{{A Method for Comparing Two Hierarchical Clusterings}}
+      \field{volume}{78}
+      \field{year}{1983}
+      \field{pages}{553\bibrangedash 569}
+      \range{pages}{17}
     \endentry
     \entry{davis1985}{article}{}{}
       \name{author}{4}{}{%
@@ -98,6 +190,38 @@
       \verb{doi}
       \verb 10.1086/163168
       \endverb
+    \endentry
+    \entry{hubert1985}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=e19158c11645d238064b02e3e6f4f91a}{%
+           family={{Hubert}},
+           familyi={H\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod}}}%
+        {{hash=990a9383b16e12e60ba11f1c069276ec}{%
+           family={{Arabie}},
+           familyi={A\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{efdbef05c074ec6d4291a902f65f2216}
+      \strng{fullhash}{efdbef05c074ec6d4291a902f65f2216}
+      \strng{fullhashraw}{efdbef05c074ec6d4291a902f65f2216}
+      \strng{bibnamehash}{efdbef05c074ec6d4291a902f65f2216}
+      \strng{authorbibnamehash}{efdbef05c074ec6d4291a902f65f2216}
+      \strng{authornamehash}{efdbef05c074ec6d4291a902f65f2216}
+      \strng{authorfullhash}{efdbef05c074ec6d4291a902f65f2216}
+      \strng{authorfullhashraw}{efdbef05c074ec6d4291a902f65f2216}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Classification}
+      \field{title}{{Comparing partitions}}
+      \field{volume}{2}
+      \field{year}{1985}
+      \field{pages}{193\bibrangedash 218}
+      \range{pages}{26}
     \endentry
     \entry{stauffer1994}{book}{}{}
       \name{author}{2}{}{%
@@ -165,6 +289,32 @@
       \verb{doi}
       \verb 10.1086/341469
       \endverb
+    \endentry
+    \entry{penrose2003}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=93a4167530b2d48df3b6fdf79a07ed4e}{%
+           family={{Penrose}},
+           familyi={P\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Oxford University Press}%
+      }
+      \strng{namehash}{93a4167530b2d48df3b6fdf79a07ed4e}
+      \strng{fullhash}{93a4167530b2d48df3b6fdf79a07ed4e}
+      \strng{fullhashraw}{93a4167530b2d48df3b6fdf79a07ed4e}
+      \strng{bibnamehash}{93a4167530b2d48df3b6fdf79a07ed4e}
+      \strng{authorbibnamehash}{93a4167530b2d48df3b6fdf79a07ed4e}
+      \strng{authornamehash}{93a4167530b2d48df3b6fdf79a07ed4e}
+      \strng{authorfullhash}{93a4167530b2d48df3b6fdf79a07ed4e}
+      \strng{authorfullhashraw}{93a4167530b2d48df3b6fdf79a07ed4e}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{Random Geometric Graphs}}
+      \field{year}{2003}
     \endentry
     \entry{eke2004}{article}{}{}
       \name{author}{6}{}{%
@@ -250,6 +400,86 @@
       \verb 10.1093/acprof:oso/9780199206650.001.0001
       \endverb
     \endentry
+    \entry{vinh2010}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=c52399b2b34cb80ab4b459307e7c6329}{%
+           family={{Vinh}},
+           familyi={V\bibinitperiod},
+           given={N.\bibnamedelimi X.},
+           giveni={N\bibinitperiod\bibinitdelim X\bibinitperiod}}}%
+        {{hash=5adcfb58b7014b79cbccd59393100e1a}{%
+           family={{Epps}},
+           familyi={E\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
+        {{hash=44730aa4ef93c1bfa359b37944b71580}{%
+           family={{Bailey}},
+           familyi={B\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{25caf9e1921977c626d06ec19b529b9f}
+      \strng{fullhash}{8cb8653c73162b8cc8d5a246bf8738ea}
+      \strng{fullhashraw}{8cb8653c73162b8cc8d5a246bf8738ea}
+      \strng{bibnamehash}{8cb8653c73162b8cc8d5a246bf8738ea}
+      \strng{authorbibnamehash}{8cb8653c73162b8cc8d5a246bf8738ea}
+      \strng{authornamehash}{25caf9e1921977c626d06ec19b529b9f}
+      \strng{authorfullhash}{8cb8653c73162b8cc8d5a246bf8738ea}
+      \strng{authorfullhashraw}{8cb8653c73162b8cc8d5a246bf8738ea}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{JMLR}
+      \field{title}{{Information Theoretic Measures for Clusterings Comparison}}
+      \field{volume}{11}
+      \field{year}{2010}
+      \field{pages}{2837\bibrangedash 2854}
+      \range{pages}{18}
+    \endentry
+    \entry{ahn2014}{article}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{3}{}{%
+        {{hash=055ad8b3270ee6072f1e43a23f4ded19}{%
+           family={{Ahn}},
+           familyi={A\bibinitperiod},
+           given={C.\bibnamedelimi P.},
+           giveni={C\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+        {{hash=7bde403bd288a0374b308475a9ce8047}{%
+           family={{Alexandroff}},
+           familyi={A\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+        {{hash=7a12a7b046b55a9bfa269bb35c9d48c2}{%
+           family={{Allende Prieto}},
+           familyi={A\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{89187b707a07f0ef0ff37081d3e68019}
+      \strng{fullhash}{3a65987e38c3c224108bd097dbaa28cf}
+      \strng{fullhashraw}{3a65987e38c3c224108bd097dbaa28cf}
+      \strng{bibnamehash}{3a65987e38c3c224108bd097dbaa28cf}
+      \strng{authorbibnamehash}{3a65987e38c3c224108bd097dbaa28cf}
+      \strng{authornamehash}{89187b707a07f0ef0ff37081d3e68019}
+      \strng{authorfullhash}{3a65987e38c3c224108bd097dbaa28cf}
+      \strng{authorfullhashraw}{3a65987e38c3c224108bd097dbaa28cf}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{ApJS}
+      \field{number}{2}
+      \field{title}{{The Tenth Data Release of the Sloan Digital Sky Survey}}
+      \field{volume}{211}
+      \field{year}{2014}
+      \field{pages}{17}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1088/0067-0049/211/2/17
+      \endverb
+    \endentry
     \entry{tempel2014}{article}{}{}
       \name{author}{9}{}{%
         {{hash=c5c45c3f8b2fd3f808b56d4197575450}{%
@@ -318,6 +548,118 @@
       \range{pages}{-1}
       \verb{doi}
       \verb 10.1051/0004-6361/201423931
+      \endverb
+    \endentry
+    \entry{barabasi2016}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=953467ea1b8e328ccd298c4b59a43b26}{%
+           family={{Barabási}},
+           familyi={B\bibinitperiod},
+           given={A.-L.},
+           giveni={A\bibinithyphendelim L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{953467ea1b8e328ccd298c4b59a43b26}
+      \strng{fullhash}{953467ea1b8e328ccd298c4b59a43b26}
+      \strng{fullhashraw}{953467ea1b8e328ccd298c4b59a43b26}
+      \strng{bibnamehash}{953467ea1b8e328ccd298c4b59a43b26}
+      \strng{authorbibnamehash}{953467ea1b8e328ccd298c4b59a43b26}
+      \strng{authornamehash}{953467ea1b8e328ccd298c4b59a43b26}
+      \strng{authorfullhash}{953467ea1b8e328ccd298c4b59a43b26}
+      \strng{authorfullhashraw}{953467ea1b8e328ccd298c4b59a43b26}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{Network Science}}
+      \field{year}{2016}
+      \verb{urlraw}
+      \verb http://networksciencebook.com/
+      \endverb
+      \verb{url}
+      \verb http://networksciencebook.com/
+      \endverb
+    \endentry
+    \entry{lambert2020}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=91f3a5c2519d182ffbf6a7cbc36652a9}{%
+           family={{Lambert}},
+           familyi={L\bibinitperiod},
+           given={T.\bibnamedelimi S.},
+           giveni={T\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=08ba45c441b67bf3b5bf09d77c4b943e}{%
+           family={{Kraan-Korteweg}},
+           familyi={K\bibinitperiod},
+           given={R.\bibnamedelimi C.},
+           giveni={R\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+        {{hash=b210fddd002ba926b3d0eb63fad8de75}{%
+           family={{Jarrett}},
+           familyi={J\bibinitperiod},
+           given={T.\bibnamedelimi H.},
+           giveni={T\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=40f87f252b49822742d20cd31b0ea23c}{%
+           family={{Macri}},
+           familyi={M\bibinitperiod},
+           given={L.\bibnamedelimi M.},
+           giveni={L\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{1d1d3429d72f2ec272142de1bc48dab7}
+      \strng{fullhash}{a396ea22e83f330f72d60a3487e53d6c}
+      \strng{fullhashraw}{a396ea22e83f330f72d60a3487e53d6c}
+      \strng{bibnamehash}{a396ea22e83f330f72d60a3487e53d6c}
+      \strng{authorbibnamehash}{a396ea22e83f330f72d60a3487e53d6c}
+      \strng{authornamehash}{1d1d3429d72f2ec272142de1bc48dab7}
+      \strng{authorfullhash}{a396ea22e83f330f72d60a3487e53d6c}
+      \strng{authorfullhashraw}{a396ea22e83f330f72d60a3487e53d6c}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{MNRAS}
+      \field{number}{3}
+      \field{title}{{The 2MASS redshift survey galaxy group catalogue derived from a graph-theory based friends-of-friends algorithm}}
+      \field{volume}{497}
+      \field{year}{2020}
+      \field{pages}{2954\bibrangedash 2973}
+      \range{pages}{20}
+      \verb{doi}
+      \verb 10.1093/mnras/staa1946
+      \endverb
+    \endentry
+    \entry{gausmann2024}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=70ed432937b35eefa3eb294b86c97de1}{%
+           family={{Gausmann}},
+           familyi={G\bibinitperiod},
+           given={E.},
+           giveni={E\bibinitperiod}}}%
+        {{hash=a587f3d22a982dad5c0eb86cb8b490bf}{%
+           family={{Ferrari}},
+           familyi={F\bibinitperiod},
+           given={F.},
+           giveni={F\bibinitperiod}}}%
+      }
+      \strng{namehash}{3bb01ea0b40a525583631e540a97c67f}
+      \strng{fullhash}{3bb01ea0b40a525583631e540a97c67f}
+      \strng{fullhashraw}{3bb01ea0b40a525583631e540a97c67f}
+      \strng{bibnamehash}{3bb01ea0b40a525583631e540a97c67f}
+      \strng{authorbibnamehash}{3bb01ea0b40a525583631e540a97c67f}
+      \strng{authornamehash}{3bb01ea0b40a525583631e540a97c67f}
+      \strng{authorfullhash}{3bb01ea0b40a525583631e540a97c67f}
+      \strng{authorfullhashraw}{3bb01ea0b40a525583631e540a97c67f}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{astro-ph.CO}
+      \field{eprinttype}{arXiv}
+      \field{journaltitle}{arXiv e-prints}
+      \field{title}{{Network Theory in Galaxy Distributions: The Coma Supercluster Neighborhood}}
+      \field{year}{2024}
+      \verb{eprint}
+      \verb 2407.02213
       \endverb
     \endentry
   \enddatalist
