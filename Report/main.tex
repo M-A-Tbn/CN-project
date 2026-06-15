@@ -162,8 +162,8 @@ so the linking volume must be an anisotropic cylinder rather than a sphere
 catalogue it produces then follow from the network topology alone.
 
 We apply the method to the SDSS DR10 Main Galaxy Sample and validate it against
-the group catalogue of Tempel et al.\ \cite{tempel2014}. That catalogue plays a
-dual role: it supplies the galaxy data, and its group assignments serve as the
+the group catalogue of Tempel et al.\ \cite{tempel2014}. That catalogue has a
+dual role: it provides the galaxy data, and its group assignments are the
 ground truth against which our partition is measured. The linking length, however,
 is read only from the network, never from Tempel's groups. The comparison is
 framed throughout as a graph-partition problem, and the network is also examined
@@ -198,7 +198,7 @@ comoving distance to redshift $z$ is
     \frac{\mathrm{d}z'}{\sqrt{\Omega_m(1+z')^3 + \Omega_\Lambda}},
 \end{equation}
 with $\Omega_\Lambda = 1 - \Omega_m$. Setting $H_0 = 100\,h$ expresses every
-distance in $h^{-1}$ Mpc, removing the residual uncertainty in the Hubble
+distance in $h^{-1}$ Mpc and removes the residual uncertainty in the Hubble
 constant from the analysis. The matter density $\Omega_m$ fixes the shape of the
 distance--redshift relation and hence the physical scale assigned to a given
 angular and redshift separation. Both parameters are chosen to match the
@@ -290,6 +290,18 @@ analysis below. Candidate pairs are found with a $k$-d tree: a
 single range query returns every pair inside the bounding sphere of radius
 $r_{\max} = \sqrt{r_\perp^2 + r_\parallel^2}$ that encloses the cylinder, after
 which \equref{eq:cylinder} selects the true links.
+\figref{fig:cylinder} illustrates the two linking volumes.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\columnwidth]{figures/imp.pdf}
+    \caption{Cylindrical FoF linking criterion, normalised to $r_\perp = 1$.
+    The sky-blue circle is the isotropic FoF boundary; the dashed vermilion
+    rectangle is the cylindrical boundary elongated by factor $S$ along the
+    line of sight. In the analysis $r_\perp = 0.54\,h^{-1}$ Mpc and $S = 10$;
+    the schematic uses $S = 2.5$ for legibility.}
+    \label{fig:cylinder}
+\end{figure}
 
 \subsection{Percolation scan}
 
@@ -376,7 +388,7 @@ footprint,
     f_{\mathrm{sky}} = \frac{7221\,\mathrm{deg}^2}{41253\,\mathrm{deg}^2},
 \end{equation}
 the SDSS Main Galaxy Sample covering approximately $7221\,\mathrm{deg}^2$. This
-yields $b = 0.144$. The value is consistent with the classical calibrated range
+gives $b = 0.144$. The value is consistent with the classical calibrated range
 $0.14 < b < 0.20$ \cite{davis1985, berlind2002} and lies slightly above the
 redshift-dependent linking length of Tempel et al., which corresponds to
 $b \approx 0.113$--$0.115$ over the same redshift interval. The value of $b$ is computed here only as an \emph{a posteriori} check: it is a
@@ -565,7 +577,7 @@ of Tempel co-group pairs recovered, is $0.98$, while pair precision, the fractio
 of our co-group pairs that are genuine, is $0.71$. At the level of pairs this
 repeats the richness-analysis conclusion: the catalogue is highly complete but
 mildly over-merged. We also test whether the agreement is significant. Permuting
-the detected labels $1000$ times and recomputing the ARI yields a null
+the detected labels $1000$ times and recomputing the ARI produces a null
 distribution centred at zero with standard deviation $5.7\times10^{-5}$; the
 observed value lies far outside the null ($z \approx 1.4\times10^4$; $p <
 0.001$).
@@ -591,7 +603,7 @@ observed value lies far outside the null ($z \approx 1.4\times10^4$; $p <
 
 \subsection{Network topology}
 
-We now examine the topology of the network at $r_{\mathrm{groups}}$ directly. The
+We now examine the network topology at $r_{\mathrm{groups}}$. The
 graph of $75{,}042$ nodes and $95{,}310$ edges fragments into $37{,}500$
 connected components; the largest spans only $585$ nodes ($0.8\%$), confirming
 the sub-critical operating point. The mean degree is $\langle k\rangle = 2.54$.
@@ -663,8 +675,7 @@ network \cite{penrose2003, barabasi2016}.
 \subsection{Internal structure of the richest groups}
 
 The global metrics average over $37{,}500$ components; \tabref{tab:groups}
-profiles the eight richest detected groups individually. A consistent picture
-emerges: the internal edge density rises as groups shrink, from $0.02$ for the
+profiles the eight richest detected groups individually. The eight groups show a consistent pattern: the internal edge density rises as groups shrink, from $0.02$ for the
 largest to $0.08$ for the smallest tabulated, while the transitivity stays in the
 range $0.54$–$0.64$. Yet even the richest groups are far from compact: their
 diameters (the longest internal shortest path) reach $16$ to $36$ links
@@ -698,7 +709,7 @@ diameter of $36$ across $226$ members, is the most filamentary of all.
 
 \section{Discussion}
 
-The central finding is that the group scale can be recovered from the network
+The main result is that the group scale can be recovered from the network
 alone. The fragmentation criterion selects $r_{\mathrm{groups}} = 0.54\,h^{-1}$
 Mpc, or $b = 0.144$, with no input from the reference catalogue, and the
 resulting groups reproduce the Tempel partition at ARI $= 0.82$. The
@@ -719,8 +730,8 @@ sub-critical inequality $r_{\mathrm{groups}} < r_{\mathrm{critical}}$ is an
 internal consistency check that any FoF catalogue should satisfy.
 
 The method has known failure modes. Single-linkage clustering has no resolution
-limit but is sensitive to bridging: a single close pair merges two groups,
-producing the extended, filamentary components of \tabref{tab:groups} and the
+limit but is sensitive to bridging: a single close pair merges two groups and
+produces the extended, filamentary components of \tabref{tab:groups} and the
 over-merging in rich systems. The fixed stretch factor $S = 10$ cannot match the
 full range of cluster velocity dispersions and under-corrects the most massive
 systems. A single transverse linking length is held across the whole slab;
@@ -735,15 +746,15 @@ We have built the FoF galaxy group finder as a network-construction problem: a
 random geometric graph in comoving space, linked through a cylindrical metric that
 corrects for redshift-space distortion, and cut at a scale fixed by the network's
 own percolation behaviour. On the SDSS DR10 sample the topology-derived catalogue
-reproduces the Tempel groups at ARI $= 0.82$ and NMI $= 0.98$ ($p < 0.001$),
-showing that the spatial galaxy network encodes its own group scale. The network
+reproduces the Tempel groups at ARI $= 0.82$ and NMI $= 0.98$ ($p < 0.001$);
+the spatial galaxy network thus encodes its own group scale. The network
 is itself far from random: a clustering coefficient four orders of magnitude above
 the Erd\H{o}s--R\'enyi null, and a degree distribution heavy-tailed at both ends,
 the topological imprint of gravity on the cosmic web. The percolation transition serves two purposes: it locates the group-finding
 scale and provides an internal consistency check on any catalogue produced this
 way. The operative quantities throughout are network-science diagnostics, from
-the percolation threshold to the clustering coefficient, doing work that
-external calibration does elsewhere.
+the percolation threshold to the clustering coefficient; they perform the
+calibration work that external data would otherwise supply.
 
 %----------------------------------------------------------
 
