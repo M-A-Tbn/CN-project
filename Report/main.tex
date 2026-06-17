@@ -34,6 +34,14 @@
 \setlength\dblfloatsep{14pt plus 2pt minus 2pt}
 \setlength\dbltextfloatsep{14pt plus 2pt minus 2pt}
 
+% Allow a tall full-width figure* (the RA--Dec map) to sit at the top of a page
+% with body text flowing beneath it, instead of being banished to a dedicated
+% float page that would leave the rest of the page blank.
+\renewcommand{\dbltopfraction}{0.92}
+\renewcommand{\dblfloatpagefraction}{0.7}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.08}
+
 % Captions: identical gap between every caption and its figure/table body,
 % whether the caption sits above (tables) or below (figures).
 \captionsetup[figure]{skip=7pt}
@@ -462,9 +470,9 @@ volume-limited range.
 \begin{figure*}[t]
     \centering
     \placefig[width=\textwidth]{figures/Galaxy_distribution_and_groups_in_RA_Dec_detected_vs_Tempel_2014_per_redshift_bin.pdf}
-    \caption{Sky projection (RA--Dec) of the Tempel et al.\ catalogue (top row)
-    and the detected groups (bottom row), in four redshift slabs of width
-    $\Delta z = 0.01$ (columns). Grouped galaxies are coloured by group
+    \caption{Sky projection (RA--Dec) of the Tempel et al.\ catalogue (left
+    column) and the detected groups (right column), in four redshift slabs of
+    width $\Delta z = 0.01$ (rows). Grouped galaxies are coloured by group
     membership and sized by richness; field galaxies are grey.}
     \label{fig:radec}
 \end{figure*}
