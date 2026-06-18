@@ -62,7 +62,7 @@
 % Override the class's sorting=ynt with citation order (IEEE standard): references
 % are numbered in order of first appearance in the text.
 \ExecuteBibliographyOptions{sorting=none}
-\renewcommand{\bibfont}{\small}
+\renewcommand{\bibfont}{\footnotesize}
 \setlength\bibitemsep{1pt plus 1pt minus 1pt}
 
 % The class forces tabular content into Fira Sans (\sffamily), whose geometric
@@ -119,8 +119,8 @@
 \begin{abstract}
 We identify galaxy groups in the SDSS DR10 Main Galaxy Sample using a cylindrical
 Friends-of-Friends algorithm, treating it explicitly as a random geometric graph
-in comoving space. Rather than calibrating the linking length externally, we
-derive it from the network's own percolation behaviour: the susceptibility peaks
+in comoving space. We derive the linking length from the network's own
+percolation behaviour rather than calibrating it externally: the susceptibility peaks
 at $r_{\mathrm{critical}} = 1.34\,h^{-1}$ Mpc, while the finite-group count peaks
 at the sub-critical scale $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc, which we take
 as the group-finding scale. Compared against the Tempel et al.\ catalogue as a
@@ -188,6 +188,10 @@ for its topological properties as a complex-network object.
 
 \section{Data}
 
+Deriving the linking length from network topology only works if the underlying
+point set is unbiased: a distance-dependent selection would shift the percolation
+scales by construction, so the sample below is cut to be volume-limited.
+
 \subsection{Source catalog}
 
 The galaxy sample is drawn from the catalogue of Tempel et al.\
@@ -253,9 +257,10 @@ declination) to Cartesian coordinates,
     Y = d_C\cos\delta\sin\alpha, \quad
     Z = d_C\sin\delta,
 \end{equation}
-with the observer at the origin. This embedding defines the metric space of the
-random geometric graph and supplies the line-of-sight direction used to decompose
-pair separations in \equref{eq:decomp}.
+with the observer at the origin. This embedding places every galaxy in the metric
+space a random geometric graph requires, and supplies the line-of-sight direction
+for the pair-separation decomposition. The next section builds the graph on this
+point set and reads its connectivity.
 
 \section{Method}
 
@@ -435,10 +440,12 @@ The transition is the spatial-graph counterpart of the giant-component transitio
 in random-graph theory. In an Erd\H{o}s--R\'enyi graph the giant component emerges
 at mean degree $\langle k\rangle = 1$, that is, at edge probability $p_c = 1/N$;
 in a random geometric graph it is instead governed by a critical radius,
-$r_c \sim (\ln N / N)^{1/d}$ in $d$ dimensions. At our operating point $\langle k\rangle = 2.54$, an Erd\H{o}s--R\'enyi graph of
-the same edge density would place roughly $90\%$ of nodes in a single giant
-component, yet the FoF network has only $0.8\%$. Connectivity builds locally,
-assembling groups, long before anything percolates globally.
+$r_c \sim (\ln N / N)^{1/d}$ in $d$ dimensions. At our operating point the mean
+degree is $\langle k\rangle = 2.54$, comfortably above the threshold at which an
+equivalent random graph would develop a giant component, yet no comparable giant
+component appears in the FoF network. Connectivity builds locally, assembling
+groups, long before anything percolates globally; the mean-field estimate below
+makes the gap quantitative.
 
 The sharpness of the peak is itself a finite-size effect. A true divergence
 occurs only in the thermodynamic limit; for a finite graph the transition is a
@@ -459,11 +466,12 @@ component present) exists only for $\lambda > 1$, recovering the mean-field
 threshold at $\langle k\rangle = 1$. At the operating point $\lambda = 2.54$,
 the equation yields $u \approx 0.10$: a random graph of the same edge density
 would place $90\%$ of its nodes in a single giant component, more than a
-hundred times the $0.8\%$ observed in the FoF network. Spatial embedding in the cosmic web suppresses the global percolation that
-mean-field theory predicts at this mean degree. The FoF network clusters locally
-into groups that never coalesce into a single spanning structure, because proximity
-in comoving space is not uniformly distributed, but concentrated wherever
-galaxies are.
+hundred times the $0.8\%$ observed in the FoF network. Spatial embedding in the
+cosmic web suppresses the global percolation that mean-field theory predicts at
+this mean degree. The FoF network clusters locally into groups that never
+coalesce into a single spanning structure. Proximity in comoving space is
+concentrated wherever galaxies are, so connectivity assembles bound systems
+before it can percolate.
 
 \begin{figure}[t]
     \centering
@@ -480,12 +488,12 @@ galaxies are.
 
 \subsection{Group catalogue: sky projection}
 
-\figref{fig:radec} projects the detected catalogue and the Tempel et al.\
-catalogue onto the plane of the sky in four redshift bins of width $\Delta z =
-0.01$. Grouped galaxies are coloured by their group label and sized by richness;
-field galaxies appear in grey. The two catalogues are visually almost
-indistinguishable: the same sky overdensities are resolved into the same groups
-in both rows. The number of grouped galaxies per bin tracks the underlying
+\figref{fig:radec} projects the Tempel et al.\ catalogue (left column) and the
+detected catalogue (right column) onto the plane of the sky in four redshift bins
+of width $\Delta z = 0.01$ (rows). Grouped galaxies are coloured by their group
+label and sized by richness; field galaxies appear in grey. The two catalogues
+are visually almost indistinguishable: the same sky overdensities are resolved
+into the same groups in both columns. The number of grouped galaxies per bin tracks the underlying
 galaxy count and shows no systematic growth with redshift. The fixed transverse
 linking length therefore does not over-link at larger distances across the
 volume-limited range.
@@ -538,8 +546,10 @@ the high density contrasts needed to produce them.
 
 Validating the catalogue against Tempel et al.\ is a \emph{graph-partition
 comparison}: both catalogues partition the same set of galaxies into groups, and
-the question is how closely the two partitions agree. We address it at three levels: individual matched groups, the global
-partition, and the network topology; the section closes by profiling the richest components individually.
+the question is how closely the two partitions agree. We address it at three
+levels: individual matched groups (by richness and by redshift), the global
+partition, and the network topology (clustering and degree distribution). The
+section then profiles the richest components individually.
 
 \needspace{4\baselineskip}
 \subsection{Completeness and purity by richness}
@@ -725,16 +735,16 @@ profiles the eight richest detected groups individually. The eight groups show a
 largest to $0.08$ for the smallest tabulated, while the transitivity stays in the
 range $0.54$–$0.64$. Yet even the richest groups are far from compact: their
 diameters (the longest internal shortest path) reach $16$ to $36$ links
-across only a few hundred members. These are extended, filamentary chains rather than clique-like balls, exactly
-the structures single-linkage clustering produces and a direct manifestation of
-its bridging sensitivity. The giant connected component
+across only a few hundred members. These are extended, filamentary chains, not
+clique-like balls. Single-linkage clustering produces exactly such structures, a
+direct manifestation of its bridging sensitivity. The giant connected component
 ($585$ members, diameter $22$) is the largest such chain; group $1017$, with a
 diameter of $36$ across $226$ members, is the most filamentary of all.
 
-\tabref{tab:groups} makes the geometry legible: not compact cliques, but chains.
-This is exactly what single-linkage on a filamentary matter distribution tends to
-produce. The same bridging sensitivity that lets FoF follow cosmic-web filaments
-at large scales assembles extended, thread-like structures at the group scale too.
+This geometry is the same bridging sensitivity seen in the global metrics: the
+property that lets FoF trace cosmic-web filaments at large scales also lets a
+single close pair fuse two systems at the group scale, the mechanism behind the
+mild over-merging measured in \tabref{tab:richness} and \tabref{tab:metrics}.
 
 \begin{table}[H]
     \caption{Internal structure of the eight richest detected groups: number of
@@ -791,16 +801,13 @@ although the redshift-binned metrics show this is adequate over $0.02 \le z \le
 length. The survey footprint also truncates groups at its boundary, an edge
 effect not corrected here.
 
-A broader implication is that the percolation-based approach provides
-an independent, physically motivated alternative to N-body calibration.
-The galaxy proximity graph encodes the scale at which matter transitions
-from isolated nodes to collectively bound structures, precisely the scale
-that simulation-based calibration targets by matching the halo mass function.
-That the two methods converge on the same linking parameter ($b = 0.144$
-topology-derived; classical calibrated range $0.14$--$0.20$
-\cite{davis1985, berlind2002}) suggests that the percolation transition is a
-genuine observable of the clustering scale rather than a methodological
-artefact.
+More broadly, the percolation scan offers a physically motivated alternative to
+N-body calibration: the proximity graph encodes the scale at which matter passes
+from isolated nodes to bound structures, the same scale simulations target through
+the halo mass function. That the topology-derived $b = 0.144$ lands in the
+classical calibrated range $0.14$--$0.20$ \cite{davis1985, berlind2002} suggests
+the percolation transition is a real observable of clustering, not a
+methodological artefact.
 
 \section{Conclusion}
 
@@ -812,12 +819,11 @@ the resulting catalogue scores ARI $= 0.82$ and NMI $= 0.98$ against Tempel et
 al., with the residual disagreement (mild over-merging in the richest systems)
 traceable to the fixed stretch factor rather than the percolation criterion itself.
 The agreement with simulation-calibrated values of $b$ was not assumed; it followed
-from the network's own structure, which suggests the percolation threshold is
-tracking something real about the clustering scale, not just the method.
+from the network's own structure, which suggests the percolation threshold tracks
+a real property of the clustering scale, independent of the method.
 
 %----------------------------------------------------------
 
-\newpage
 \printbibliography
 
 %----------------------------------------------------------
