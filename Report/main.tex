@@ -168,7 +168,7 @@ purely topologically. The susceptibility, the second moment of the finite-cluste
 size distribution, peaks at the percolation threshold $r_{\mathrm{critical}}$,
 above which only superclusters and filaments survive. The number of distinct
 finite groups peaks at a smaller scale $r_{\mathrm{groups}}$, where the network is
-fragmented into the largest number of bound systems before they begin merging into
+fragmented into the largest number of distinct groups before they begin merging into
 the giant component. We adopt $r_{\mathrm{groups}}$ as the operating point and
 require $r_{\mathrm{groups}} < r_{\mathrm{critical}}$.
 
@@ -269,8 +269,9 @@ point set and reads its connectivity.
 The Friends-of-Friends procedure constructs a graph $G(r_\perp)$ on the set of
 $N$ galaxies: each galaxy is a node, and an edge is drawn between every pair
 whose separation falls below a chosen linking length. The connected components
-of $G$ are identified as galaxy groups. This is precisely the construction of a
-\emph{random geometric graph} (RGG): the nodes carry
+of $G$ are identified as galaxy groups. This is the construction of a
+\emph{random geometric graph} (RGG), here on the clustered galaxy distribution
+rather than the uniform point process of the textbook model: the nodes carry
 positions in a metric space (here the comoving Cartesian coordinates of each
 galaxy), and adjacency is determined solely by proximity in that space. Adjacency
 is therefore fixed by geometry, not by any astrophysical assumption.
@@ -351,9 +352,9 @@ The second observable is the \emph{fragmentation count},
     = \bigl|\{\,c : 2 \le |c| < |\mathrm{GCC}|\,\}\bigr|,
 \end{equation}
 the number of components that are neither isolated nodes nor the GCC. This
-counts the genuine groups present at a given linking length. It is maximised at
-the scale where the network is broken into the largest number of distinct,
-finite systems, immediately before they coalesce into the percolating component;
+counts the candidate groups present at a given linking length. It is maximised at
+the scale where the network resolves into the largest number of distinct,
+finite systems, well below the radius at which they coalesce into the percolating component;
 we identify this scale, $r_{\mathrm{groups}}$, as the operating point of the
 group finder. Both $r_{\mathrm{critical}}$ and $r_{\mathrm{groups}}$ are read off
 the network's own topology, with no reference to the Tempel group assignments.
@@ -439,8 +440,10 @@ confirming the two scales located in \figref{fig:gcc}.
 The transition is the spatial-graph counterpart of the giant-component transition
 in random-graph theory. In an Erd\H{o}s--R\'enyi graph the giant component emerges
 at mean degree $\langle k\rangle = 1$, that is, at edge probability $p_c = 1/N$;
-in a random geometric graph it is instead governed by a critical radius,
-$r_c \sim (\ln N / N)^{1/d}$ in $d$ dimensions. At our operating point the mean
+in a random geometric graph the giant component instead appears at a constant
+critical mean degree (continuum percolation), independent of $N$; the
+$(\ln N / N)^{1/d}$ radius often quoted for geometric graphs is the stricter
+full-connectivity threshold, not the percolation onset. At our operating point the mean
 degree is $\langle k\rangle = 2.54$, comfortably above the threshold at which an
 equivalent random graph would develop a giant component, yet no comparable giant
 component appears in the FoF network. Connectivity builds locally, assembling
@@ -491,9 +494,10 @@ before it can percolate.
 \figref{fig:radec} projects the Tempel et al.\ catalogue (left column) and the
 detected catalogue (right column) onto the plane of the sky in four redshift bins
 of width $\Delta z = 0.01$ (rows). Grouped galaxies are coloured by their group
-label and sized by richness; field galaxies appear in grey. The two catalogues
-are visually almost indistinguishable: the same sky overdensities are resolved
-into the same groups in both columns. The number of grouped galaxies per bin tracks the underlying
+label and sized by richness; field galaxies appear in grey. In this qualitative
+projection, which collapses the line of sight, the two catalogues show closely
+matching large-scale structure: the same sky overdensities are resolved into the
+same groups in both columns. The number of grouped galaxies per bin tracks the underlying
 galaxy count and shows no systematic growth with redshift. The fixed transverse
 linking length therefore does not over-link at larger distances across the
 volume-limited range.
@@ -566,11 +570,11 @@ Binned by richness (\tabref{tab:richness}), completeness is uniformly high
 ($\gtrsim 0.98$) and shows no trend: essentially every member of a Tempel group
 is recovered. Purity instead declines monotonically, from $0.82$ for pairs to
 $0.75$ for the richest systems. The detected groups thus contain all the true
-members but, in the richest systems, a few additional galaxies: the fixed stretch
-factor $S = 10$ slightly under-corrects the largest velocity dispersions and
-links a handful of interlopers along the line of sight. A fixed-aperture cylinder
-cannot adapt to the full range of cluster dispersions, so some contamination at
-the rich end is unavoidable.
+members but, in the richest systems, a few additional galaxies. Rich groups sit in
+the densest environments, where a single fixed linking volume most easily bridges
+to neighbouring galaxies and structures; the declining purity is therefore an
+environmental effect of the fixed aperture, not a failure to span the internal
+velocity dispersion, which would instead depress completeness.
 
 \begin{table}[H]
     \caption{Mean completeness and purity of matched groups, binned by Tempel
@@ -665,33 +669,44 @@ observed value lies far outside the null ($z \approx 1.4\times10^4$; $p <
 At $r_{\mathrm{groups}}$ the full network has $75{,}042$ nodes and $95{,}310$
 edges, fragmenting into $37{,}500$ connected components; the largest spans only $585$ nodes ($0.8\%$), confirming
 the sub-critical operating point. The mean degree is $\langle k\rangle = 2.54$.
-Against this sits the central topological result. The Erd\H{o}s--R\'enyi null
-(a random graph with the same number of nodes and edges, hence the same edge
-probability $p_{\mathrm{ER}} = 2E/[N(N-1)] = 3.4\times10^{-5}$) has an expected
-clustering coefficient equal to $p_{\mathrm{ER}}$. The measured transitivity is
-$0.646$ (\tabref{tab:clustering}): a galaxy's two neighbours are themselves
-linked nearly two-thirds of the time, exceeding the random expectation by a
-factor of $\sim 1.9\times10^4$.
+The Erd\H{o}s--R\'enyi null (a random graph with the same number of nodes and
+edges, hence edge probability $p_{\mathrm{ER}} = 2E/[N(N-1)] = 3.4\times10^{-5}$)
+has an expected clustering coefficient equal to $p_{\mathrm{ER}}$. The measured
+transitivity, $0.646$ (\tabref{tab:clustering}), exceeds this by four orders of
+magnitude. That gap is real but weak on its own: any graph built from spatial
+proximity is locally clustered, so a structureless null is beaten before any
+cosmology enters.
 
-This four-orders-of-magnitude excess reflects the spatially clustered structure
-of the galaxy distribution. It is the same excess clustering seen in social, biological and technological
-networks, but here it is driven by gravity rather than social or functional
-dynamics: galaxies sharing a common neighbour are physically close, and physical
-proximity is transitive.
+The sharper test is a \emph{geometric} null: uniform-random points in the same
+volume and angular footprint, linked by the same cylinder, with the linking
+length tuned to the same mean degree $\langle k\rangle = 2.54$. Averaged over
+realisations this null has transitivity $0.45$ and mean local clustering $0.32$
+(\tabref{tab:clustering}). The galaxy network matches it in mean local clustering
+($0.32$) but exceeds it in transitivity ($0.646$ against $0.45$, a factor of
+$1.4$ and far outside the realisation scatter of $\pm 0.002$). The excess is
+therefore not generic geometry: it is concentrated in the high-degree, dense
+environments that dominate transitivity, the rich groups and cluster cores where
+gravity has drawn galaxies into extra closed triangles. The same clustering shows
+in the linking lengths: the real network reaches $\langle k\rangle = 2.54$ at
+$0.54\,h^{-1}$ Mpc, less than half the $\approx 1.3\,h^{-1}$ Mpc the uniform null
+needs for the same mean degree.
 
 \begin{table}[H]
-    \caption{Clustering of the FoF network against the Erd\H{o}s--R\'enyi null at
-    the same edge density ($p_{\mathrm{ER}} = 3.4\times10^{-5}$).}
+    \caption{Clustering of the FoF network against an Erd\H{o}s--R\'enyi null and a
+    matched-density geometric null.}
     \label{tab:clustering}
     \centering
-    \begin{tabular}{lcc}
+    \begin{tabular}{lccc}
         \toprule
-        Quantity & Observed & Ratio to ER \\
+        Quantity & FoF network & ER null & Geometric null \\
         \midrule
-        Transitivity          & 0.646 & $1.9\times10^4$ \\
-        Mean local clustering & 0.322 & $9.5\times10^3$ \\
+        Transitivity          & $0.646$ & $3.4\times10^{-5}$ & $0.45$ \\
+        Mean local clustering & $0.322$ & $3.4\times10^{-5}$ & $0.32$ \\
         \bottomrule
     \end{tabular}
+    \tabletext{The geometric null is uniform-random points in the same volume and
+    footprint, linked at matched mean degree $\langle k\rangle = 2.54$; values are
+    means over realisations.}
 \end{table}
 
 \subsection{Degree distribution}
@@ -707,7 +722,7 @@ mean degree would essentially never produce; the null lies tens of orders of
 magnitude below the data at high $k$. Because probability is conserved, the
 over-population of both extremes leaves the distribution depleted near its mean:
 galaxies are either isolated in the field or embedded in a dense group, with few
-in between. The hubs are the brightest central galaxies of rich systems.
+in between. The hubs are the most connected, central members of the richest groups.
 
 The double-logarithmic panel shows the tail is not a pure power law: it is
 concave and truncated at $k_{\max}$. The cutoff is geometric in origin, since
@@ -793,9 +808,9 @@ internal consistency check that any FoF catalogue should satisfy.
 The method has known failure modes. Single-linkage clustering has no resolution
 limit but is sensitive to bridging: a single close pair merges two groups and
 produces the extended, filamentary components of \tabref{tab:groups} and the
-over-merging in rich systems. The fixed stretch factor $S = 10$ cannot match the
-full range of cluster velocity dispersions and under-corrects the most massive
-systems. A single transverse linking length is held across the full volume;
+over-merging in rich systems. The fixed stretch factor $S = 10$ cannot adapt to the
+full range of cluster velocity dispersions either; we have not scanned $S$, so its
+separate contribution to the over-merging is not isolated here. A single transverse linking length is held across the full volume;
 although the redshift-binned metrics show this is adequate over $0.02 \le z \le
 0.06$, it would not extrapolate to a deeper sample without a redshift-dependent
 length. The survey footprint also truncates groups at its boundary, an edge
