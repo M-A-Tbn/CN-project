@@ -103,7 +103,7 @@
 
 \corres{\textsuperscript{\textasteriskcentered}\href{mailto:mohamadali.tabaeian@studio.unibo.it}{mohamadali.tabaeian@studio.unibo.it}}
 
-\docinfo{Course project for Complex Networks, Spring 2026. Code: \href{https://github.com/M-A-Tbn/CN-project}{github.com/M-A-Tbn/CN-project}.}
+\docinfo{Submitted as the final project for the Complex Networks Course, Under the supervision of Prof. Daniel Remondini and Dott. Francesco Durazzi. The LaTeX source and Jupyter Notebook containing the code are available at : \href{https://github.com/M-A-Tbn/CN-project}{github.com/M-A-Tbn/CN-project}.}
 
 %----------------------------------------------------------
 
@@ -125,8 +125,8 @@ at $r_{\mathrm{critical}} = 1.34\,h^{-1}$ Mpc, while the finite-group count peak
 at the sub-critical scale $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc, which we take
 as the group-finding scale. Compared against the Tempel et al.\ catalogue as a
 graph-partition problem, the groups score ARI $= 0.82$ and NMI $= 0.98$
-($p < 0.001$ against a permutation null). The asymmetry (high recall, lower
-precision) points to mild over-merging in the richest systems. The network is
+(significant against a permutation null; $z \approx 1.4\times10^4$). The asymmetry
+(high recall, lower precision) points to over-merging concentrated in the richest systems. The network is
 itself far from random: clustering four orders of magnitude above the
 Erd\H{o}s--R\'enyi baseline, and a degree distribution heavy-tailed at both ends.
 \end{abstract}
@@ -163,28 +163,24 @@ the FoF construction as a random geometric graph and study how its connectivity
 changes as the linking length is varied. Such a graph undergoes a percolation
 transition: below a critical linking length the network consists of small finite
 clusters; above it a single giant component spans the volume.
-Two scales emerge from the transition, defined
-purely topologically. The susceptibility, the second moment of the finite-cluster
-size distribution, peaks at the percolation threshold $r_{\mathrm{critical}}$,
-above which only superclusters and filaments survive. The number of distinct
-finite groups peaks at a smaller scale $r_{\mathrm{groups}}$, where the network is
-fragmented into the largest number of distinct groups before they begin merging into
-the giant component. We adopt $r_{\mathrm{groups}}$ as the operating point and
-require $r_{\mathrm{groups}} < r_{\mathrm{critical}}$.
+Two scales come out of the transition. The susceptibility, the second moment of
+the finite-cluster size distribution, peaks at the percolation threshold
+$r_{\mathrm{critical}}$, above which only superclusters and filaments survive.
+At a shorter scale, $r_{\mathrm{groups}}$, the number of distinct finite groups
+reaches its maximum, just before inter-group bridges begin to dominate and
+components merge into the giant. We adopt $r_{\mathrm{groups}}$ as the operating
+point and require $r_{\mathrm{groups}} < r_{\mathrm{critical}}$.
 
 Because the line-of-sight coordinate is reconstructed from redshift, peculiar
 velocities stretch groups into radial filaments (the Fingers-of-God effect),
 so the linking volume must be an anisotropic cylinder rather than a sphere
-\cite{tempel2014}. The scale $r_{\mathrm{groups}}$ and the group
-catalogue it produces then follow from the network topology alone.
+\cite{tempel2014}. Both scales are read off the topology; no external calibration sets $r_{\mathrm{groups}}$.
 
 We apply the method to the SDSS DR10 Main Galaxy Sample and validate it against
 the group catalogue of Tempel et al.\ \cite{tempel2014}. That catalogue has a
 dual role: it provides the galaxy data, and its group assignments are the
-ground truth against which our partition is measured. The linking length, however,
-is read only from the network, never from Tempel's groups. The comparison is
-framed throughout as a graph-partition problem, and the network is also examined
-for its topological properties as a complex-network object.
+ground truth against which our partition is measured. The linking length is read only from the network, never from Tempel's groups;
+the comparison is framed as a graph-partition problem throughout.
 
 \section{Data}
 
@@ -197,17 +193,14 @@ scales by construction, so the sample below is cut to be volume-limited.
 The galaxy sample is drawn from the catalogue of Tempel et al.\
 \cite{tempel2014}, retrieved through the VizieR service. The underlying data are
 the spectroscopic galaxies of the Sloan Digital Sky Survey Data Release 10 (SDSS
-DR10) Main Galaxy Sample (MGS) \cite{ahn2014}. A spectroscopic survey measures
-each galaxy's redshift from the Doppler shift of identified spectral lines;
-this gives a precise line-of-sight distance, in contrast to a photometric
-survey, which estimates redshift from broad-band colours with far larger
-uncertainty. That precision makes a redshift-space group finder viable:
-the radial coordinate is reliable enough that the only serious distortion is the
-peculiar-velocity (Fingers-of-God) effect addressed in the next section. The MGS
-is magnitude-limited, complete to an apparent $r$-band magnitude
-$m_{\mathrm{lim}} = 17.77$. From the catalogue we retain the position, redshift
-and magnitude of each galaxy; the group identifiers assigned by Tempel et al.\
-are held back and used only as the validation ground truth below.
+DR10) Main Galaxy Sample (MGS) \cite{ahn2014}. Spectroscopic redshifts are
+precise enough that the dominant line-of-sight distortion is peculiar-velocity
+stretching rather than measurement noise; that is what makes a redshift-space
+group finder viable here. The MGS is magnitude-limited, complete to an apparent
+$r$-band magnitude $m_{\mathrm{lim}} = 17.77$. From the catalogue we retain the
+position, redshift and magnitude of each galaxy; the group identifiers assigned
+by Tempel et al.\ are held back and used only as the validation ground truth
+below.
 
 \subsection{Cosmology}
 
@@ -219,48 +212,43 @@ comoving distance to redshift $z$ is
     \frac{\mathrm{d}z'}{\sqrt{\Omega_m(1+z')^3 + \Omega_\Lambda}},
 \end{equation}
 with $\Omega_\Lambda = 1 - \Omega_m$. Setting $H_0 = 100\,h$ expresses every
-distance in $h^{-1}$ Mpc and removes the residual uncertainty in the Hubble
-constant from the analysis. The matter density $\Omega_m$ fixes the shape of the
-distance--redshift relation and hence the physical scale assigned to a given
-angular and redshift separation. Both parameters are chosen to match the
-cosmology adopted by Tempel et al.\ \cite{tempel2014}: because the linking length
-is a physical distance, any mismatch in cosmology would rescale it relative to
-the reference catalogue and render the validation below unfair.
+distance in $h^{-1}$ Mpc, which sidesteps the uncertainty in the Hubble
+constant. These are the same parameters Tempel et al.\ \cite{tempel2014} adopt;
+a different cosmology would rescale all physical distances and make the
+validation comparison meaningless.
 
 \subsection{Volume-limited sample}
 
 The MGS is flux-limited, so at increasing distance only progressively brighter
-galaxies remain above $m_{\mathrm{lim}}$; a raw redshift slice would therefore
-sample systematically more luminous galaxies at its far edge and bias the
-inferred group population with distance. To remove this bias we construct a
-volume-limited sample. We first restrict to the redshift interval $0.02 \le z \le
-0.06$: the lower bound suppresses the large fractional peculiar-velocity errors
-of the very nearby universe, while the upper bound keeps the volume compact enough
-that a single fixed linking length remains appropriate throughout. We then impose
-the absolute-magnitude limit corresponding to $m_{\mathrm{lim}}$ at the far edge
-of the volume,
+galaxies remain above $m_{\mathrm{lim}}$; a raw redshift slice would bias the
+inferred group population toward more luminous systems at the far edge. We
+restrict to $0.02 \le z \le 0.06$, where the lower bound avoids the regime where
+peculiar-velocity errors dominate the redshift and the upper bound keeps the
+volume compact enough for a single fixed linking length. We then impose the
+absolute-magnitude limit corresponding to $m_{\mathrm{lim}}$ at the far edge,
 \begin{equation}\label{eq:Mlim}
     M_{\mathrm{lim}} = m_{\mathrm{lim}} - \mu(z_{\max}),
 \end{equation}
 where $\mu(z)$ is the distance modulus, and keep only galaxies with $M \le
 M_{\mathrm{lim}}$. The sample is then complete to the same absolute magnitude
-throughout the volume. These cuts reduce the parent catalogue from $588{,}193$ to
-$75{,}042$ galaxies.
+throughout the volume. No K-correction or extinction correction is applied; at
+the low redshifts considered ($z \le 0.06$) these corrections are small, so the
+incompleteness they introduce at the faint end is treated as a known limitation
+rather than a source of systematic bias. These cuts reduce the parent catalogue
+from $588{,}193$ to $75{,}042$ galaxies.
 
 \subsection{Coordinate conversion}
 
-The network is built in physical space, so each galaxy is mapped from its
-observed $(d_C, \alpha, \delta)$ (comoving distance, right ascension,
-declination) to Cartesian coordinates,
+Each galaxy is mapped from its observed $(d_C, \alpha, \delta)$ to Cartesian
+coordinates,
 \begin{equation}\label{eq:cartesian}
     X = d_C\cos\delta\cos\alpha, \quad
     Y = d_C\cos\delta\sin\alpha, \quad
     Z = d_C\sin\delta,
 \end{equation}
-with the observer at the origin. This embedding places every galaxy in the metric
-space a random geometric graph requires, and supplies the line-of-sight direction
-for the pair-separation decomposition. The next section builds the graph on this
-point set and reads its connectivity.
+with the observer at the origin. The Cartesian embedding is needed both for the
+graph construction and for decomposing pair separations into transverse and
+line-of-sight components.
 
 \section{Method}
 
@@ -273,8 +261,12 @@ of $G$ are identified as galaxy groups. This is the construction of a
 \emph{random geometric graph} (RGG), here on the clustered galaxy distribution
 rather than the uniform point process of the textbook model: the nodes carry
 positions in a metric space (here the comoving Cartesian coordinates of each
-galaxy), and adjacency is determined solely by proximity in that space. Adjacency
-is therefore fixed by geometry, not by any astrophysical assumption.
+galaxy), and adjacency is determined solely by proximity in that space. The group
+membership that results is therefore derived entirely from the network structure,
+with no reference to any pre-existing catalogue or external labelling. The procedure is in this sense unsupervised. Although the linking parameters must account for
+redshift-space geometry (as described below), no group assignments from Tempel or
+any other catalogue are used as input; those catalogues serve only as verification
+after the fact.
 
 A spherical linking length is, however, inappropriate in redshift space. The
 line-of-sight coordinate is reconstructed from the observed redshift, which
@@ -321,7 +313,7 @@ which \equref{eq:cylinder} selects the true links.
     \caption{Cylindrical FoF linking criterion, normalized to $r_\perp = 1$.
     The sky-blue circle is the isotropic FoF boundary; the dashed vermilion
     rectangle is the cylindrical boundary elongated by factor $S$ along the
-    line of sight. In the analysis $r_\perp = 0.54\,h^{-1}$ Mpc and $S = 10$;
+    line of sight. In the analysis $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc and $S = 10$;
     the schematic uses $S = 2.5$ for legibility.}
     \label{fig:cylinder}
 \end{figure}
@@ -329,9 +321,13 @@ which \equref{eq:cylinder} selects the true links.
 \subsection{Percolation scan}
 
 The transverse linking length is the single free parameter of the construction,
-and the structure of the graph changes qualitatively as it is varied. We scan
-$r_\perp$ over $[0.1, 2.5)\,h^{-1}$ Mpc in steps of $0.02\,h^{-1}$ Mpc,
-rebuilding $G(r_\perp)$ and extracting its connected components at each step, and
+and the structure of the graph changes qualitatively as it is varied. We scan $r_\perp$ over $[0.1, 2.5)\,h^{-1}$ Mpc in steps of
+$0.02\,h^{-1}$ Mpc. The lower bound is set well below the expected group scale
+(${\sim}0.5\,h^{-1}$ Mpc) to capture the onset of the percolation transition
+from below; the upper bound is set above $r_{\mathrm{critical}}$ to confirm that
+the GCC is fully established. The step size of $0.02\,h^{-1}$ Mpc gives
+sufficient resolution to localise both peaks to better than one step. The graph
+$G(r_\perp)$ is rebuilt and its connected components extracted at each step, and
 we monitor two complementary topological observables.
 
 The first is the \emph{susceptibility},
@@ -351,31 +347,32 @@ The second observable is the \emph{fragmentation count},
     N_{\mathrm{groups}}(r_\perp)
     = \bigl|\{\,c : 2 \le |c| < |\mathrm{GCC}|\,\}\bigr|,
 \end{equation}
-the number of components that are neither isolated nodes nor the GCC. This
-counts the candidate groups present at a given linking length. It is maximised at
-the scale where the network resolves into the largest number of distinct,
-finite systems, well below the radius at which they coalesce into the percolating component;
-we identify this scale, $r_{\mathrm{groups}}$, as the operating point of the
-group finder. Both $r_{\mathrm{critical}}$ and $r_{\mathrm{groups}}$ are read off
-the network's own topology, with no reference to the Tempel group assignments.
+the number of components that are neither isolated nodes nor the GCC. Galaxy
+groups sit below the percolation threshold: too small to register in the
+susceptibility peak, yet physically real. A linking length that is too short
+leaves them as unresolved singletons; one that is too long chains them into
+the percolating component. At intermediate lengths the network resolves into the
+largest number of distinct finite systems, and that maximum is the criterion used
+to select $r_{\mathrm{groups}}$, with no reference to any external catalogue.
+Tempel's catalogue enters only afterwards, as a check on whether the
+topology-derived groups correspond to physically recognised structures.
 
 \subsection{GCC diagnostic}
 
 \figref{fig:gcc} shows both scales directly. The upper panel tracks the
 fraction of galaxies in the GCC as $r_\perp$ increases; the lower panel shows
 its derivative. Three independent
-markers of the transition are overlaid. The susceptibility peak places
-$r_{\mathrm{critical}} = 1.34\,h^{-1}$ Mpc, and the point of steepest GCC growth
-(the maximum of $\mathrm{d}\,\mathrm{GCC}/\mathrm{d}r_\perp$) gives
-$1.36\,h^{-1}$ Mpc, in close agreement; the two methods bracket the same
-percolation threshold. The fragmentation maximum sits well below, at
-$r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc. The defining requirement of the method,
+markers of the transition are overlaid. The susceptibility peak places $r_{\mathrm{critical}} = 1.34\,h^{-1}$ Mpc.
+The maximum-gradient point gives $1.36\,h^{-1}$ Mpc, in close agreement.
+The fragmentation maximum sits well below both, at $r_{\mathrm{groups}} =
+0.54\,h^{-1}$ Mpc. The defining requirement of the method,
 \begin{equation}\label{eq:subcritical}
     r_{\mathrm{groups}} < r_{\mathrm{critical}},
 \end{equation}
-is therefore satisfied: the group-finding scale is comfortably sub-critical, and
-the catalogue produced at $r_{\mathrm{groups}}$ describes bound groups rather
-than the percolating cosmic web.
+is therefore satisfied: the group-finding scale is well below the percolation
+threshold. $r_{\mathrm{critical}}$ is not used to find groups; it is computed
+to confirm that $r_{\mathrm{groups}}$ sits in the sub-critical regime where the
+network still resolves distinct finite structures.
 
 \begin{figure}[H]
     \centering
@@ -409,24 +406,24 @@ footprint,
     \qquad
     f_{\mathrm{sky}} = \frac{7221\,\mathrm{deg}^2}{41253\,\mathrm{deg}^2},
 \end{equation}
-the SDSS Main Galaxy Sample covering approximately $7221\,\mathrm{deg}^2$. This
-gives $b = 0.144$. The value $b = 0.144$ lands within the classical calibrated range
-$0.14 < b < 0.20$ \cite{davis1985, berlind2002}, and slightly above the
-redshift-dependent Tempel et al.\ value ($b \approx 0.113$--$0.115$ over the same
-interval). We compute $b$ only to locate $r_{\mathrm{groups}}$ in the conventional
-literature; the linking length itself came from the topology.
+the SDSS Main Galaxy Sample covering approximately $7221\,\mathrm{deg}^2$.
+This approximates the survey volume as a uniform spherical shell, without
+accounting for the detailed angular mask or boundary holes; the resulting $b$
+is therefore indicative rather than precise. This gives $b = 0.144$, near the lower edge of the classical calibrated range $0.14 < b < 0.20$
+\cite{davis1985, berlind2002} and slightly above the redshift-dependent Tempel
+et al.\ value ($b \approx 0.113$--$0.115$ over the same interval). The
+computation of $b$ is purely for comparison with the literature.
 
 \subsection{Final network}
 
-The group catalogue is produced by building the graph once at the operating
+With $r_{\mathrm{groups}}$ fixed, the group catalogue is produced by building the graph once at the operating
 point $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc. The resulting network contains
 $N = 75{,}042$ nodes and $95{,}310$ edges. Its connected components are extracted
 and each galaxy is assigned a group label; this output is exactly that of
 single-linkage hierarchical clustering cut at $r_{\mathrm{groups}}$, the simplest
 community-detection rule, in which two galaxies share a group whenever they are
-joined by a chain of pairwise links. Unlike modularity-based methods it imposes
-no resolution limit, but it is correspondingly sensitive to bridging: a single
-close pair can merge two otherwise distinct systems.
+joined by a chain of pairwise links. It imposes no resolution limit, but is correspondingly sensitive to bridging:
+a single close pair can merge two otherwise distinct systems. Both are taken up in the next section.
 
 \section{Results}
 
@@ -435,7 +432,7 @@ close pair can merge two otherwise distinct systems.
 \figref{fig:phase} shows both observables across the full scan. The susceptibility
 peak at $r_{\mathrm{critical}} = 1.34\,h^{-1}$ Mpc and the fragmentation maximum
 at $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc are both sharp and well-resolved,
-confirming the two scales located in \figref{fig:gcc}.
+consistent with the two scales located in \figref{fig:gcc}.
 
 The transition is the spatial-graph counterpart of the giant-component transition
 in random-graph theory. In an Erd\H{o}s--R\'enyi graph the giant component emerges
@@ -444,18 +441,18 @@ in a random geometric graph the giant component instead appears at a constant
 critical mean degree (continuum percolation), independent of $N$; the
 $(\ln N / N)^{1/d}$ radius often quoted for geometric graphs is the stricter
 full-connectivity threshold, not the percolation onset. At our operating point the mean
-degree is $\langle k\rangle = 2.54$, comfortably above the threshold at which an
-equivalent random graph would develop a giant component, yet no comparable giant
-component appears in the FoF network. Connectivity builds locally, assembling
-groups, long before anything percolates globally; the mean-field estimate below
+degree is $\langle k\rangle = 2.54$, well above the threshold at which an equivalent
+random graph would develop a giant component, yet no comparable giant component
+appears in the FoF network. Groups assemble locally long before anything percolates globally; the mean-field estimate below
 makes the gap quantitative.
 
 The sharpness of the peak is itself a finite-size effect. A true divergence
 occurs only in the thermodynamic limit; for a finite graph the transition is a
 smooth crossover whose width narrows as $N$ grows. The
 volume-limited sample of $\sim 7.5\times10^4$ galaxies, drawn from a parent
-catalogue of $\sim 6\times10^5$, is large enough that the peak is well localised
-and $r_{\mathrm{critical}}$ can be read off unambiguously.
+catalogue of $\sim 6\times10^5$, is large enough that the peak is well localised and $r_{\mathrm{critical}}$
+can be identified with good precision, as confirmed by the close agreement
+between the susceptibility peak and the maximum-gradient cross-check.
 
 The mean-field theory of percolation provides an analytic check on these
 numbers. In an Erd\H{o}s--R\'enyi graph, the probability $u$ that a randomly
@@ -467,14 +464,12 @@ equation
 where $\lambda = \langle k\rangle$. A nontrivial solution ($u < 1$, giant
 component present) exists only for $\lambda > 1$, recovering the mean-field
 threshold at $\langle k\rangle = 1$. At the operating point $\lambda = 2.54$,
-the equation yields $u \approx 0.10$: a random graph of the same edge density
+the equation gives $u \approx 0.10$: a random graph of the same edge density
 would place $90\%$ of its nodes in a single giant component, more than a
-hundred times the $0.8\%$ observed in the FoF network. Spatial embedding in the
-cosmic web suppresses the global percolation that mean-field theory predicts at
-this mean degree. The FoF network clusters locally into groups that never
-coalesce into a single spanning structure. Proximity in comoving space is
-concentrated wherever galaxies are, so connectivity assembles bound systems
-before it can percolate.
+hundred times the $0.8\%$ observed in the FoF network. Spatial embedding in the cosmic web suppresses the global percolation that
+mean-field theory predicts at this mean degree; we attribute this to the galaxy
+distribution being too inhomogeneous for a spanning component to assemble at
+the scale where groups form.
 
 \begin{figure}[t]
     \centering
@@ -491,16 +486,18 @@ before it can percolate.
 
 \subsection{Group catalogue: sky projection}
 
+The sky projections provide a first check that both catalogues trace the same large-scale structure before any quantitative comparison.
 \figref{fig:radec} projects the Tempel et al.\ catalogue (left column) and the
 detected catalogue (right column) onto the plane of the sky in four redshift bins
 of width $\Delta z = 0.01$ (rows). Grouped galaxies are coloured by their group
 label and sized by richness; field galaxies appear in grey. In this qualitative
 projection, which collapses the line of sight, the two catalogues show closely
-matching large-scale structure: the same sky overdensities are resolved into the
-same groups in both columns. The number of grouped galaxies per bin tracks the underlying
-galaxy count and shows no systematic growth with redshift. The fixed transverse
-linking length therefore does not over-link at larger distances across the
-volume-limited range.
+matching large-scale structure: the same sky overdensities appear grouped in both
+columns. Because the line of sight is collapsed, the projection cannot establish
+3D group identity; that is the role of the quantitative metrics in
+\S\ref{sec:validation}. The number of grouped galaxies per bin tracks the underlying galaxy count with
+no systematic growth with redshift, consistent with the fixed transverse linking
+length remaining appropriate across the volume-limited range.
 
 The panel-by-panel agreement also checks the coordinate pipeline: errors in the
 angular-to-Cartesian transformation or the comoving-distance integral would show
@@ -521,20 +518,14 @@ follows extended associations without breaking them at the panel boundaries.
 
 \subsection{Group richness distribution}
 
+Alongside individual group matches, the two catalogues should agree in their group-size statistics if the linking length is appropriate.
 \figref{fig:richness} compares the richness distributions (the number of
 members per group) of the detected and Tempel catalogues, restricted to groups
-of at least two members. The two agree closely over the full range, both falling
-steeply with richness as expected for a hierarchical galaxy distribution. Two
-systematic failure modes would be visible here: a shift of the detected
-distribution toward higher richness would indicate over-merging, with small
-groups incorrectly bridged into larger structures, while a shift toward lower
-richness would indicate fragmentation of rich clusters by a linking cylinder too
-small to span their velocity dispersion. Neither is present at the level of the
-global distribution; the mild excess of rich detected groups is quantified in the
-validation that follows. The steep decline shared by both catalogues reflects the
-rarity of very rich systems: massive groups are the end product of hierarchical
-merging, and in the volume surveyed only a small fraction of the sky has assembled
-the high density contrasts needed to produce them.
+of at least two members. The two agree closely over the full range, both falling steeply with richness.
+Neither a global shift toward higher richness (over-merging) nor toward lower
+richness (fragmentation) is visible; the excess of rich detected groups is
+concentrated at the high-richness tail and is quantified in the validation that
+follows.
 
 \begin{figure}[t]
     \centering
@@ -546,7 +537,7 @@ the high density contrasts needed to produce them.
     \label{fig:richness}
 \end{figure}
 
-\section{Validation \& Assessment}
+\section{Validation \& Assessment}\label{sec:validation}
 
 Validating the catalogue against Tempel et al.\ is a \emph{graph-partition
 comparison}: both catalogues partition the same set of galaxies into groups, and
@@ -570,11 +561,11 @@ Binned by richness (\tabref{tab:richness}), completeness is uniformly high
 ($\gtrsim 0.98$) and shows no trend: essentially every member of a Tempel group
 is recovered. Purity instead declines monotonically, from $0.82$ for pairs to
 $0.75$ for the richest systems. The detected groups thus contain all the true
-members but, in the richest systems, a few additional galaxies. Rich groups sit in
-the densest environments, where a single fixed linking volume most easily bridges
-to neighbouring galaxies and structures; the declining purity is therefore an
-environmental effect of the fixed aperture, not a failure to span the internal
-velocity dispersion, which would instead depress completeness.
+members but, in the richest systems, a few additional galaxies. Rich groups sit in the densest environments, with a single fixed linking volume
+most easily bridging to neighbouring galaxies and structures; the declining
+purity reflects the fixed aperture bridging into neighbouring galaxies at high
+density, not a failure to span the internal velocity dispersion
+(which would depress completeness, not purity).
 
 \begin{table}[H]
     \caption{Mean completeness and purity of matched groups, binned by Tempel
@@ -592,22 +583,25 @@ velocity dispersion, which would instead depress completeness.
         $51$–$500$ & 0.989 & 0.753 \\
         \bottomrule
     \end{tabular}
+    \tabletext{Means are unweighted averages over all Tempel groups in each
+    richness bin. The bins are defined by Tempel group size $N_T$; the
+    declining purity with richness reflects over-merging in the most massive
+    systems.}
 \end{table}
 
 \subsection{Completeness and purity by redshift}
 
 \figref{fig:cpz} repeats the matched-group analysis binned by mean group
-redshift. Completeness remains near unity and purity fluctuates around its mean
-with no strong systematic trend across the volume. The fixed linking length
+redshift. Completeness remains near unity (consistent with the global value of $0.98$
+in \tabref{tab:metrics}) and purity fluctuates around its mean of $\approx 0.79$
+with no systematic trend across redshift. The fixed linking length
 therefore does not over- or under-link with distance over the volume-limited
 range, consistent with the sky projection of \figref{fig:radec}.
 
-The stability is physically expected. The transverse linking length $r_\perp$
-is applied in comoving coordinates and converted to an angular separation at
-each galaxy's position, so the physical scale probed is invariant throughout
-the volume. The volume-limited selection at $M_{\mathrm{lim}}$ simultaneously
-suppresses the Malmquist-type bias that would inflate group sizes at the far
-edge of the survey and depress purity at high $z$.
+The stability is physically expected: $r_\perp$ is applied in comoving
+coordinates, so the physical scale probed does not drift with distance, and the
+volume-limited cut suppresses the Malmquist-type bias that would otherwise
+inflate group sizes at the far edge of the survey.
 
 \begin{figure}[t]
     \centering
@@ -624,25 +618,28 @@ edge of the survey and depress purity at high $z$.
 For the global comparison, the two partitions are evaluated on the $41{,}430$
 galaxies that Tempel places in groups of at least two members ($10{,}907$ Tempel
 groups, $9{,}739$ detected groups). The remaining $75{,}042 - 41{,}430 =
-33{,}612$ galaxies include both our isolated nodes and Tempel's field galaxies;
-both partitions agree on them trivially, so their inclusion would inflate every
-score. Two standard partition-comparison scores
-are reported in \tabref{tab:metrics}: the Adjusted Rand Index (ARI),
-the fraction of galaxy pairs co-classified by both partitions,
-corrected for chance; and the Normalized Mutual Information (NMI),
-the information one partition carries about the other. Both lie on $[0,1]$, with
-$0$ for chance agreement and $1$ for identity. The detected partition scores
-ARI $= 0.82$ and NMI $= 0.98$.
+33{,}612$ galaxies are those Tempel classifies as field objects. This set is not
+homogeneous: it contains galaxies that our method also leaves isolated (genuine
+agreement), but may also contain galaxies that our method links into a detected
+group (a false positive invisible to the metrics below). Restricting the
+comparison to the Tempel-grouped subsample therefore gives a conservative
+evaluation of completeness but may slightly overstate pair precision, since
+false positives drawn from the Tempel field are not penalised. \tabref{tab:metrics} reports two standard partition-comparison scores. The
+Adjusted Rand Index (ARI) measures the fraction of pairs on which both
+partitions agree (whether by placing them in the same group or in different
+groups), corrected for chance; the Normalized Mutual Information (NMI) measures
+the information one partition carries about the other. Both lie on $[0,1]$. The
+detected partition scores ARI $= 0.82$ and NMI $= 0.98$.
 
 The pair confusion matrix makes the asymmetry concrete. Pair recall, the fraction
 of Tempel co-group pairs recovered, is $0.98$, while pair precision, the fraction
 of our co-group pairs that are genuine, is $0.71$. At the level of pairs this
 repeats the richness-analysis conclusion: the catalogue is highly complete but
-mildly over-merged. We also test whether the agreement is significant. Permuting
+over-merged in the richest systems. We also test whether the agreement is significant. Permuting
 the detected labels $1000$ times and recomputing the ARI produces a null
 distribution centred at zero with standard deviation $5.7\times10^{-5}$; the
-observed value lies far outside the null ($z \approx 1.4\times10^4$; $p <
-0.001$).
+observed value lies far outside the null ($z \approx 1.4\times10^4$);
+the agreement is not a chance artefact.
 
 \begin{table}[H]
     \caption{Global partition-comparison metrics between the detected and Tempel
@@ -661,14 +658,15 @@ observed value lies far outside the null ($z \approx 1.4\times10^4$; $p <
         Pair $F_1$                         & 0.824 \\
         \bottomrule
     \end{tabular}
+    \tabletext{ARI and pair $F_1$ coincide numerically to three digits; they measure distinct properties of the partition and the agreement is incidental.}
 \end{table}
 
 \needspace{6\baselineskip}
 \subsection{Network topology}
 
 At $r_{\mathrm{groups}}$ the full network has $75{,}042$ nodes and $95{,}310$
-edges, fragmenting into $37{,}500$ connected components; the largest spans only $585$ nodes ($0.8\%$), confirming
-the sub-critical operating point. The mean degree is $\langle k\rangle = 2.54$.
+edges, fragmenting into $37{,}500$ connected components; the largest spans only $585$ nodes ($0.8\%$),
+consistent with the sub-critical operating point. The mean degree is $\langle k\rangle = 2.54$.
 The Erd\H{o}s--R\'enyi null (a random graph with the same number of nodes and
 edges, hence edge probability $p_{\mathrm{ER}} = 2E/[N(N-1)] = 3.4\times10^{-5}$)
 has an expected clustering coefficient equal to $p_{\mathrm{ER}}$. The measured
@@ -677,16 +675,17 @@ magnitude. That gap is real but weak on its own: any graph built from spatial
 proximity is locally clustered, so a structureless null is beaten before any
 cosmology enters.
 
-The sharper test is a \emph{geometric} null: uniform-random points in the same
-volume and angular footprint, linked by the same cylinder, with the linking
-length tuned to the same mean degree $\langle k\rangle = 2.54$. Averaged over
+The sharper test is a \emph{geometric} null: $75{,}042$ points placed uniformly
+within the survey footprint (RA--Dec positions drawn within the occupied
+one-degree pixel mask, comoving distances drawn uniformly in volume), linked by
+the same cylindrical criterion with the linking length bisected to match the real
+mean degree $\langle k\rangle = 2.54$. Averaged over eight independent
 realisations this null has transitivity $0.45$ and mean local clustering $0.32$
 (\tabref{tab:clustering}). The galaxy network matches it in mean local clustering
 ($0.32$) but exceeds it in transitivity ($0.646$ against $0.45$, a factor of
-$1.4$ and far outside the realisation scatter of $\pm 0.002$). The excess is
-therefore not generic geometry: it is concentrated in the high-degree, dense
-environments that dominate transitivity, the rich groups and cluster cores where
-gravity has drawn galaxies into extra closed triangles. The same clustering shows
+$1.4$ and far outside the realisation scatter of $\pm 0.002$). The excess is confined to the high-degree, dense environments that dominate
+transitivity, the rich groups and cluster cores, consistent with gravitational
+clustering having drawn galaxies into extra closed triangles. The same clustering shows
 in the linking lengths: the real network reaches $\langle k\rangle = 2.54$ at
 $0.54\,h^{-1}$ Mpc, less than half the $\approx 1.3\,h^{-1}$ Mpc the uniform null
 needs for the same mean degree.
@@ -704,9 +703,10 @@ needs for the same mean degree.
         Mean local clustering & $0.322$ & $3.4\times10^{-5}$ & $0.32$ \\
         \bottomrule
     \end{tabular}
-    \tabletext{The geometric null is uniform-random points in the same volume and
-    footprint, linked at matched mean degree $\langle k\rangle = 2.54$; values are
-    means over realisations.}
+    \tabletext{The geometric null places $75{,}042$ points uniformly within the
+    survey footprint and volume, linked at matched mean degree $\langle k\rangle =
+    2.54$; values are means over eight independent realisations ($\pm 0.002$
+    scatter).}
 \end{table}
 
 \subsection{Degree distribution}
@@ -725,9 +725,10 @@ galaxies are either isolated in the field or embedded in a dense group, with few
 in between. The hubs are the most connected, central members of the richest groups.
 
 The double-logarithmic panel shows the tail is not a pure power law: it is
-concave and truncated at $k_{\max}$. The cutoff is geometric in origin, since
-the degree is bounded by the number of galaxies that can physically occupy a
-single linking cylinder. The network is therefore heavy-tailed but not scale-free,
+concave and truncated at $k_{\max}$. The cutoff arises because the degree is bounded by the number of galaxies that
+can occupy a single linking cylinder; finite sample size and luminosity selection
+also contribute, but the geometric constraint is the dominant factor at the
+linking length used here. The network is therefore heavy-tailed but not scale-free,
 consistent with a random geometric graph rather than a preferential-attachment
 network.
 
@@ -745,21 +746,18 @@ network.
 
 \subsection{Internal structure of the richest groups}
 
-The global metrics average over $37{,}500$ components; \tabref{tab:groups}
-profiles the eight richest detected groups individually. The eight groups show a consistent pattern: the internal edge density rises as groups shrink, from $0.02$ for the
-largest to $0.08$ for the smallest tabulated, while the transitivity stays in the
-range $0.54$–$0.64$. Yet even the richest groups are far from compact: their
-diameters (the longest internal shortest path) reach $16$ to $36$ links
-across only a few hundred members. These are extended, filamentary chains, not
-clique-like balls. Single-linkage clustering produces exactly such structures, a
+The global metrics in \S\ref{sec:validation} are computed on the $9{,}739$ detected groups; \tabref{tab:groups}
+profiles the eight richest of these individually. The eight groups show a consistent pattern: the internal edge density rises as groups shrink, from $0.02$ for the
+largest to $0.08$ for the smallest tabulated. The transitivity stays in the
+range $0.54$–$0.64$ throughout. Yet even the richest groups are far from compact: diameters reaching $16$ to
+$36$ links across only a few hundred members indicate elongated, sparsely
+connected structures rather than clique-like balls. Single-linkage clustering produces exactly such structures, a
 direct manifestation of its bridging sensitivity. The giant connected component
 ($585$ members, diameter $22$) is the largest such chain; group $1017$, with a
 diameter of $36$ across $226$ members, is the most filamentary of all.
 
-This geometry is the same bridging sensitivity seen in the global metrics: the
-property that lets FoF trace cosmic-web filaments at large scales also lets a
-single close pair fuse two systems at the group scale, the mechanism behind the
-mild over-merging measured in \tabref{tab:richness} and \tabref{tab:metrics}.
+The same bridging sensitivity that produces filamentary internal structure is
+what drives the over-merging seen in \tabref{tab:richness} and \tabref{tab:metrics}.
 
 \begin{table}[H]
     \caption{Internal structure of the eight richest detected groups: number of
@@ -783,15 +781,14 @@ mild over-merging measured in \tabref{tab:richness} and \tabref{tab:metrics}.
     \tabletext{Group $133$ is the giant connected component.}
 \end{table}
 
-\section{Discussion}
+\section{Discussion}\label{sec:discussion}
 
 The main result is that the group scale can be recovered from the network
 alone. The fragmentation criterion selects $r_{\mathrm{groups}} = 0.54\,h^{-1}$
 Mpc, or $b = 0.144$, with no input from the reference catalogue, and the
 resulting groups reproduce the Tempel partition at ARI $= 0.82$. The
 topologically chosen linking length is slightly larger than Tempel's effective $b
-\approx 0.113$–$0.115$, and the direction of the difference is consistent with
-the validation: a marginally longer linking length explains the mild over-merging
+\approx 0.113$–$0.115$, and this is consistent with the validation: a marginally longer linking length explains the over-merging
 seen as declining purity in rich systems (\tabref{tab:richness}) and as pair
 precision below recall (\tabref{tab:metrics}). The fragmentation maximum favours
 linking lengths just large enough to assemble groups fully, at the cost of
@@ -810,32 +807,27 @@ limit but is sensitive to bridging: a single close pair merges two groups and
 produces the extended, filamentary components of \tabref{tab:groups} and the
 over-merging in rich systems. The fixed stretch factor $S = 10$ cannot adapt to the
 full range of cluster velocity dispersions either; we have not scanned $S$, so its
-separate contribution to the over-merging is not isolated here. A single transverse linking length is held across the full volume;
-although the redshift-binned metrics show this is adequate over $0.02 \le z \le
-0.06$, it would not extrapolate to a deeper sample without a redshift-dependent
-length. The survey footprint also truncates groups at its boundary, an edge
+separate contribution to the over-merging is not isolated here. A single transverse linking length is held across the full volume. The
+redshift-binned metrics show this is adequate over $0.02 \le z \le 0.06$, but
+a deeper sample would need a redshift-dependent length. The survey footprint also truncates groups at its boundary, an edge
 effect not corrected here.
 
-More broadly, the percolation scan offers a physically motivated alternative to
-N-body calibration: the proximity graph encodes the scale at which matter passes
-from isolated nodes to bound structures, the same scale simulations target through
-the halo mass function. That the topology-derived $b = 0.144$ lands in the
-classical calibrated range $0.14$--$0.20$ \cite{davis1985, berlind2002} suggests
-the percolation transition is a real observable of clustering, not a
-methodological artefact.
+More broadly, the fact that $b = 0.144$ lands near the lower edge of the classical calibrated range
+$0.14$--$0.20$ \cite{davis1985, berlind2002} without any external calibration
+input suggests that the percolation transition tracks something physical about
+the clustering scale, rather than an artefact of how the scan was set up.
 
 \section{Conclusion}
 
-The percolation transition does two things. It converts a free parameter, the
-linking length, into a topological observable, and it provides a built-in
-consistency check: any group-finding scale must sit below $r_{\mathrm{critical}}$
-or the catalogue describes filaments rather than groups. On the SDSS DR10 sample
-the resulting catalogue scores ARI $= 0.82$ and NMI $= 0.98$ against Tempel et
-al., with the residual disagreement (mild over-merging in the richest systems)
-traceable to the fixed stretch factor rather than the percolation criterion itself.
-The agreement with simulation-calibrated values of $b$ was not assumed; it followed
-from the network's own structure, which suggests the percolation threshold tracks
-a real property of the clustering scale, independent of the method.
+The central question was whether the linking length for a galaxy group finder
+can be fixed by the network's own topology rather than by calibration. The
+fragmentation maximum at $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc, read from
+a percolation scan with no reference to any external catalogue, reproduces the
+Tempel et al.\ partition at ARI $= 0.82$ and NMI $= 0.98$. The residual
+disagreement is over-merging in the richest systems, attributable to
+single-linkage bridging and the fixed stretch factor rather than to a problem
+with the percolation criterion. That $b = 0.144$ falls near the lower edge of the classical
+calibrated range without being calibrated there suggests that topology alone is sufficient to identify the operating scale, independent of any external reference catalogue.
 
 %----------------------------------------------------------
 
