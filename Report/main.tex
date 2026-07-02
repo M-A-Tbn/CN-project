@@ -128,7 +128,7 @@ graph-partition problem, the groups score ARI $= 0.82$ and NMI $= 0.98$
 (significant against a permutation null; $z \approx 1.4\times10^4$). The asymmetry
 (high recall, lower precision) points to over-merging concentrated in the richest systems. The network is
 itself far from random: clustering four orders of magnitude above the
-Erd\H{o}s--R\'enyi baseline, and a degree distribution heavy-tailed at both ends.
+Erdhos Renyi baseline, and a degree distribution heavy-tailed at both ends.
 \end{abstract}
 
 \keywords{galaxy groups, Friends-of-Friends, network percolation, SDSS, large-scale structure, complex networks}
@@ -476,7 +476,7 @@ fragmentation maximum at $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc are both
 consistent with the two scales located in \figref{fig:gcc}.
 
 This transition is the spatial graph analogue of the giant component transition
-in random graph theory. In the case of an Erd\H{o}s--R\'enyi graph, the giant
+in random graph theory. In the case of an Erdhos Renyi graph, the giant
 component appears when the mean degree $\langle k\rangle = 1$. This corresponds
 to an edge probability $p_c = 1/N$.
 
@@ -499,7 +499,7 @@ close agreement between the susceptibility peak and the maximum-gradient point
 also confirms this.
 
 The mean-field theory of percolation offers a method to check these numbers
-using analytical techniques. In an Erd\H{o}s--R\'enyi graph, the probability
+using analytical techniques. In an Erdhos Renyi graph, the probability
 $u$ of a randomly chosen node being outside the giant component is given by the
 self-consistency equation
 \begin{equation}\label{eq:gcc_mf}
@@ -598,71 +598,96 @@ high $N$ is the histogram-level trace of the over-merging measured later in
 
 \section{Validation \& Assessment}\label{sec:validation}
 
-Validating the catalogue against Tempel et al.\ is a \emph{graph-partition
-comparison}: both catalogues partition the same set of galaxies into groups, and
-the question is how closely the two partitions agree. We address it at three
-levels: individual matched groups (by richness and by redshift), the global
-partition, and the network topology (clustering and degree distribution).
+Validating the detected groups catalogue against Tempel et al.\ is a partition 
+comparison task; both catalogues partition the same set of galaxies into gravitationally bound groups, and
+so the question will be how closely these two partitions agree. We answer this question at three
+levels: 1) individual matched groups (by richness and by redshift), 2) the global
+partition, and the 3) network topology (clustering and degree distribution).
 
 \subsection{Completeness and purity by richness}
-
-At the group level, for each Tempel group $T$ (with at least two members) we
-identify the detected group $D$ with which it shares the most galaxies and
+For each Tempel group $T$ (with at least two members) we
+identify the detected group $D$ which shares the most galaxies with $T$ and
 compute
 \begin{equation}\label{eq:cp}
     \mathrm{Completeness} = \frac{|T \cap D|}{|T|}, \qquad
     \mathrm{Purity} = \frac{|T \cap D|}{|D|}.
 \end{equation}
-The two are asymmetric: completeness is the fraction of a reference group
-recovered, purity the fraction of the matched detected group that is genuine.
+Completeness is the fraction of a reference group ($T$) that is
+recovered by a group $D$ from the detected catalogue, while purity is the
+fraction of the matched detected group that is genuine.
+In other words, completeness measures how many of the actual members of a Tempel group
+are recovered, while purity measures how many of
+the recovered members are actually true members of that Tempel group. A group
+with high completeness but low purity contains all the
+true members but also a large number of alien members. A group with high purity
+but low completeness contains only true members, but misses many of them.
+
 Binned by richness (\tabref{tab:richness}), completeness is uniformly high
-($\gtrsim 0.98$) and shows no trend: essentially every member of a Tempel group
-is recovered. Purity instead declines monotonically, from $0.82$ for pairs to
-$0.75$ for the richest systems. The detected groups thus contain all the true
-members but, in the richest systems, a few additional galaxies. Rich groups sit
-in the densest environments, where a single fixed linking volume most easily
-bridges to neighbouring galaxies and structures. The declining purity reflects
-that bridging at high density, not a failure to span the internal velocity
-dispersion: a failure of that kind would depress completeness, not purity.
+($\gtrsim 0.98$) and shows no trend meaning that essentially every member of a Tempel group
+is recovered. Completeness is exactly $1$ for $97.5\%$ of matched groups; the
+small fragmenting tail ($2.5\%$, completeness as low as $0.5$) is what pulls
+the bin averages below unity. Purity, on the other hand, declines monotonically, from $0.82$ for pairs to
+$0.75$ for the crowded groups. The detected groups thus contain almost all the true
+members, but in the richest systems a considerable number of additional galaxies are also
+swept inside. Taking the total number of these extra galaxies across all detected groups, only about $12\%$
+of them are galaxies that are ungrouped in the Tempel catalogue (field galaxies); the remaining $88\%$ belong to
+another Tempel group entirely, and this other-group share itself rises with richness (\tabref{tab:richness}),
+reaching about $74\%$ in the richest bin. Over-merging is therefore mostly whole neighbouring groups being
+bridged into one detected structure, not scattered field galaxies leaking in.
+Rich groups sit in the densest environments, where it is easier for a single fixed linking length to
+bridge to neighbouring galaxies and structures. This decrease in purity reflects
+the bridging effect at higher densities and is not related to internal velocity dispersion of the groups as it would
+also affect the completeness.
 
 \begin{table}[H]
     \caption{Mean completeness and purity of matched groups, binned by Tempel
-    group richness $N_T$.}
+    group richness $N_T$, together with the fraction of the purity loss that
+    comes from another Tempel group rather than a field galaxy.}
     \label{tab:richness}
     \centering
-    \begin{tabular}{lcc}
+    \begin{tabular}{lccc}
         \toprule
-        Richness $N_T$ & Completeness & Purity \\
+        Richness $N_T$ & Completeness & Purity & Other-group share \\
         \midrule
-        $2$          & 0.995 & 0.824 \\
-        $3$--$5$     & 0.992 & 0.805 \\
-        $6$--$10$    & 0.984 & 0.778 \\
-        $11$--$50$   & 0.984 & 0.757 \\
-        $51$--$500$  & 0.989 & 0.753 \\
+        $2$          & 0.995 & 0.824 & 0.556 \\
+        $3$--$5$     & 0.992 & 0.805 & 0.554 \\
+        $6$--$10$    & 0.984 & 0.778 & 0.595 \\
+        $11$--$50$   & 0.984 & 0.757 & 0.609 \\
+        $51$--$500$  & 0.989 & 0.753 & 0.742 \\
         \bottomrule
     \end{tabular}
     \tabletext{Means are unweighted averages over all Tempel groups in each
     richness bin. The bins are defined by Tempel group size $N_T$; the
     declining purity with richness reflects over-merging in the most massive
-    systems.}
+    systems. The other-group share is the fraction of each matched group's
+    non-member galaxies ($D \setminus T$) that belong to a different Tempel
+    group rather than being Tempel-field; it also rises with richness.}
 \end{table}
 
 \subsection{Completeness and purity by redshift}
 
-\figref{fig:cpz} repeats the matched-group analysis binned by mean group
-redshift. Completeness remains near unity across the whole range (consistent
-with the global value of $0.98$ in \tabref{tab:metrics}). Purity stays close to
-its mean of $\approx 0.79$ but shows a mild upward drift with redshift, from
-$\approx 0.78$ in the nearest bins to $\approx 0.85$ in the farthest. The
-contamination behind the lower purity is therefore slightly stronger at low
-redshift. Completeness stays flat, so the fixed linking length does not lose
-groups with distance over the volume-limited range, consistent with the sky
+\figref{fig:cpz} repeats the analysis for matched groups binned by mean group
+redshift. Completeness remains nearly constant at unity across the whole range (consistent
+with the global value of $0.98$ in \tabref{tab:metrics}) and purity stays close to
+its mean of $\approx 0.79$ but moves slightly upward with redshift, from
+$\approx 0.78$ in the lower redshift bins to $\approx 0.85$ in the highest. This can be traced back to the
+bridging effect discussed above. Purity is related to local galaxy density, not richness, as
+richness itself shows no trend with redshift. The denser a region of the space is, the more likely it is
+that bridges form that connect two distinct groups. Within the volume-limited sample, the galaxy number density is
+highest near $z_{\min}$ and drops by roughly $40\%$ toward $z_{\max}$. This is
+most likely due to real large scale structures rather than a selection effect, since
+$M_{\mathrm{lim}}$ already removes the redshift dependence of the flux limit.
+Completeness and purity are sensitive to different failure modes.
+Completeness falls when true members of $T$ end up outside $D$, as a result of
+under-linking. Adding non-member galaxies to an already complete
+group still leaves completeness at $1$, so over-linking affects purity but
+cannot lower completeness. In the connected-components clustering method, having more edges
+results only in merging components together, never splitting them, so this asymmetry is
+structural, not incidental. A constant, near-unity completeness across
+redshift therefore shows only that under-linking is not the issue here.
+The fixed comoving $r_\perp$ gathers essentially all true members
+inside the volume-limited range, consistent with the sky
 projection of \figref{fig:radec}.
-
-The flat completeness is physically expected. $r_\perp$ is applied in comoving
-coordinates, so the physical scale probed does not drift with distance. The
-volume-limited cut then suppresses the Malmquist-type bias that would otherwise
-inflate group sizes at the far edge of the survey.
 
 \begin{figure}[t]
     \centering
@@ -675,32 +700,40 @@ inflate group sizes at the far edge of the survey.
 \end{figure}
 
 \subsection{Global partition metrics}
+The basis for the global partition comparison is the 41,430 galaxies grouped by both catalogues into
+groups of at least 2 members. This is 10,907 Tempel groups and 9,739 detected groups.
+The remaining (75,042 - 41,430 = 33,612) galaxies are singletons that Tempel classifies
+as field galaxies. This is not a homogeneous set. Some of its galaxies are also left
+isolated by our method (genuine agreement), while others are linked into one of the
+detected groups (a false positive the metrics below cannot see). Restricting the comparison
+to the Tempel-grouped galaxies therefore doesn't affect completeness, since completeness was never
+about field galaxies to begin with, but may slightly overstate
+pair precision, since field galaxies that are linked into a detected group fall outside the
+Tempel-grouped set, so they slip past the metrics unnoticed.
+\tabref{tab:metrics} reports two standard partition-comparison
+scores. The Adjusted Rand Index (ARI) measures the fraction of pairs which
+both partitions agree upon, either by placing them in the same group (True positives) or in different
+groups (True negatives).
+Ranging [-1, 1], an ARI of 1 indicates perfect agreement (identical groups), 0
+indicates a totally random grouping and -1 indicates absolute disagreement as
+if they are intentionally set to have no overlapping. The Normalized Mutual
+Information (NMI) measures how much one partition tells about the other. Scaling
+[0, 1], an NMI of 1 means the two partitions are identical, while 0 means they are
+completely independent. The detected partition scores ARI $= 0.82$ and NMI $= 0.98$.
 
-For the global comparison, the two partitions are evaluated on the $41{,}430$
-galaxies that Tempel places in groups of at least two members ($10{,}907$ Tempel
-groups, $9{,}739$ detected groups). The remaining $75{,}042 - 41{,}430 =
-33{,}612$ galaxies are those Tempel classifies as field objects. This set is not
-homogeneous. Some of its galaxies our method also leaves isolated (genuine
-agreement); others our method links into a detected group (a false positive the
-metrics below cannot see). Restricting the comparison to the Tempel-grouped
-subsample is therefore conservative on completeness, but may slightly overstate
-pair precision, since false positives drawn from the Tempel field go
-unpenalised. \tabref{tab:metrics} reports two standard partition-comparison
-scores. The Adjusted Rand Index (ARI) measures the fraction of pairs on which
-both partitions agree, whether by placing them in the same group or in different
-groups, corrected for chance. The Normalized Mutual Information (NMI) measures
-how much one partition tells you about the other. Both lie on $[0,1]$. The
-detected partition scores ARI $= 0.82$ and NMI $= 0.98$.
-
-The pair confusion matrix makes the asymmetry concrete. Pair recall, the
-fraction of Tempel co-group pairs recovered, is $0.98$, while pair precision,
-the fraction of our co-group pairs that are genuine, is $0.71$. At the level of
-pairs this repeats the richness-analysis conclusion: the catalogue is highly
-complete but over-merged in the richest systems. Permuting the detected labels
-$1000$ times and recomputing the ARI gives a null distribution centred at zero
-with standard deviation $5.7\times10^{-5}$; the observed value lies far outside
-it ($z \approx 1.4\times10^4$), confirming the agreement is not a chance
-artefact.
+Pair recall and pair precision derived from the pair confusion matrix make the
+asymmetry even more apparent. Pair recall asks: out of all the pairs of galaxies
+that belong in the same group in the Tempel catalogue, what percentage does our
+algorithm successfully find? This is $0.98$, which means our catalogue
+is highly complete. Pair precision, on the other hand, asks: of all the galaxy pairs our
+algorithm claims were in the same group, what percentage are actually together in the Tempel
+catalogue. For this work it is $0.71$. The other 0.29 are false positives.
+This repeats the richness analysis conclusion stated above: the catalogue is highly
+complete but also over-merged in the richest systems. To distinguish between our results and 
+a random coincidence, we permute the detected labels 1000 times and recompute the ARI. This
+gives a null distribution centred at zero with a standard deviation of $5.7\times10^{-5}$. The
+observed value lies far outside of it ($z \approx 1.4\times10^4$), which confirms the agreement
+is not produced by chance.
 
 \begin{table}[H]
     \caption{Global partition-comparison metrics between the detected and Tempel
@@ -725,36 +758,40 @@ artefact.
 
 \subsection{Network topology}
 
-At $r_{\mathrm{groups}}$ the full network has $75{,}042$ nodes and $95{,}310$
-edges, fragmenting into $37{,}500$ connected components; the largest spans only
-$585$ nodes ($0.8\%$), consistent with the sub-critical operating point. The
-mean degree is $\langle k\rangle = 2.54$. Consider an Erd\H{o}s--R\'enyi null:
-a random graph with the same number of nodes and edges, hence edge probability
+The full network constructed with the maximum fragmentation criterion ($r_{\mathrm{groups}}$)
+has 75,042 nodes and 95,310 edges; the network fragments into 37,500 connected components.
+The largest group spans $585$ nodes ($0.8\%$ of the total galaxy population), consistent
+with the sub-critical regime set by the susceptibility peak. The
+mean degree is $\langle k\rangle = 2.54$. We consider an Erdhos Renyi null,
+a random graph with the same number of nodes and edges, with the edge probability of
 $p_{\mathrm{ER}} = 2E/[N(N-1)] = 3.4\times10^{-5}$. Its expected clustering
-coefficient equals $p_{\mathrm{ER}}$. The measured transitivity, $0.646$
-(\tabref{tab:clustering}), exceeds this by four orders of magnitude. That gap is
-real but weak on its own: any graph built from spatial proximity is locally
-clustered, so a structureless null is beaten before any cosmology enters.
+coefficient is $p_{\mathrm{ER}}$. The measured transitivity, $0.646$
+(\tabref{tab:clustering}), exceeds this value by four orders of magnitude. While that
+gap is real, it is weak on its own. Any graph built on spatial proximity
+is locally clustered, so even if no cosmology is involved, it will beat any structureless
+null in this regard.
 
-The sharper test is a \emph{geometric} null. We place $75{,}042$ points
-uniformly within the survey footprint: RA--Dec positions drawn within the
-occupied one-degree pixel mask, comoving distances drawn uniformly in volume.
-These are linked by the same cylindrical criterion, with the linking length
-bisected to match the real mean degree $\langle k\rangle = 2.54$. Averaged over
-eight independent realisations this null has transitivity $0.45$ and mean local
-clustering $0.32$ (\tabref{tab:clustering}). The galaxy network matches it in
-mean local clustering ($0.32$) but exceeds it in transitivity ($0.646$ against
-$0.45$, a factor of $1.4$ and far outside the realisation scatter of
-$\pm 0.002$). The excess is confined to the high-degree, dense environments
-that dominate transitivity, namely the rich groups and cluster cores.
-Gravitational clustering draws galaxies into extra closed triangles that the
-uniform null cannot form. The same clustering shows in the linking lengths: the
-real network reaches $\langle k\rangle = 2.54$ at $0.54\,h^{-1}$ Mpc, less
-than half the $\approx 1.3\,h^{-1}$ Mpc the uniform null needs for the same
+A sharper test is a geometric null. We build a fake catalogue with the same 75,042 points,
+scattered randomly. Their positions on the sky match the real footprint of the survey,
+not the full sky, and their comoving distances are drawn so the number density stays constant
+with depth.
+These points are linked by the same cylindrical criterion we introduced before, with the
+linking length selected using bisection methods to match the actual mean degree
+$\langle k\rangle = 2.54$. The process is repeated 9 more times (10 in total) to avoid
+random fluctuations. Averaging over these 10 iterations, this null has transitivity $0.45 \pm 0.002$
+and mean local clustering $0.32$ (\tabref{tab:clustering}). The actual galaxy network matches
+the null in mean local clustering ($0.32$) but exceeds it in transitivity ($0.646$ against
+$0.45$, by a factor of $1.4$, far outside the $\pm 0.002$ error limit).
+This excess is confined to the high-degree, dense environments that dominate
+transitivity, namely the richest groups and cluster cores.
+Gravitational clustering gathers galaxies into extra closed triangles that cannot
+be produced by a uniform null. The same clustering is observed in the linking lengths. The
+real network reaches $\langle k\rangle = 2.54$ at $0.54\,h^{-1}$ Mpc, which is less
+than half the $\approx 1.3\,h^{-1}$ Mpc required by the uniform null to reach the same
 mean degree.
 
 \begin{table}[H]
-    \caption{Clustering of the FoF network against an Erd\H{o}s--R\'enyi null
+    \caption{Clustering of the FoF network against an Erdhos Renyi null
     and a matched-density geometric null.}
     \label{tab:clustering}
     \centering
@@ -768,7 +805,7 @@ mean degree.
     \end{tabular}
     \tabletext{The geometric null places $75{,}042$ points uniformly within the
     survey footprint and volume, linked at matched mean degree $\langle k\rangle
-    = 2.54$; values are means over eight independent realisations ($\pm 0.002$
+    = 2.54$; values are means over ten independent realisations ($\pm 0.002$
     scatter).}
 \end{table}
 
@@ -776,7 +813,7 @@ mean degree.
 
 \figref{fig:degree} shows the degree distribution $P(k)$ of the same network on
 semi-logarithmic and double-logarithmic axes, with the Poisson law of the
-Erd\H{o}s--R\'enyi null at the same mean degree overlaid. The distribution
+Erdhos Renyi null at the same mean degree overlaid. The distribution
 departs from the null at both extremes. The isolated-node fraction is $34.9\%$
 (field galaxies of degree zero), against a Poisson expectation of $7.9\%$, an
 excess of $4.4\times$. At the opposite end a heavy tail reaches $k_{\max} = 43$,
@@ -801,7 +838,7 @@ preferential attachment.
     \placefig[width=\textwidth]{figures/Degree_Distribution.pdf}
     \caption{Degree distribution $P(k)$ of the FoF network on semi-logarithmic
     (left) and double-logarithmic (right) axes. The dashed curve is the Poisson
-    law of an Erd\H{o}s--R\'enyi graph of the same mean degree. The data exceed
+    law of an Erdhos Renyi graph of the same mean degree. The data exceed
     the null at both ends (a $34.9\%$ isolated fraction and a heavy tail to
     $k_{\max} = 43$) and the tail is concave and truncated, not a pure power
     law.}
