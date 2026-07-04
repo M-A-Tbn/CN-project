@@ -4,6 +4,7 @@
 *.png
 *.svg
 Notebook/observational_surveys_redshift_0-1.txt
+Notebook/.cache/
 .Ds_Store
 .DS_Store
 
