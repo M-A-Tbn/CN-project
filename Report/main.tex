@@ -35,6 +35,20 @@
 \setlength\dblfloatsep{14pt plus 2pt minus 2pt}
 \setlength\dbltextfloatsep{14pt plus 2pt minus 2pt}
 
+% Paragraph glue: a whisper of stretch and shrink per paragraph so flushbottom
+% distributes any leftover column space across many paragraph gaps instead of
+% dumping it above one heading or around one float.
+\setlength\parskip{0pt plus 1.5pt minus 0.5pt}
+
+% Never strand a paragraph's opening line alone at the bottom of a column
+% (a "club" line) or its closing line alone at the top of the next one (a
+% "widow"). This matters especially in a two-column layout with several
+% top-only [t] floats: a float deferred to the next column can otherwise
+% end up sitting directly above an orphaned continuation line, which reads
+% as if the float belongs to that stray line instead of its own paragraph.
+\clubpenalty=10000
+\widowpenalty=10000
+
 % Allow a tall full-width figure* (the RA--Dec map) to sit at the top of a page
 % with body text flowing beneath it, instead of being banished to a dedicated
 % float page that would leave the rest of the page blank.
@@ -161,6 +175,12 @@ factor, which we adopt from Tempel et al.
 % Override the default header (full title overflows in two-column layout)
 \fancyhead[RO,LE]{\footerfont Cylindrical FoF Galaxy Groups via Maximum Fragmentation}
 
+% First page only: ragged bottom, so the spare room in the second column
+% gathers above the corresponding-author block instead of being stretched
+% around the Data heading. Flushbottom returns from page 2 onward.
+\raggedbottom
+\afterpage{\flushbottom}
+
 %----------------------------------------------------------
 
 \section{Introduction}
@@ -286,6 +306,13 @@ $(d_C, \alpha, \delta)$ to Cartesian coordinates,
 with the observer at the origin. The Cartesian conversion is needed both for the
 graph construction and for vector decomposition into transverse and line-of-sight
 components.
+
+There are two reasons for working with Cartesian positions instead of $(\alpha, \delta, z)$.
+First, The pair separations and the k-d tree range
+search are defined in a metric space, which angular coordinates do not give
+directly. Second, since the line of sight is not a fixed axis and its
+direction changes across the sky, the decomposition showed in \equref{eq:decomp}
+needs the actual 3D vectors of both galaxies to work.
 
 \section{Method}
 
@@ -478,6 +505,13 @@ where the network still resolves distinct finite structures.
 
 To connect the linking length derived from the network to the conventional FoF
 literature, we express it as the dimensionless linking parameter
+% Tighter display spacing around the two stacked definitions below, so page 4's
+% left column stays compact without shrinking the phase-transition figure.
+% Restored to the document values right after the volume equation.
+\setlength\abovedisplayskip{0pt plus 1pt}%
+\setlength\belowdisplayskip{0pt plus 1pt}%
+\setlength\abovedisplayshortskip{0pt plus 1pt}%
+\setlength\belowdisplayshortskip{0pt plus 1pt}%
 \begin{equation}\label{eq:b}
     b \equiv \frac{r_{\mathrm{groups}}}{\bar d},
     \qquad \bar d = n^{-1/3},
@@ -491,12 +525,17 @@ distances at $z_{\min}$ and $z_{\max}$, restricted to the survey footprint,
     \qquad
     f_{\mathrm{sky}} = \frac{7221\,\mathrm{deg}^2}{41253\,\mathrm{deg}^2},
 \end{equation}
+\setlength\abovedisplayskip{6pt plus 2pt minus 1pt}%
+\setlength\belowdisplayskip{6pt plus 2pt minus 1pt}%
+\setlength\abovedisplayshortskip{6pt plus 2pt minus 1pt}%
+\setlength\belowdisplayshortskip{6pt plus 2pt minus 1pt}%
 the SDSS Main Galaxy Sample covers approximately $7221\,\mathrm{deg}^2$. This
 approximates the survey volume as a uniform spherical shell. This gives
 $b = 0.144$, below the classical value $b = 0.2$ used for group-finding since
 Davis et al.\ \cite{davis1985, berlind2002}, and slightly above the
 redshift-dependent Tempel et al.\ value ($b \approx 0.113$--0.115 over the
 same redshift interval), which means Tempel et al.\ groups are bound tighter.
+\looseness=-1
 These comparisons inherit the uncertainty of $r_{\mathrm{groups}}$. The grid
 step alone translates into about $\pm 0.005$ in $b$, and if the full width of
 the fragmentation plateau ($0.42$--$0.58\,h^{-1}$ Mpc) is taken as the
@@ -505,8 +544,10 @@ is then within the uncertainty of our scale, while the classical $b = 0.2$
 stays outside it.
 Again, the computation of $b$ is purely for comparison with the literature.
 
+\vspace{-4pt}
 \subsection{Final network}
 
+\looseness=-1
 With $r_{\mathrm{groups}}$ fixed, the group catalogue is produced by building
 the graph once at linking length $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc. The
 resulting network consists of $N = 75{,}042$ nodes and $95{,}310$ edges. Its
@@ -517,6 +558,7 @@ resolution limit (even the smallest groups are detected), but the price is paid
 with sensitivity to bridging, where a single close pair can merge two separate
 systems. Both we will discuss later in Discussion.
 
+\vspace{-4pt}
 \section{Results}
 
 \subsection{The percolation transition}
@@ -531,6 +573,7 @@ in random graph theory. In the case of an Erd\H{o}s-R\'enyi graph, the giant
 component appears when the mean degree $\langle k\rangle = 1$. This corresponds
 to an edge probability $p_c = 1/N$.
 
+\looseness=-1
 In a random geometric graph, the giant component appears at a constant critical
 mean degree, which is known as continuum percolation. This threshold does not
 depend on $N$. In our case, the mean degree is $\langle k\rangle = 2.54$. This
@@ -540,6 +583,7 @@ component. Instead, groups form locally before global percolation takes place.
 The mean-field estimate below gives a quantitative comparison for this
 difference.
 
+\looseness=-1
 The sharpness of the peak is a finite-size effect. A true divergence occurs only
 in the thermodynamic limit. For a finite graph, the transition is a smooth
 crossover whose width narrows as $N$ grows. The volume-limited sample has
@@ -553,9 +597,14 @@ The mean-field theory of percolation offers a method to check these numbers
 using analytical techniques. In an Erd\H{o}s-R\'enyi graph, the probability
 $u$ of a randomly chosen node being outside the giant component is given by the
 self-consistency equation
+\setlength\abovedisplayskip{1pt plus 1pt}%
+\setlength\belowdisplayskip{1pt plus 1pt}%
 \begin{equation}\label{eq:gcc_mf}
     u = e^{\lambda(u-1)},
 \end{equation}
+\setlength\abovedisplayskip{6pt plus 2pt minus 1pt}%
+\setlength\belowdisplayskip{6pt plus 2pt minus 1pt}%
+\looseness=-1
 where $\lambda = \langle k\rangle$. A nontrivial solution ($u < 1$, giant
 component present) exists only for $\lambda > 1$, which yields the mean-field
 threshold at $\langle k\rangle = 1$. At the operating point of this work,
@@ -582,6 +631,7 @@ where groups appear.
 
 \subsection{Group catalogue: sky projection}
 
+\looseness=-1
 Before performing any quantitative validation, we can check the group catalogue
 qualitatively. \figref{fig:radec} projects the Tempel et al.\ catalogue (left
 column) and the detected catalogue (right column) onto the plane of the sky in
@@ -591,17 +641,20 @@ faint grey. Even though this projection is qualitative and collapses the line
 of sight, the two catalogues look similar. Both dense patches and empty voids of
 the sky show up similarly in both columns.
 
+\looseness=-1
 Collapsing the line of sight is costly. The projection cannot tell whether two
 galaxies that look close on the sky really belong to the same group in three
 dimensions. That test is left to the quantitative metrics in
 \S\ref{sec:validation}.
 
+\looseness=-1
 The panel by panel agreement also gives us a free check on the coordinate
 transformation. To draw the map, each galaxy must be moved from spherical survey
 coordinates to a 3D position. A mistake in the coordinate transformation would
 place our groups at slightly wrong positions. The groups line up between the two
 columns, so the coordinate code is working.
 
+\looseness=-1
 A second thing to check is what happens at the bin edges. Large structures are
 bigger than one redshift slice, so the same structure can appear in two stacked
 rows. A naive finder might cut such a structure in half at the boundary. This
@@ -674,16 +727,19 @@ true members but also a large number of alien members. A group with high purity
 but low completeness contains only true members, but misses many of them.
 
 Binned by richness (\tabref{tab:richness}), completeness is uniformly high
-($\gtrsim 0.98$) and shows no trend meaning that essentially every member of a Tempel group
+($\gtrsim 0.97$) and shows no trend meaning that essentially every member of a Tempel group
 is recovered. Completeness is exactly 1 for 97.5\% of matched groups; the
 small fragmenting tail (2.5\%, completeness as low as 0.5) is what pulls
-the bin averages below unity. Purity, on the other hand, declines with richness, from 0.82 for pairs down
-to about 0.76 for the crowded groups. The detected groups thus contain almost all the true
+the bin averages below unity. Purity, on the other hand, declines with richness through most of
+the distribution, from 0.82 for pairs down to a low of 0.74 in the 51--100 bin, before recovering
+to 0.81 and 0.88 in the two richest bins. That recovery is not a reversal of the trend, it is a
+small-number effect: the 101--300 and 301+ bins hold only five and one Tempel group respectively,
+so their averages are single-group values rather than statistics. The detected groups thus contain almost all the true
 members, but in the richest systems a considerable number of additional galaxies are also
 swept inside. Taking the total number of these extra galaxies across all detected groups, only about 12\%
 of them are galaxies that are ungrouped in the Tempel catalogue (field galaxies); the remaining 88\% belong to
 another Tempel group entirely, and this other-group share itself rises with richness (\tabref{tab:richness}),
-reaching about 74\% in the richest bin. Over-merging is therefore mostly whole neighbouring groups being
+levelling off around three-quarters in the three richest bins. Over-merging is therefore mostly whole neighbouring groups being
 bridged into one detected structure, not scattered field galaxies leaking in.
 Rich groups sit in the densest environments, where it is easier for a single fixed linking length to
 bridge to neighbouring galaxies and structures. This decrease in purity reflects
@@ -691,29 +747,29 @@ the bridging effect at higher densities and is not related to internal velocity 
 also affect the completeness.
 
 \begin{table}[H]
-    \caption{Mean completeness and purity of matched groups, binned by Tempel
-    group richness $N_T$, together with the fraction of the purity loss that
-    comes from another Tempel group rather than a field galaxy.}
+    \caption{Completeness and purity of matched groups, binned by Tempel
+    group richness $N_T$.}
     \label{tab:richness}
     \centering
-    \begin{tabular}{lccc}
+    \begin{tabular}{lcccc}
         \toprule
-        Richness $N_T$ & Completeness & Purity & Other-group share \\
+        Richness $N_T$ & Groups & Completeness & Purity & Other-group share \\
         \midrule
-        2          & 0.995 & 0.824 & 0.556 \\
-        3--5     & 0.992 & 0.805 & 0.554 \\
-        6--10    & 0.984 & 0.778 & 0.595 \\
-        11--50   & 0.984 & 0.757 & 0.609 \\
-        51+      & 0.989 & 0.758 & 0.742 \\
+        2          & 6223 & 0.995 & 0.824 & 0.556 \\
+        3--5     & 3404 & 0.992 & 0.805 & 0.554 \\
+        6--10    & 844  & 0.984 & 0.778 & 0.595 \\
+        11--50   & 410  & 0.984 & 0.757 & 0.609 \\
+        51--100  & 20   & 0.992 & 0.738 & 0.734 \\
+        101--300 & 5    & 0.974 & 0.811 & 0.772 \\
+        301+     & 1    & 0.996 & 0.879 & 0.732 \\
         \bottomrule
     \end{tabular}
-    \tabletext{Means are unweighted averages over all Tempel groups in each
-    richness bin. The bins are defined by Tempel group size $N_T$; the top
-    bin is open ended and holds 26 groups, the richest with 516 members. The
-    declining purity with richness reflects over-merging in the most massive
-    systems. The other-group share is the fraction of each matched group's
-    non-member galaxies ($D \setminus T$) that belong to a different Tempel
-    group rather than being Tempel-field; it also rises with richness.}
+    \tabletext{Each row averages over the Tempel groups in that richness bin
+    (the count is in the Groups column). The last bin has just one group,
+    T548 (516 members); the two richest bins have only five and one group,
+    so those two rows are really single outcomes, not averages. Other-group
+    share is how much of a group's contamination comes from another Tempel
+    group rather than from field galaxies.}
 \end{table}
 
 \subsection{Completeness and purity by redshift}
@@ -786,7 +842,7 @@ is highly complete. Pair precision, on the other hand, asks: of all the galaxy p
 algorithm claims were in the same group, what percentage are actually together in the Tempel
 catalogue. For this work it is 0.71. The other 0.29 are false positives.
 This 0.71 is visibly lower than the per-group purities of \tabref{tab:richness},
-which never drop below 0.75, but the two numbers describe the same mistakes with
+which stay above 0.73 even in the lowest bin, but the two numbers describe the same mistakes with
 different weights. A group of $N$ members contributes $N(N-1)/2$ pairs, so the
 pair count grows quadratically with group size and the few largest, most
 contaminated detected groups dominate the pair precision, while the averages in
@@ -800,7 +856,7 @@ gives a null distribution centred at zero with a standard deviation of $5.7\time
 observed value lies far outside of it ($z \approx 1.4\times10^4$), which confirms the agreement
 is not produced by chance.
 
-\begin{table}[H]
+\begin{table}[t]
     \caption{Global partition-comparison metrics between the detected and Tempel
     catalogues, on the grouped subsample ($41{,}430$ galaxies).}
     \label{tab:metrics}
@@ -896,7 +952,7 @@ expectation. this is the most depleted point, and the ratio does not return to p
 until $k=6$. Therefore galaxies with degrees near the $\langle k\rangle$ are quite rare which means
 most of the galaxies are either isolated or placed in a dense group, with only a few placed in between.
 
-\begin{table}[H]
+\begin{table}[t]
     \caption{Data-to-Poisson ratio of $P(k)$ near the mean degree
     $\langle k\rangle = 2.54$. The ratio dips below 1 for $k=2$--5, the
     depletion required once both extremes are over-populated, and returns to
@@ -975,28 +1031,6 @@ compact, clique-like blob; instead, both of them are made of dense knots joined 
 bridges. This is the same bridging sensitivity that drives the over-merging in \tabref{tab:richness}
 and \tabref{tab:metrics}.
 
-\begin{table}[t]
-    \caption{Internal structure of the eight richest detected groups: number of
-    members $N$, internal edge density, transitivity, and diameter.}
-    \label{tab:groups}
-    \centering
-    \begin{tabular}{rrccc}
-        \toprule
-        Group & $N$ & Density & Transitivity & Diameter \\
-        \midrule
-        G133  & 585 & 0.021 & 0.561 & 22 \\
-        G4    & 302 & 0.038 & 0.542 & 17 \\
-        G0    & 301 & 0.047 & 0.579 & 18 \\
-        G1017 & 226 & 0.040 & 0.615 & 36 \\
-        G242  & 156 & 0.046 & 0.635 & 19 \\
-        G262  & 154 & 0.064 & 0.594 & 17 \\
-        G251  & 142 & 0.070 & 0.612 & 16 \\
-        G10   & 141 & 0.084 & 0.629 & 16 \\
-        \bottomrule
-    \end{tabular}
-    \tabletext{Group G133 is the giant connected component.}
-\end{table}
-
 Tempel's eight richest groups in this sample are also printed in
 \tabref{tab:tempel_groups}, for further comparison. The rising pattern in edge density
 with decreasing richness behaves differently here, from 0.026 for the richest group
@@ -1010,30 +1044,59 @@ None of Tempel's groups form a single connected component (a component that hold
 linking length, but in every case the largest connected component holds at least 90\% of the
 group's members; for the largest group (T548), 514 of 516 galaxies are recovered in that giant one-piece component.
 
-\begin{table}[t]
-    \caption{Tempel's eight richest groups in this sample, shown as their
-    induced subgraph under our own cylindrical network rather than Tempel's
-    own linking rule.}
-    \label{tab:tempel_groups}
-    \centering
-    \begin{tabular}{rrccc}
-        \toprule
-        Tempel group & $N$ & Density & Largest piece & Pieces \\
-        \midrule
-        T548  & 516 & 0.026 & 514 & 3 \\
-        T73   & 252 & 0.051 & 250 & 3 \\
-        T52   & 237 & 0.071 & 236 & 2 \\
-        T619  & 117 & 0.140 & 115 & 3 \\
-        T607  & 115 & 0.100 & 113 & 3 \\
-        T696  & 103 & 0.105 & 94  & 2 \\
-        T1649 & 99  & 0.138 & 97  & 2 \\
-        T1701 & 90  & 0.134 & 89  & 2 \\
-        \bottomrule
-    \end{tabular}
-    \tabletext{``Pieces'' is the number of connected components the group
-    splits into under our network; ``Largest piece'' is the size of the
-    biggest one.}
-\end{table}
+% Both richest-group tables as one full-width float, side by side, so they
+% sit together at the top of a page instead of competing for column space
+% (which either stacks them in one column or strands the other column's
+% text short). Table numbering and \tabref targets are unaffected: each
+% minipage still issues its own \caption/\label.
+\begin{table*}[t]
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \caption{Internal structure of the eight richest detected groups: number of
+        members $N$, internal edge density, transitivity, and diameter.}
+        \label{tab:groups}
+        \begin{tabular}{rrccc}
+            \toprule
+            Group & $N$ & Density & Transitivity & Diameter \\
+            \midrule
+            G133  & 585 & 0.021 & 0.561 & 22 \\
+            G4    & 302 & 0.038 & 0.542 & 17 \\
+            G0    & 301 & 0.047 & 0.579 & 18 \\
+            G1017 & 226 & 0.040 & 0.615 & 36 \\
+            G242  & 156 & 0.046 & 0.635 & 19 \\
+            G262  & 154 & 0.064 & 0.594 & 17 \\
+            G251  & 142 & 0.070 & 0.612 & 16 \\
+            G10   & 141 & 0.084 & 0.629 & 16 \\
+            \bottomrule
+        \end{tabular}
+        \tabletext{Group G133 is the giant connected component.}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \caption{Tempel's eight richest groups in this sample, shown as their
+        induced subgraph under our own cylindrical network rather than Tempel's
+        own linking rule.}
+        \label{tab:tempel_groups}
+        \begin{tabular}{rrccc}
+            \toprule
+            Tempel group & $N$ & Density & Largest piece & Pieces \\
+            \midrule
+            T548  & 516 & 0.026 & 514 & 3 \\
+            T73   & 252 & 0.051 & 250 & 3 \\
+            T52   & 237 & 0.071 & 236 & 2 \\
+            T619  & 117 & 0.140 & 115 & 3 \\
+            T607  & 115 & 0.100 & 113 & 3 \\
+            T696  & 103 & 0.105 & 94  & 2 \\
+            T1649 & 99  & 0.138 & 97  & 2 \\
+            T1701 & 90  & 0.134 & 89  & 2 \\
+            \bottomrule
+        \end{tabular}
+        \tabletext{``Pieces'' is the number of connected components the group
+        splits into under our network; ``Largest piece'' is the size of the
+        biggest one.}
+    \end{minipage}
+\end{table*}
 
 To track the Group G1017's bridging behavior, we colour its members by
 their original Tempel membership instead of our own detected labels
@@ -1084,7 +1147,8 @@ produces. \S\ref{sec:validation} answered this at every level we tested. The cat
 is nearly complete, and its one downside, the loss of purity, always goes
 in the same direction.
 Completeness is essentially perfect, being exactly 1 for 97.5\% of the
-matched groups, while purity falls from 0.82 to about 0.76 with growing richness.
+matched groups, while purity falls from 0.82 to a low of about 0.74 in the
+well-populated bins, with growing richness.
 Of the contaminating members, 88\% belong to other Tempel groups while the other
 12\% come from the field. Analysis at the group level agrees too.
 Tempel's richest groups survive our network more than 90\% intact
@@ -1135,6 +1199,10 @@ the retained galaxies sit within 0.1 mag of the absolute magnitude cut, so
 the population whose membership in the sample could change is limited to a
 few percent at the faint end.
 
+% Start Conclusion on a fresh page, and flush the pending Fig. 8/9 float
+% page first so it no longer straddles the Discussion/Conclusion boundary.
+\clearpage
+
 \section{Conclusion}
 
 A galaxy group catalogue was built for the SDSS DR10 Main Galaxy Sample in
@@ -1164,6 +1232,10 @@ the group scale was derived from the network itself; only the shape of the
 linking cylinder was borrowed from outside.
 
 %----------------------------------------------------------
+
+% Column break: start References at the top of the right column instead of
+% stacking it under Conclusion in the left one.
+\newpage
 
 \printbibliography
 
