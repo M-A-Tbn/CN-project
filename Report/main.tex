@@ -288,10 +288,9 @@ corresponding to $m_{\mathrm{lim}}$ at the far edge,
 where $\mu(z)$ is the distance modulus, and keep only galaxies with $M \le
 M_{\mathrm{lim}}$. This way, a noticeable number of galaxies are removed from
 the sample but the sample becomes uniformly complete and comparable, which is an
-acceptable tradeoff. No K-correction or extinction correction is applied; at the
-low redshifts considered ($z \le 0.06$) these corrections are small, so the
-incompleteness they introduce is treated as a known limitation, not a source of
-systematic bias. These cuts reduce the population of the parent catalogue from
+acceptable tradeoff. No K-correction or extinction correction is applied. Both
+are small at these redshifts ($z \le 0.06$), so we accept the results without
+try to correct them. These cuts reduce the population of the parent catalogue from
 $588{,}193$ to $75{,}042$ galaxies.
 
 \subsection{Coordinate conversion}
@@ -470,22 +469,13 @@ susceptibility peak and the maximum-gradient point both sit near
 $1.35\,h^{-1}$ Mpc which is already a cluster-scale separation, much larger
 than the size of a galaxy group. For this reason a second observable, the
 fragmentation count, becomes important. Its maximum sits at a much smaller
-scale, $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc. This maximum is broad rather
-than sharp. The fragmentation count stays within 1\% of its peak value over
-the whole range $0.42 \le r_\perp \le 0.58\,h^{-1}$ Mpc, so the quoted
-$r_{\mathrm{groups}}$ is the centre of a plateau of that width, not a sharply
-determined point. The two scales obey
-\begin{equation}\label{eq:subcritical}
-    r_{\mathrm{groups}} < r_{\mathrm{critical}},
-\end{equation}
-as they must. The fragmentation count can only peak below the percolation
-threshold, since past that point the growing GCC swallows finite groups and
-their number drops, so \equref{eq:subcritical} is a consistency check on the
-pipeline rather than an independent validation of the method. What is
-informative is the margin, with $r_{\mathrm{groups}}$ at less than half of
-$r_{\mathrm{critical}}$. The latter is not used to find groups; it is computed
-to confirm that $r_{\mathrm{groups}}$ sits deep in the sub-critical regime
-where the network still resolves distinct finite structures.
+scale, $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc. This maximum is wide. The
+fragmentation count is still within 1\% of its peak across $0.42$--$0.58\,h^{-1}$
+Mpc, so $r_{\mathrm{groups}} = 0.54$ marks the centre of a range, not one
+sharply pinned point. $r_{\mathrm{critical}}$ is never used to pick the
+groups; we compute it just to show how far above the $r_{\mathrm{groups}}$ it
+sits. it is also a threshold that helps us make sure we are still in the
+sub-critical regime.
 
 \begin{figure}[H]
     \centering
@@ -505,13 +495,6 @@ where the network still resolves distinct finite structures.
 
 To connect the linking length derived from the network to the conventional FoF
 literature, we express it as the dimensionless linking parameter
-% Tighter display spacing around the two stacked definitions below, so page 4's
-% left column stays compact without shrinking the phase-transition figure.
-% Restored to the document values right after the volume equation.
-\setlength\abovedisplayskip{0pt plus 1pt}%
-\setlength\belowdisplayskip{0pt plus 1pt}%
-\setlength\abovedisplayshortskip{0pt plus 1pt}%
-\setlength\belowdisplayshortskip{0pt plus 1pt}%
 \begin{equation}\label{eq:b}
     b \equiv \frac{r_{\mathrm{groups}}}{\bar d},
     \qquad \bar d = n^{-1/3},
@@ -525,29 +508,21 @@ distances at $z_{\min}$ and $z_{\max}$, restricted to the survey footprint,
     \qquad
     f_{\mathrm{sky}} = \frac{7221\,\mathrm{deg}^2}{41253\,\mathrm{deg}^2},
 \end{equation}
-\setlength\abovedisplayskip{6pt plus 2pt minus 1pt}%
-\setlength\belowdisplayskip{6pt plus 2pt minus 1pt}%
-\setlength\abovedisplayshortskip{6pt plus 2pt minus 1pt}%
-\setlength\belowdisplayshortskip{6pt plus 2pt minus 1pt}%
 the SDSS Main Galaxy Sample covers approximately $7221\,\mathrm{deg}^2$. This
 approximates the survey volume as a uniform spherical shell. This gives
 $b = 0.144$, below the classical value $b = 0.2$ used for group-finding since
 Davis et al.\ \cite{davis1985, berlind2002}, and slightly above the
 redshift-dependent Tempel et al.\ value ($b \approx 0.113$--0.115 over the
 same redshift interval), which means Tempel et al.\ groups are bound tighter.
-\looseness=-1
 These comparisons inherit the uncertainty of $r_{\mathrm{groups}}$. The grid
 step alone translates into about $\pm 0.005$ in $b$, and if the full width of
 the fragmentation plateau ($0.42$--$0.58\,h^{-1}$ Mpc) is taken as the
 uncertainty instead, $b$ spans roughly 0.11--0.15. The gap to the Tempel value
 is then within the uncertainty of our scale, while the classical $b = 0.2$
 stays outside it.
-Again, the computation of $b$ is purely for comparison with the literature.
 
-\vspace{-4pt}
 \subsection{Final network}
 
-\looseness=-1
 With $r_{\mathrm{groups}}$ fixed, the group catalogue is produced by building
 the graph once at linking length $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc. The
 resulting network consists of $N = 75{,}042$ nodes and $95{,}310$ edges. Its
@@ -558,7 +533,6 @@ resolution limit (even the smallest groups are detected), but the price is paid
 with sensitivity to bridging, where a single close pair can merge two separate
 systems. Both we will discuss later in Discussion.
 
-\vspace{-4pt}
 \section{Results}
 
 \subsection{The percolation transition}
@@ -573,7 +547,6 @@ in random graph theory. In the case of an Erd\H{o}s-R\'enyi graph, the giant
 component appears when the mean degree $\langle k\rangle = 1$. This corresponds
 to an edge probability $p_c = 1/N$.
 
-\looseness=-1
 In a random geometric graph, the giant component appears at a constant critical
 mean degree, which is known as continuum percolation. This threshold does not
 depend on $N$. In our case, the mean degree is $\langle k\rangle = 2.54$. This
@@ -583,7 +556,6 @@ component. Instead, groups form locally before global percolation takes place.
 The mean-field estimate below gives a quantitative comparison for this
 difference.
 
-\looseness=-1
 The sharpness of the peak is a finite-size effect. A true divergence occurs only
 in the thermodynamic limit. For a finite graph, the transition is a smooth
 crossover whose width narrows as $N$ grows. The volume-limited sample has
@@ -597,14 +569,9 @@ The mean-field theory of percolation offers a method to check these numbers
 using analytical techniques. In an Erd\H{o}s-R\'enyi graph, the probability
 $u$ of a randomly chosen node being outside the giant component is given by the
 self-consistency equation
-\setlength\abovedisplayskip{1pt plus 1pt}%
-\setlength\belowdisplayskip{1pt plus 1pt}%
 \begin{equation}\label{eq:gcc_mf}
     u = e^{\lambda(u-1)},
 \end{equation}
-\setlength\abovedisplayskip{6pt plus 2pt minus 1pt}%
-\setlength\belowdisplayskip{6pt plus 2pt minus 1pt}%
-\looseness=-1
 where $\lambda = \langle k\rangle$. A nontrivial solution ($u < 1$, giant
 component present) exists only for $\lambda > 1$, which yields the mean-field
 threshold at $\langle k\rangle = 1$. At the operating point of this work,
@@ -645,7 +612,7 @@ the sky show up similarly in both columns.
 Collapsing the line of sight is costly. The projection cannot tell whether two
 galaxies that look close on the sky really belong to the same group in three
 dimensions. That test is left to the quantitative metrics in
-\S\ref{sec:validation}.
+Validation \& Assessment.
 
 \looseness=-1
 The panel by panel agreement also gives us a free check on the coordinate
@@ -665,7 +632,7 @@ across adjacent bins instead of breaking them at the panel edges.
 However, having a closer look at the panels, one might notice that the detected
 groups are slightly more extended than the Tempel groups. This is a sign of
 over-merging, whose causes we discuss quantitatively later in
-\S\ref{sec:discussion}.
+Discussion.
 
 \begin{figure*}[p]
     \centering
@@ -677,6 +644,10 @@ over-merging, whose causes we discuss quantitatively later in
     \label{fig:radec}
 \end{figure*}
 
+% Flush the pending Fig. 4 float page first, then start 4.3 fresh on the
+% next page instead of splitting it across the float page.
+\clearpage
+
 \subsection{Group richness distribution}
 
 If the linking length is to be appropriate, the two catalogues should also agree
@@ -687,7 +658,7 @@ same steep shape. They do not match exactly, though: the detected catalogue lies
 slightly above Tempel across the whole range, and the excess grows at high
 richness, where it also reaches a marginally heavier tail. This small excess at
 high $N$ is the histogram-level trace of the over-merging measured later in
-\S\ref{sec:validation}, not a shift toward lower richness.
+Validation \& Assessment, not a shift toward lower richness.
 
 \begin{figure}[t]
     \centering
@@ -807,6 +778,8 @@ projection of \figref{fig:radec}.
     \label{fig:cpz}
 \end{figure}
 
+\newpage
+
 \subsection{Global partition metrics}
 The basis for the global partition comparison is the 41,430 galaxies that Tempel places in
 groups of at least 2 members (10,907 Tempel groups). These same galaxies fall into 9,739
@@ -870,11 +843,8 @@ is not produced by chance.
         \midrule
         Pair precision                     & 0.710 \\
         Pair recall                        & 0.982 \\
-        Pair $F_1$                         & 0.824 \\
         \bottomrule
     \end{tabular}
-    \tabletext{ARI and pair $F_1$ coincide numerically to three digits; they
-    measure distinct properties of the partition and the agreement is incidental.}
 \end{table}
 
 \subsection{Network topology}
@@ -931,6 +901,8 @@ mean degree.
     clustering.}
 \end{table}
 
+\newpage
+
 \subsection{Degree distribution}
 
 \figref{fig:degree} shows the degree distribution $P(k)$ of the same network on
@@ -952,28 +924,6 @@ expectation. this is the most depleted point, and the ratio does not return to p
 until $k=6$. Therefore galaxies with degrees near the $\langle k\rangle$ are quite rare which means
 most of the galaxies are either isolated or placed in a dense group, with only a few placed in between.
 
-\begin{table}[t]
-    \caption{Data-to-Poisson ratio of $P(k)$ near the mean degree
-    $\langle k\rangle = 2.54$. The ratio dips below 1 for $k=2$--5, the
-    depletion required once both extremes are over-populated, and returns to
-    parity by $k=6$.}
-    \label{tab:depletion}
-    \centering
-    \begin{tabular}{lccc}
-        \toprule
-        $k$ & Data $P(k)$ & Poisson $P(k)$ & Ratio \\
-        \midrule
-        0 & 0.349 & 0.079 & 4.43 \\
-        1 & 0.213 & 0.200 & 1.06 \\
-        2 & 0.123 & 0.254 & 0.48 \\
-        3 & 0.080 & 0.215 & 0.37 \\
-        4 & 0.056 & 0.137 & 0.41 \\
-        5 & 0.041 & 0.069 & 0.59 \\
-        6 & 0.030 & 0.029 & 1.00 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
 The double-logarithmic panel (right) shows that the tail does not follow a pure power law; instead
 it is concave and truncated at $k_{\max}$. The situation arises because the degree is
 bounded by the number of galaxies that can occupy a single linking cylinder. Finite sample
@@ -994,6 +944,26 @@ preferential attachment.
     following a pure power law.}
     \label{fig:degree}
 \end{figure*}
+
+\begin{table}[H]
+    \caption{Data-to-Poisson ratio of $P(k)$ near $\langle k\rangle = 2.54$.}
+    \label{tab:depletion}
+    \centering
+    {\setlength\tabcolsep{18pt}
+    \begin{tabular}{lccc}
+        \toprule
+        $k$ & Data $P(k)$ & Poisson $P(k)$ & Ratio \\
+        \midrule
+        0 & 0.349 & 0.079 & 4.43 \\
+        1 & 0.213 & 0.200 & 1.06 \\
+        2 & 0.123 & 0.254 & 0.48 \\
+        3 & 0.080 & 0.215 & 0.37 \\
+        4 & 0.056 & 0.137 & 0.41 \\
+        5 & 0.041 & 0.069 & 0.59 \\
+        6 & 0.030 & 0.029 & 1.00 \\
+        \bottomrule
+    \end{tabular}}
+\end{table}
 
 \subsection{Internal structure of the richest groups}
 
@@ -1143,7 +1113,7 @@ it also sits just above the effective $b \approx 0.113$--0.115 that Tempel et
 al.\ use for the same redshift interval.
 
 The second question is what kind of catalogue this scale actually
-produces. \S\ref{sec:validation} answered this at every level we tested. The catalogue
+produces. Validation \& Assessment answered this at every level we tested. The catalogue
 is nearly complete, and its one downside, the loss of purity, always goes
 in the same direction.
 Completeness is essentially perfect, being exactly 1 for 97.5\% of the
@@ -1167,7 +1137,7 @@ Erd\H{o}s-R\'enyi null, the outcome is one-sided. An Erd\H{o}s-R\'enyi graph wit
 degree puts 90\% of its nodes into one giant component while our network
 puts 0.8\% there, and the real network's clustering beats the random expectation by four
 orders of magnitude. The
-geometric null makes this comparison fair and interesting. A large share of this
+geometric null makes this a fair and meaningful comparison. A large share of this
 clustering, however, is not due to gravity. Random points filling the same volume,
 linked at the same mean degree, already produce a transitivity of 0.45, because 
 neighbours of a point in 3D space are likely to be close to each other as well.
