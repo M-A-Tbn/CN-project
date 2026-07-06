@@ -1,423 +1,1212 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% --------------------------------------------------------
-%  ____  _           
-% |  _ \| |__   ___  
-% | |_) | '_ \ / _ \ 
-% |  _ <| | | | (_) |
-% |_| \_\_| |_|\___/ 
-%
-% LaTeX2e Template
-% Version 3.0.1 (15/04/2026)
-%
-% Author: 
-% Guillermo Jimenez (memo.notess1@gmail.com)
-% 
-% Contributor:
-% Eduardo Gracidas (eduardo.gracidas29@gmail.com)
-%
-% License:
-% Creative Commons CC BY 4.0
-% --------------------------------------------------------
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% --------------------------------------------------------
-% Find the latest version on GitHub:
-% https://github.com/MemoJimenez/Rho-class
-% --------------------------------------------------------
+% CN-Project - Course Report
+% Complex Networks, Spring 2026
+% Università di Bologna
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[9pt,a4paper,twocolumn,twoside]{rho-class/rho}
 \usepackage[english]{babel}
+\usepackage{needspace}
 
-%% Spanish babel recomendation
-% \usepackage[spanish,es-nodecimaldot,es-noindentfirst]{babel}
+% ===== Uniform publication spacing ==========================================
+% Display equations: identical glue above and below every formula. The class
+% sets these to a rigid, slightly negative value inside \normalsize, so we
+% re-patch \normalsize (ours runs last and wins). Crucially the two "short"
+% skips are set equal to the regular ones, so a formula's spacing does not
+% depend on whether the line before it was full or short. A small symmetric
+% rubber lets flushbottom balance columns without opening paragraph gaps.
+\makeatletter
+\expandafter\def\expandafter\normalsize\expandafter{%
+    \normalsize%
+    \setlength\abovedisplayskip{6pt plus 2pt minus 1pt}%
+    \setlength\belowdisplayskip{6pt plus 2pt minus 1pt}%
+    \setlength\abovedisplayshortskip{6pt plus 2pt minus 1pt}%
+    \setlength\belowdisplayshortskip{6pt plus 2pt minus 1pt}%
+}
+\makeatother
+
+% Floats: a single separation value for in-text [H] floats (\intextsep),
+% top/bottom [t] floats (\textfloatsep), stacked floats (\floatsep) and the
+% full-width figure* floats (\dbltextfloatsep, \dblfloatsep). Every figure and
+% table therefore sits the same distance from the surrounding text.
+\setlength\floatsep{14pt plus 2pt minus 2pt}
+\setlength\textfloatsep{14pt plus 2pt minus 2pt}
+\setlength\intextsep{14pt plus 2pt minus 2pt}
+\setlength\dblfloatsep{14pt plus 2pt minus 2pt}
+\setlength\dbltextfloatsep{14pt plus 2pt minus 2pt}
+
+% Paragraph glue: a whisper of stretch and shrink per paragraph so flushbottom
+% distributes any leftover column space across many paragraph gaps instead of
+% dumping it above one heading or around one float.
+\setlength\parskip{0pt plus 1.5pt minus 0.5pt}
+
+% Never strand a paragraph's opening line alone at the bottom of a column
+% (a "club" line) or its closing line alone at the top of the next one (a
+% "widow"). This matters especially in a two-column layout with several
+% top-only [t] floats: a float deferred to the next column can otherwise
+% end up sitting directly above an orphaned continuation line, which reads
+% as if the float belongs to that stray line instead of its own paragraph.
+\clubpenalty=10000
+\widowpenalty=10000
+
+% Allow a tall full-width figure* (the RA--Dec map) to sit at the top of a page
+% with body text flowing beneath it, instead of being banished to a dedicated
+% float page that would leave the rest of the page blank.
+\renewcommand{\dbltopfraction}{0.92}
+\renewcommand{\dblfloatpagefraction}{0.7}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.08}
+
+% Captions: identical gap between every caption and its figure/table body,
+% whether the caption sits above (tables) or below (figures).
+% The class sets justification=centering; we override it completely in
+% \AtBeginDocument so it wins after every package hook (including ragged2e).
+\captionsetup[table]{skip=7pt}
+\AtBeginDocument{%
+    \captionsetup[figure]{format=plain, labelsep=period,
+        labelfont={small,bf,sf}, textfont={small},
+        justification=raggedright, singlelinecheck=false, skip=7pt}%
+    \captionsetup[figure*]{format=plain, labelsep=period,
+        labelfont={small,bf,sf}, textfont={small},
+        justification=raggedright, singlelinecheck=false, skip=7pt}%
+}
+% ============================================================================
+
+% Bibliography: small font and tight entry spacing to keep all refs on one page.
+% Override the class's sorting=ynt with citation order (IEEE standard): references
+% are numbered in order of first appearance in the text.
+\ExecuteBibliographyOptions{sorting=none}
+\renewcommand{\bibfont}{\footnotesize}
+\setlength\bibitemsep{1pt plus 1pt minus 1pt}
+
+% The class forces tabular content into Fira Sans (\sffamily), whose geometric
+% digits clash with the serif STIX figures used in the body and inline math.
+% Append a hook (runs after the class's) to switch table content to the roman
+% face, so every number shares one academic, lining-figure style.
+\AtBeginEnvironment{tabular}{\rmfamily}
+
+% Graceful figure fallback: shows a placeholder box if the PDF has not been
+% generated yet (i.e. the notebook has not been run). Once the figure PDFs
+% exist in figures/, they replace the boxes automatically on the next compile.
+\newcommand{\placefig}[2][width=\columnwidth]{%
+    \IfFileExists{#2}%
+        {\includegraphics[#1]{#2}}%
+        {\fbox{\rule{0pt}{4.5cm}\rule{\columnwidth}{0pt}}}%
+}
 
 %----------------------------------------------------------
 % Title
 %----------------------------------------------------------
 
-\doctype{Project Report}
-\title{Reproducing the (Tempel et al. 2014) SDSS DR10 Galaxy Group Catalog with an Unsupervised Cylindrical FoF Driven by Network Properties.}
+\doctype{Project Report: Complex Networks}
+\title{Reproducing the Tempel et al. (2014) SDSS DR10 Galaxy Group Catalogue with an Unsupervised Cylindrical FoF Driven by\\ Maximum Fragmentation}
 
 %----------------------------------------------------------
-% Authors, Affiliations and dates
+% Authors and affiliations
 %----------------------------------------------------------
 
-\author[{\textasteriskcentered},a,1]{Ali Tabaeian}
-
-%----------------------------------------------------------
+\author[{\textasteriskcentered},a]{Ali Tabaeian}
 
 \affil[a]{Dipartimento di Fisica \& Astronomia, Università di Bologna}
-
-%----------------------------------------------------------
 
 \dates{Spring, 2026}
 
 %----------------------------------------------------------
-% Corresponding author-, Document- information
-%----------------------------------------------------------
+% Corresponding author and document info
+%---------------------------------------------------------- 
 
-\corres{\textsuperscript{\textasteriskcentered}Corresponding author: \href{mailto:author.one@institute.org}{author.one@institute.org} (A. One).}
-\corres{\textsuperscript{\textdagger}These authors contributed equally to this work.}
+\corres{\textsuperscript{\textasteriskcentered}\href{mailto:mohamadali.tabaeian@studio.unibo.it}{mohamadali.tabaeian@studio.unibo.it}}
 
-%----------------------------------------------------------
-
-\docinfo{This document class was prepared on Overleaf and compiled with pdf\LaTeX{}. No errors were found during the compilation process. Rho-class supports external editors, though additional setup may be required.} 
+\docinfo{Submitted as the final project for the Complex Networks Course, Under the supervision of Prof. Daniel Remondini and Dott. Francesco Durazzi. The LaTeX source and Jupyter Notebook containing the code are available at : \href{https://github.com/M-A-Tbn/CN-project}{github.com/M-A-Tbn/CN-project}.}
 
 %----------------------------------------------------------
 
-\journalname{LATEX}
-\journal{Rho-class (v.3) 2026}
-\theday{\today}
-\vol{X}
-\no{X}
+\journalname{Complex Networks}
+\journal{Università di Bologna, 2026}
+\theday{\ifcase\month\or January\or February\or March\or April\or May\or June\or July\or August\or September\or October\or November\or December\fi~\the\year}
+
 
 %----------------------------------------------------------
-% Abstract and Keywords
+% Abstract
 %----------------------------------------------------------
 
 \begin{abstract}
-    Rho-class was designed for creating professional \LaTeX{} documents, including research articles, technical reports, and academic documentation. It enhances the writing experience through intuitive custom environments, multilingual support, and refined typography. The class integrates Fira Sans for headings and highlighted elements, Fira Mono for code listings, and STIX2 for body text, ensuring consistent styling across tables, figures, equations, listings, and captions. It is worth to mention that this template is inspired by an earlier work, the \href{https://es.overleaf.com/latex/templates/tau-class-lab-report-template/chhshmhxstsq}{tau-class}. \textit{New or updated features are marked with an asterisk (*)}.
+Our goal is to recover the galaxy groups of the Tempel et al.\ (2014)
+catalogue using only properties of the network itself.
+The standard network observables such as the
+susceptibility peak, or the growth of the giant component, respond to the
+percolation transition, which happens at a much larger scale than the
+groups we are after. This suggested a simple, almost trivial question: if
+the target is the smallest bound structures, why not look for the point
+where the network breaks into the largest number of pieces with at least
+two members? We therefore adopt maximum fragmentation as the operating
+point. The data are a volume-limited subsample of the SDSS DR10 Main
+Galaxy Sample. A redshift slice $0.02 \le z \le 0.06$ combined with an
+absolute-magnitude cut reduces the sample size and makes the selection uniform
+across the volume. The network is built on comoving
+Cartesian positions with galaxies as nodes and edges coming from a cylindrical
+Friends-of-Friends criterion elongated along the line of sight to absorb
+the finger-of-god distortion. The groups are simply the connected
+components and no community detection is involved. The susceptibility
+peak puts the percolation threshold at $1.34\,h^{-1}$ Mpc, while the number of finite
+groups peaks at $0.54\,h^{-1}$ Mpc, far below it. Analysing the results
+shows a decent agreement with the source catalogue: an ARI of 0.82 and an
+NMI of 0.98, with a permutation test ruling out random agreement. The
+pair confusion matrix splits this into a completeness of 0.98 and a
+purity of 0.71 with the mismatch coming from overmerging in the densest regions
+where neighbouring groups get bridged
+into a single detected structure, which we attribute to the fixed
+stretch factor not accounting for the largest velocity dispersions.
+Although some overmerging remains, mostly from the
+simplifications applied, the network recovers the Tempel groups
+reasonably well. The transverse group scale is read off the network itself
+with no external calibration; the one borrowed ingredient is the stretch
+factor, which we adopt from Tempel et al.
 \end{abstract}
 
-%----------------------------------------------------------
-
-\keywords{Rho-class, Research Article, Laboratory Report, Academic Writing, Journal}
+\keywords{galaxy groups, Friends-of-Friends, network percolation, SDSS, large-scale structure, complex networks}
 
 %----------------------------------------------------------
 
 \begin{document}
 
-    \maketitle
-    \thispagestyle{firststyle}
+\maketitle
+\thispagestyle{firststyle}
+% Override the default header (full title overflows in two-column layout)
+\fancyhead[RO,LE]{\footerfont Cylindrical FoF Galaxy Groups via Maximum Fragmentation}
+
+% First page only: ragged bottom, so the spare room in the second column
+% gathers above the corresponding-author block instead of being stretched
+% around the Data heading. Flushbottom returns from page 2 onward.
+\raggedbottom
+\afterpage{\flushbottom}
 
 %----------------------------------------------------------
 
-\section{Rho Class}
+\section{Introduction}
 
-    \rhostart{R}ho-class is specially designed for research articles, technical/lab reports, and academic documentation. This guide will help you understand the features and proper use of the template, enabling you to efficiently structure and format your documents with clarity and precision.
+\rhostart{G}alaxy groups, systems of a few up to a few hundred galaxies bound
+inside a common dark matter halo, are home to most of the galaxies. They are
+the smallest building blocks of the cosmic web, smaller than galaxy clusters and
+superclusters.
+A standard tool for extracting them from redshift surveys is the
+Friends-of-Friends (FoF) algorithm, with a historical origin in the work of
+Huchra and Geller \cite{huchra1982}. Two galaxies are declared friends if they are
+closer than a linking length $\ell$.
+This friendship is transitive, and every maximal chain of friends creates a group.
+Speaking the language of graph theory, galaxies become nodes and the proximity criterion
+becomes the edge set. Groups are then just
+the connected components. The value of $\ell$ is not given by graph theory.
+Written in its dimensionless form $b
+= \ell/\bar d$, with $\bar d$ the mean inter-galaxy separation, the linking
+length has historically been calibrated against $N$-body simulations
+\cite{davis1985, berlind2002} or copied from earlier surveys.
 
-    This class includes the following files in the rho-class folder:
-	
-	\begin{itemize}
-		\item \inlinecode{rho.cls} — The main class file.
-		\item \inlinecode{rhoenvs.sty} — A package containing custom environments.
-		\item \inlinecode{rhobabel.sty} — A support package for multilingual.
-		\item \inlinecode{README.md} — With essential information.
-	\end{itemize}
+This work relies on the fact that percolation in proximity graphs is unavoidable.
+As the linking length grows,
+small components form and grow, until at a critical value they
+merge into a giant component large enough to span the whole survey. This is called a phase
+transition, and the scale where it happens is a property of the data without anybody
+picking it by hand. This critical value though does not necessarily reveal the smallest
+structures of that graph. Below that critical scale, a second special point draws attention:
+the length at which the number of distinct finite groups is maximal, which trivially
+is paired to the smallest structures that can form. We adopt this maximum
+fragmentation point as the group-finding scale. Both scales come out of the
+network itself: $r_{\mathrm{critical}}$ comes from the susceptibility peak,
+$r_{\mathrm{groups}}$ from the fragmentation maximum.
 
-    Additionally, this template includes a sample document \inlinecode{main.tex}, a bibliography file \inlinecode{rho.bib}, as well as figures, tables and code examples to help you get started quickly.
+Working in redshift space adds some complications. Peculiar velocities inside
+virialised systems contaminate the observed redshift which is necessary to calculate
+the radial coordinate. Therefore, every group is stretched into a radial finger
+pointing at the observer, off by several $h^{-1}$ Mpc along
+the line of sight \cite{jackson1972}. A spherical linking volume would either cut
+these fingers into several pieces or swallow everything in their neighborhood together with them.
+Following Tempel et al.\ \cite{tempel2014}, the linking volume used here is a
+cylinder with a height (along the line of sight) ten times longer than its diameter.
 
-    \subsection{License}
+The construction is applied to a volume-limited slice of the SDSS DR10 Main
+Galaxy Sample \cite{ahn2014}. The Tempel et al.\ catalogue \cite{tempel2014}
+plays two roles for us: first, it gives us the input galaxies, and second, its group labels
+are the ground truth for a graph-partition comparison, to help us evaluate the results.
+The reference labels play no role in setting the
+linking length; they only enter afterwards, to score the final partition.
+Apart from the astrophysics aspect, we also study the network itself,
+through its degree
+distribution, its clustering measured against random and geometric nulls,
+and the internal structure of its richest groups.
 
-        This template was developed by Guillermo Jimenez, licensed under Creative Commons CC BY 4.0. You are free to adapt, share, and distribute it, provided that proper credit is given to the original author.
+\section{Data}
 
-\section{Document Styling}
+Deriving the linking length solely from network topology works only if the
+sample is unbiased. A distance-dependent selection would cause a bias, changing
+the entire shape of the dataset and the network; therefore the sample is cut to
+be volume-limited. The following changes are applied to correct for the
+observational and cosmological effects.
 
-    \subsection{Document Type}
+\subsection{Source catalogue}
 
-        Before the main title, a brief descriptor indicates the type of document (e.g., Lab Report, Research Article, etc). This is controlled by the \inlinecode{\doctype{}} command. 
-        
-        If no such label is needed, omit the command and the title will automatically reposition itself to maintain proper vertical spacing and visual alignment.
+The galaxy sample is drawn from the catalogue of Tempel et al.\
+\cite{tempel2014}, retrieved through the VizieR service. The catalogue contains
+the spectroscopic galaxies of the Sloan Digital Sky Survey Data Release 10
+(SDSS DR10) Main Galaxy Sample (MGS) \cite{ahn2014}. Spectroscopic redshifts
+are precise and the line-of-sight distortions are due to peculiar-velocity
+stretching, not measurement noise, and that is why using a redshift-space group
+finder is a solid choice. The MGS is magnitude-limited, with an apparent
+$r$-band magnitude limit of $m_{\mathrm{lim}} = 17.77$ \cite{tempel2014}. We store the position,
+redshift, magnitude and the group labels for each galaxy, with the latter serving
+only as the validation ground truth.
 
-    \subsection{Abstract and Keywords}
+\subsection{Cosmology}
 
-        The abstract and keywords are declared in the preamble of the document with \inlinecode{\begin{abstract}...\end{abstract}} environment alongside the dedicated \inlinecode{\keywords{}} command to allow the class file to automatically handle their formatting and positioning during the title creation process.
+To make the dataset compatible with the source catalogue and build the graph in
+physical space, redshifts are converted to comoving distances under a flat
+$\Lambda$CDM cosmology with $H_0 = 100\,h\,\mathrm{km\,s^{-1}\,Mpc^{-1}}$ and
+$\Omega_m = 0.27$. The comoving distance to redshift $z$ is
+\begin{equation}\label{eq:comoving}
+    d_C(z) = \frac{c}{H_0}\int_0^z
+    \frac{\mathrm{d}z'}{\sqrt{\Omega_m(1+z')^3 + \Omega_\Lambda}},
+\end{equation}
+with $\Omega_\Lambda = 1 - \Omega_m$. Setting $H_0 = 100\,h$ puts every
+distance in units of $h^{-1}$ Mpc, which absorbs the uncertainty in the Hubble
+constant. We use the same parameters as Tempel et al.\ \cite{tempel2014} because
+a different cosmology would change the scale of all physical distances and leave
+the validation comparison meaningless.
 
-    \subsection{Lettrine}
+\subsection{Volume-limited sample}
 
-		The \inlinecode{\rhostart{}} command, provides a personalized lettrine for the beginning of the first paragraph as shown in this example.
+The MGS is flux-limited. As the distance increases, only brighter galaxies stay
+brighter than $m_{\mathrm{lim}}$, so a raw redshift slice would bias the group
+population toward the brighter systems at the distant edge of the slice. We
+restrict to $0.02 \le z \le 0.06$. This redshift range is compact enough to
+ensure that we don't need to take the linking length's dependence on redshift
+into account. The lower bound keeps $z$ above the threshold where peculiar
+velocities dominate the redshift. We then impose the absolute-magnitude limit
+corresponding to $m_{\mathrm{lim}}$ at the far edge,
+\begin{equation}\label{eq:Mlim}
+    M_{\mathrm{lim}} = m_{\mathrm{lim}} - \mu(z_{\max}),
+\end{equation}
+where $\mu(z)$ is the distance modulus, and keep only galaxies with $M \le
+M_{\mathrm{lim}}$. This way, a noticeable number of galaxies are removed from
+the sample but the sample becomes uniformly complete and comparable, which is an
+acceptable tradeoff. No K-correction or extinction correction is applied. Both
+are small at these redshifts ($z \le 0.06$), so we accept the results without
+try to correct them. These cuts reduce the population of the parent catalogue from
+$588{,}193$ to $75{,}042$ galaxies.
 
-	\subsection{Table of Contents}
+\subsection{Coordinate conversion}
 
-        This class includes a customized design for the table of contents, which is disabled by default. To enable it, insert the \inlinecode{\tableofcontents} command before your first section.
+Each galaxy is mapped from its observed spherical coordinates
+$(d_C, \alpha, \delta)$ to Cartesian coordinates,
+\begin{equation}\label{eq:cartesian}
+    X = d_C\cos\delta\cos\alpha, \quad
+    Y = d_C\cos\delta\sin\alpha, \quad
+    Z = d_C\sin\delta,
+\end{equation}
+with the observer at the origin. The Cartesian conversion is needed both for the
+graph construction and for vector decomposition into transverse and line-of-sight
+components.
 
-\section{Cross-Reference Commands*}
+There are two reasons for working with Cartesian positions instead of $(\alpha, \delta, z)$.
+First, The pair separations and the k-d tree range
+search are defined in a metric space, which angular coordinates do not give
+directly. Second, since the line of sight is not a fixed axis and its
+direction changes across the sky, the decomposition showed in \equref{eq:decomp}
+needs the actual 3D vectors of both galaxies to work.
 
-    Rho-class provides shorthand commands for cross-referencing figures, tables, code listings, and equations. To customize the label format, edit the \inlinecode{rhobabel.sty} file. Label translations for Spanish are handled automatically.
+\section{Method}
 
-        \begin{itemize}
-            \item \inlinecode{\figref{}} — Uses the label style defined by \inlinecode{\figlabel}.
-            \item \inlinecode{\figsref{}} — Uses the label style defined by \inlinecode{\figslabel}.
-            \item \inlinecode{\tabref{}} — Uses the label style defined by \inlinecode{\tablabel}.
-            \item \inlinecode{\coderef{}}  — Uses the label style defined by \inlinecode{\captionlabelcode}.
-            \item \inlinecode{\equref{}} — Uses the label style defined by \inlinecode{\eqlabel}.
-        \end{itemize}
-        
-    These commands generate fully hyperlinked references, both the label and the number, ensuring navigation to the referenced element when clicked in the PDF.
+\subsection{Cylindrical linking criterion}
 
-\section{Figures}
-		
-    \figref{fig:figure} shows a 3D surface visualization of a bivariate function.
-    		
-    \begin{figure}[H]
-    	\centering
-    	\includegraphics[width=0.7\columnwidth]{example-image-a}
-    	\caption{3D surface obtained from PGFPlots \cite{PFGPlots}.}
-    	\label{fig:figure}
-    \end{figure}
+The Friends-of-Friends algorithm constructs a graph $G(r_\perp)$ on the set of
+$N$ galaxies where each galaxy is a node, and an edge is drawn between every
+pair if their distance falls inside a sphere with radius equal to the linking
+length. With such criterion no group finding algorithm is needed as the connected
+components of $G$ are identified as galaxy groups. This is the construction of a
+\emph{random geometric graph} (RGG), built on the clustered galaxy distribution
+rather than a uniform set of points. In such a graph, the position of each node
+is described by the comoving Cartesian coordinates of the galaxy, and only the
+proximity in that space determines adjacency. The group memberships assigned by
+this method are derived entirely from the network structure, with no reference to
+any external labelling. In that sense, we can claim that this procedure is
+unsupervised. This must be separated from the corrections or adjustments made to
+account for observational effects or cosmological assumptions dictated by
+redshift-space geometry, which are necessary to ensure that the data represents
+a physically meaningful structure. No group assignments from Tempel or any other
+catalogue are used as input; those catalogues serve only as verification after
+the fact.
 
-\section{Tables}
-	
-        \tabref{tab:table} shows an example table of some astronomical objects. 
+The main challenge imposed by redshift-space geometry is the inappropriate use
+of a spherical linking length. The line-of-sight coordinate is reconstructed
+from the observed redshift, which is affected by both cosmological recession and
+the peculiar velocity of each galaxy. Within a virialised system, peculiar
+velocities of 300--$500\,\mathrm{km\,s^{-1}}$ displace galaxies by several
+$h^{-1}$ Mpc along the line of sight while the actual transverse range for the
+same system is only $\sim 0.5\,h^{-1}$ Mpc. Due to this effect, groups are
+stretched into radial filaments pointing back at the observer \cite{jackson1972},
+what has come to be called the \emph{Fingers-of-God} effect. A spherical
+criterion that is large enough to absorb this stretching would over-link in the
+transverse direction and merge physically distinct systems into groups which they
+don't belong to.
 
-        \begin{table}[H]
-        	\caption{Astronomical Object Data}
-        	\label{tab:table}
-        	\begin{tabular}{
-        		>{\raggedright\arraybackslash}p{0.25\columnwidth}
-        		>{\raggedright\arraybackslash}p{0.29\columnwidth}
-        		>{\raggedright\arraybackslash}p{0.31\columnwidth}
-        	}
-        	\toprule
-        	\textbf{Object} & \textbf{Type} & \textbf{Distance (Light Years)} \\
-        	\midrule
-        	Alpha Centauri & Star system & 4.37 \\
-        	Betelgeuse & Red supergiant star & 642.5 \\
-        	Andromeda & Spiral galaxy & 2.537 million \\
-        	Earth & Planet & 0 \\
-        	Sirius & Binary star system & 8.6 \\
-        	\bottomrule
-        	\end{tabular}
-        	\tabletext{Note: The table contains data of some famous celestial objects.}
-        \end{table}
+To fix this issue, an anisotropic, cylindrical linking volume is used
+\cite{tempel2014}. For a pair $(i,j)$ with comoving positions
+$\vec r_i, \vec r_j$, the separation is decomposed along the line of sight. With
+the observer at the origin, the local line-of-sight direction at the pair
+midpoint is $\hat{\ell}_{ij} = (\vec r_i + \vec r_j)/|\vec r_i + \vec r_j|$,
+and the parallel and perpendicular separations are
+\begin{equation}\label{eq:decomp}
+    d_\parallel = \bigl|(\vec r_i - \vec r_j)\cdot\hat{\ell}_{ij}\bigr|,
+    \qquad
+    d_\perp = \sqrt{\,|\vec r_i - \vec r_j|^2 - d_\parallel^2\,}.
+\end{equation}
+The pair is only linked if it lies inside the cylinder aligned with the line of
+sight,
+\begin{equation}\label{eq:cylinder}
+    d_\perp \le r_\perp
+    \quad\text{and}\quad
+    d_\parallel \le r_\parallel = S\,r_\perp,
+\end{equation}
+where $r_\perp$ is the transverse linking length and $S$ is the dimensionless
+stretch factor. Following Tempel et al.\ \cite{tempel2014} we fix $S = 10$;
+this is a shape parameter set by the typical ratio of radial to transverse
+distortion, and it is the only parameter taken from the literature. Since it
+comes from the same work we later validate against, the shape of our linking
+cylinders is not independent of the reference catalogue, and some part of the
+agreement scores may be inherited from this shared choice. In a strict
+treatment $S$ is not a constant but a function of redshift. as the redshift
+increases the peculiar velocities become larger, so the line-of-sight distortion
+grows and the ratio of radial to transverse stretching also changes with $z$. We
+keep $S$ fixed over the whole sample to keep the analysis simpler. If one
+chooses to treat $S$ as a free parameter, they can perform a 2D scan for both
+$r_\perp$ and $r_\parallel$ to find the optimal values. That would be a more
+general approach, avoided in this work to reduce the computational complexity
+and keep the analysis simpler. This leaves $r_\perp$ the only free parameter
+which is fixed entirely by the topological analysis below. Candidate pairs are
+found with a $k$-d tree: a single range query returns every pair inside the
+bounding sphere of radius $r_{\max} = \sqrt{r_\perp^2 + r_\parallel^2}$ that
+encloses the cylinder, filtered by \equref{eq:cylinder} that selects the true
+links. \figref{fig:cylinder} illustrates the two linking volumes. Note that
+the figure is drawn with a reduced stretch of $S = 2.5$ so the cylinder fits
+the frame; the analysis itself always uses $S = 10$.
 
-        The \inlinecode{\tabletext{}} command is used to add notes to tables easily. 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.78\columnwidth]{figures/imp.pdf}
+    \caption{Cylindrical FoF linking criterion, normalized to $r_\perp = 1$. The
+    blue circle is the isotropic FoF boundary; the dashed rectangle in green is
+    the cylindrical boundary stretched by factor $S = 2.5$ (used for legibility)
+    along the line of sight. In the analysis $r_{\mathrm{groups}} =
+    0.54\,h^{-1}$ Mpc and $S = 10$.}
+    \label{fig:cylinder}
+\end{figure}
 
-\section{Document Data}
+\subsection{Percolation scan}
 
-    \subsection{Front-Matter Footer Block*}
+With the transverse linking length being the single free parameter of the
+construction, the structure of the graph changes qualitatively as it is varied.
+We scan $r_\perp$ over $[0.1, 2.5)\,h^{-1}$ Mpc in steps of
+$0.02\,h^{-1}$ Mpc. The lower bound sits just above the radius of a cD galaxy,
+the largest galaxies known, whose extended stellar envelopes reach
+${\sim}100\,\mathrm{kpc}$; below this the linking length would be smaller than a
+single galaxy and no physically meaningful pair can be linked. It is also well
+below the expected group scale (${\sim}0.5\,h^{-1}$ Mpc). The upper bound on
+the other hand was found by trial and error, it sits above
+$r_{\mathrm{critical}}$, far enough to confirm that the GCC is fully
+established (by the end of the scan the GCC already holds about 99\% of all
+galaxies and its growth curve is flat), as any value above that will just add
+unnecessary computation workload with no benefit. The step size of $0.02\,h^{-1}$ Mpc gives a
+resolution precise enough to locate both peaks but also maintains a reasonable
+computational time. This step is also the resolution of the result itself, so
+every scale read off the scan carries a formal uncertainty of at least
+$\pm 0.02\,h^{-1}$ Mpc. The graph $G(r_\perp)$ is rebuilt and its connected
+components are extracted at each step so we can monitor two observables that
+describe the percolation of the network:
 
-        A new block called \inlinecode{\docinfo{}}, has been added to the bottom right of the first page, acting as a floating element which stays fixed in place. This replaces the corresponding author block previously located above the abstract in earlier versions.
+The first observable is the \emph{susceptibility},
+\begin{equation}\label{eq:chi}
+    \chi(r_\perp) = \frac{1}{N}\sum_{s\,\neq\,\mathrm{GCC}} s^2\, n_s,
+\end{equation}
+where $n_s$ is the number of components containing $s$ galaxies. The sum runs
+over every component except the giant connected component (GCC). For an infinite
+system, this quantity goes to infinity at the percolation threshold, but since
+our network is finite, it reaches a maximum and we take the location of that
+peak as an estimate of the percolation threshold, denoted as
+$r_{\mathrm{critical}}$. It is the scale at which a single component first
+spans the sampling volume. Above this scale, the analysis recovers galaxy
+clusters, filaments and superclusters rather than groups that we are interested
+in.
 
-        The \inlinecode{\docinfo{}} block was created to give you greater control over supplementary document data, such as publication dates, licensing information, extended author details, and other front-matter notes. You can fully customize its content to suit your needs.
+The second observable is the \emph{fragmentation count},
+\begin{equation}\label{eq:nfrag}
+    N_{\mathrm{groups}}(r_\perp)
+    = \bigl|\{\,c : 2 \le |c| < |\mathrm{GCC}|\,\}\bigr|,
+\end{equation}
 
-        Additionally, the new \inlinecode{\corres{}} command serves as a flexible alternative to \inlinecode{\thanks{}}. Since modifying the standard \inlinecode{\thanks{}} command can be complex and its positioning is often rigid, \inlinecode{\corres{}} was introduced to offer a more adaptable solution without sacrificing functionality. 
-        
-        \begin{note}
-            You can use \verb|\corres{}| as many times as needed since it automatically ensures that each entry remains correctly associated. For best results, I recommend using text symbols rather than mathematical ones (e.g., \verb|\textasteriskcentered|, \verb|\textdagger|, etc.). 
-        \end{note}
+This counts every component that is neither a single galaxy nor the GCC. Galaxy
+groups sit below the percolation threshold. Being the smallest structures formed
+by the galaxies, they are invisible to the susceptibility peak, yet physically
+real. A linking length that is too short leaves them as isolated singletons and
+one that is too long over-links them into the percolating component. At an
+intermediate scale, the network fragments into the largest number of distinct
+systems, and that maximum is the criterion used to select $r_{\mathrm{groups}}$,
+without relying on any external catalogue. Tempel's catalogue enters only
+afterwards, as a check on whether this maximum fragmentation was able to
+identify groups that correspond to physically recognised structures.
 
-        If \inlinecode{\corres{}} is not used, \inlinecode{\docinfo{}} will automatically adjust its position. The implementation was designed to handle any combination of front-matter elements you might need when starting your document. In this example template, you’ll find a minimal demonstration that combines both to illustrate their interaction.
+\subsection{GCC analysis}
 
-    \subsection{Headers and Footers*}
+A common approach to find the linking length is to analyse the giant connected
+component (GCC) directly, for example by taking the maximum gradient of its
+size with respect to $r_\perp$. This locates the percolation threshold, but
+this is not the scale we need. \figref{fig:gcc} shows both scales in the same
+frame. The upper panel tracks the size of the GCC, i.e.\ the fraction of
+galaxies it contains, as $r_\perp$ increases; the lower panel shows its
+derivative with respect to $r_\perp$. Three independent indicators of the
+transition are marked in the plot. The susceptibility peak locates
+$r_{\mathrm{critical}} = 1.34\,h^{-1}$ Mpc. The maximum-gradient point gives
+$1.36\,h^{-1}$ Mpc, in close agreement. Here the main challenge appears. The
+susceptibility peak and the maximum-gradient point both sit near
+$1.35\,h^{-1}$ Mpc which is already a cluster-scale separation, much larger
+than the size of a galaxy group. For this reason a second observable, the
+fragmentation count, becomes important. Its maximum sits at a much smaller
+scale, $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc. This maximum is wide. The
+fragmentation count is still within 1\% of its peak across $0.42$--$0.58\,h^{-1}$
+Mpc, so $r_{\mathrm{groups}} = 0.54$ marks the centre of a range, not one
+sharply pinned point. $r_{\mathrm{critical}}$ is never used to pick the
+groups; we compute it just to show how far above the $r_{\mathrm{groups}}$ it
+sits. it is also a threshold that helps us make sure we are still in the
+sub-critical regime.
 
-        \subsubsection{Headers}
+\begin{figure}[H]
+    \centering
+    \placefig{figures/GCC_Diagnostic_Cylindrical_r_perp_Scan.pdf}
+    \caption{Giant connected component (GCC) diagnostic for the cylindrical
+    scan. Top: fraction of galaxies in the GCC as a function of the transverse
+    linking length $r_\perp$. Bottom: its derivative
+    $\mathrm{d}\,\mathrm{GCC}/\mathrm{d}r_\perp$. The susceptibility peak
+    ($r_{\mathrm{critical}} = 1.34\,h^{-1}$ Mpc) and the maximum-gradient point
+    ($1.36\,h^{-1}$ Mpc) locate the percolation threshold, while the
+    fragmentation maximum ($r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc) marks the
+    group-finding scale we adopt.}
+    \label{fig:gcc}
+\end{figure}
 
-            On all pages except the first, the document title and journal appear in the header. Since twoside layout is enabled, its position alternates depending on whether the page is odd or even.
+\subsection{Linking parameter}
 
-        \subsubsection{Footers}
+To connect the linking length derived from the network to the conventional FoF
+literature, we express it as the dimensionless linking parameter
+\begin{equation}\label{eq:b}
+    b \equiv \frac{r_{\mathrm{groups}}}{\bar d},
+    \qquad \bar d = n^{-1/3},
+    \qquad n = \frac{N}{V},
+\end{equation}
+where $\bar d$ is the mean inter-galaxy separation and $n$ is the number density
+of the sample. The volume-limited slice is a spherical shell between the comoving
+distances at $z_{\min}$ and $z_{\max}$, restricted to the survey footprint,
+\begin{equation}\label{eq:vol}
+    V = \frac{4\pi}{3}\bigl(d_{\max}^3 - d_{\min}^3\bigr)\,f_{\mathrm{sky}},
+    \qquad
+    f_{\mathrm{sky}} = \frac{7221\,\mathrm{deg}^2}{41253\,\mathrm{deg}^2},
+\end{equation}
+the SDSS Main Galaxy Sample covers approximately $7221\,\mathrm{deg}^2$. This
+approximates the survey volume as a uniform spherical shell. This gives
+$b = 0.144$, below the classical value $b = 0.2$ used for group-finding since
+Davis et al.\ \cite{davis1985, berlind2002}, and slightly above the
+redshift-dependent Tempel et al.\ value ($b \approx 0.113$--0.115 over the
+same redshift interval), which means Tempel et al.\ groups are bound tighter.
+These comparisons inherit the uncertainty of $r_{\mathrm{groups}}$. The grid
+step alone translates into about $\pm 0.005$ in $b$, and if the full width of
+the fragmentation plateau ($0.42$--$0.58\,h^{-1}$ Mpc) is taken as the
+uncertainty instead, $b$ spans roughly 0.11--0.15. The gap to the Tempel value
+is then within the uncertainty of our scale, while the classical $b = 0.2$
+stays outside it.
 
-            In the first page, six elements display supplementary information for your document:
+\subsection{Final network}
 
-            \begin{itemize}
-                \item \inlinecode{\journalname{}} — Displays the journal name, university, institute, company, or any institutional affiliation.
-                \item \inlinecode{\theday{}} — Displays the current date.
-                \item \inlinecode{\vol{}} — Specifies the volume number of the publication.
-                \item \inlinecode{\no{}} — Specifies the issue number within the volume.
-                \item \inlinecode{\journal{}} — Defines the full journal title.
-                \item \inlinecode{\thepage} — Shows the current page number and the total count.
-            \end{itemize}
+With $r_{\mathrm{groups}}$ fixed, the group catalogue is produced by building
+the graph once at linking length $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc. The
+resulting network consists of $N = 75{,}042$ nodes and $95{,}310$ edges. Its
+connected components are extracted and each galaxy is assigned a group label.
+The output is the most basic way to construct a network, two galaxies are members
+of the same group if they are connected by a chain of edges. This method has no
+resolution limit (even the smallest groups are detected), but the price is paid
+with sensitivity to bridging, where a single close pair can merge two separate
+systems. Both we will discuss later in Discussion.
 
-             In all cases, you can freely rearrange or customize the order of these elements by modifying the class file to suit your needs. If any of them are not required, simply omit the corresponding command — the remaining elements will automatically adjust their spacing to remain evenly distributed.
+\section{Results}
 
-\section{Rho Custom Packages}
+\subsection{The percolation transition}
 
-    \subsection{Rhobabel.sty}
-		
-		This package have all the commands that automatically translate from English to Spanish when this custom package is defined. 
-		
-		By default, this document has its content in English. However, at the beginning of the document you will find a recommendation when writing in Spanish. 
-		
-		You may modify this package if you want to use other language than English or Spanish. This will make easier to translate your document without having to modify the class document.
+\figref{fig:phase} shows both observables across the full scan. The
+susceptibility peak at $r_{\mathrm{critical}} = 1.34\,h^{-1}$ Mpc and the
+fragmentation maximum at $r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc are both
+consistent with the two scales located in \figref{fig:gcc}.
 
-    \subsection{Rhoenvs.sty}
+This transition is the spatial graph analogue of the giant component transition
+in random graph theory. In the case of an Erd\H{o}s-R\'enyi graph, the giant
+component appears when the mean degree $\langle k\rangle = 1$. This corresponds
+to an edge probability $p_c = 1/N$.
 
-        This package provides custom environments designed to enhance the visual presentation and structure of your document. Key examples include rhoenv, info, and note.
-        
-		Their style is defined by \inlinecode{rhoenvstyle} — allowing you to customize their appearance according to your document’s requirements.
+In a random geometric graph, the giant component appears at a constant critical
+mean degree, which is known as continuum percolation. This threshold does not
+depend on $N$. In our case, the mean degree is $\langle k\rangle = 2.54$. This
+value is much higher than the threshold where a giant component would form in a
+random graph. However, in the FoF network, we do not observe a similar giant
+component. Instead, groups form locally before global percolation takes place.
+The mean-field estimate below gives a quantitative comparison for this
+difference.
 
-		An example using the \inlinecode{rhoenv} environment is shown below.
-		
-		\begin{rhoenv}[frametitle=Custom Title]
-			This is an example of the custom title environment. To add a title type this command \verb|[frametitle=Custom Title]| next to the beginning of this environment (as shown in this example).
-		\end{rhoenv}
+The sharpness of the peak is a finite-size effect. A true divergence occurs only
+in the thermodynamic limit. For a finite graph, the transition is a smooth
+crossover whose width narrows as $N$ grows. The volume-limited sample has
+$\sim 7.5\times10^4$ galaxies, drawn from a parent catalogue (MGS) of
+$\sim 6\times10^5$. This is still large enough for the peak to be well
+localised, so $r_{\mathrm{critical}}$ can be found with good precision. The
+close agreement between the susceptibility peak and the maximum-gradient point
+also confirms this.
 
-        The \inlinecode{info} and \inlinecode{note} are environments which have a predefined title and translate their title to Spanish automatically when this language is defined.
+The mean-field theory of percolation offers a method to check these numbers
+using analytical techniques. In an Erd\H{o}s-R\'enyi graph, the probability
+$u$ of a randomly chosen node being outside the giant component is given by the
+self-consistency equation
+\begin{equation}\label{eq:gcc_mf}
+    u = e^{\lambda(u-1)},
+\end{equation}
+where $\lambda = \langle k\rangle$. A nontrivial solution ($u < 1$, giant
+component present) exists only for $\lambda > 1$, which yields the mean-field
+threshold at $\langle k\rangle = 1$. At the operating point of this work,
+$\lambda = 2.54$, the equation gives $u \approx 0.10$. A random graph with the
+same edge density would place 90\% of its nodes in a single giant component,
+more than a hundred times bigger than the 0.8\% observed in our FoF network.
+The way galaxies are arranged in the cosmic web prevents the global percolation
+that mean-field theory predicts at this average degree. This means the galaxy
+distribution is too uneven for a large connected structure to form at the scale
+where groups appear.
 
-\section{Equations}
+\begin{figure}[t]
+    \centering
+    \placefig{figures/Anisotropic_Phase_Transition_Cylindrical_r_perp.pdf}
+    \caption{The anisotropic percolation transition. The susceptibility
+    $\chi(r_\perp)$ (left axis) and the number of finite groups
+    $N_{\mathrm{groups}}(r_\perp)$ (right axis) are shown against the transverse
+    linking length. $\chi$ peaks at the percolation threshold
+    $r_{\mathrm{critical}} = 1.34\,h^{-1}$ Mpc (dashed), while the fragmentation
+    count peaks at the sub-critical group scale $r_{\mathrm{groups}} =
+    0.54\,h^{-1}$ Mpc (dotted), the operating point of the group finder.}
+    \label{fig:phase}
+\end{figure}
 
-	\equref{eq:equation} shows the Schrödinger equation as an example. 
+\subsection{Group catalogue: sky projection}
 
-    \begin{equation}\label{eq:equation}
-        i\hbar \frac{\partial }{\partial t}\Psi(\mathbf{r},t) = \left[\frac{-\hbar^2}{2m}\nabla^2 + V(\mathbf{r},t) \right]\Psi(\mathbf{r},t)
-    \end{equation}
-	
-	The \inlinecode{amssymb} and \inlinecode{amsmath} packages were not required, as \href{https://ctan.org/pkg/stix2-otf/}{STIX2} font incorporates mathematical symbols for writing quality equations.
-	
-	\begin{note}
-		If you would like to change the values that adjust the spacing above and below the equations, change the \verb|\eqskip| value until the preferred spacing is set. The default value is set to 9pt.
-	\end{note}
+\looseness=-1
+Before performing any quantitative validation, we can check the group catalogue
+qualitatively. \figref{fig:radec} projects the Tempel et al.\ catalogue (left
+column) and the detected catalogue (right column) onto the plane of the sky in
+four redshift bins of width $\Delta z = 0.01$ (rows). Grouped galaxies are
+coloured by their group label and sized by richness. Field galaxies appear in
+faint grey. Even though this projection is qualitative and collapses the line
+of sight, the two catalogues look similar. Both dense patches and empty voids of
+the sky show up similarly in both columns.
 
-\section{Codes}
+\looseness=-1
+Collapsing the line of sight is costly. The projection cannot tell whether two
+galaxies that look close on the sky really belong to the same group in three
+dimensions. That test is left to the quantitative metrics in
+Validation \& Assessment.
 
-	\subsection{Coding with Minted*}
-	
-		The \inlinecode{minted} package offers customized features for adding codes. In addition, the template is designed to work seamlessly with Fira Code, a monospaced font specially crafted for programming environments.
+\looseness=-1
+The panel by panel agreement also gives us a free check on the coordinate
+transformation. To draw the map, each galaxy must be moved from spherical survey
+coordinates to a 3D position. A mistake in the coordinate transformation would
+place our groups at slightly wrong positions. The groups line up between the two
+columns, so the coordinate code is working.
 
-        If your are using a desktop app as \href{https://www.texstudio.org/}{TeXstudio}, try these steps to make this package work on Windows:
-		
-		\begin{enumerate}
-			\item Install Python — A stable version (e.g., v.3.11)
-			\item Open the terminal and type \inlinecode{pip install Pygments}.
-			\item Update if a newer version is available.
-			\item Go to TeXStudio settings and change the default compiler to \inlinecode{pdflatex --shell-escape -interaction=nonstopmode \%.tex}.
-			\item Compile and wait for the result.
-		\end{enumerate}
-        
-		\vspace*{-9pt}
-        
-		\begin{rhoenv}[frametitle=Caution]
-			Ensure that \textbf{pygments} is properly installed and added to your system’s PATH. Otherwise, you may encounter compilation errors. Additionally, enable shell escape when compiling, as it is required for minted to process and highlight code.
-		\end{rhoenv}
-		
-		In \href{https://es.overleaf.com/}{Overleaf}, this package is easier to use since it does not require any additional installations or modifications — just add the code as shown in the example. \coderef{lst:example} shows a Python example.
-		
-		\begin{code}
-			\inputminted{python}{example.py}
-            \caption{Python code example with minted.}
-			\label{lst:example}
-		\end{code}
-		
-		You can customize its design changing \inlinecode{\usemintedstyle} command. The different styles offered by the \href{https://ctan.org/pkg/minted}{minted package} can be preview through this link — \url{https://pygments.org/styles/}.
+\looseness=-1
+A second thing to check is what happens at the bin edges. Large structures are
+bigger than one redshift slice, so the same structure can appear in two stacked
+rows. A naive finder might cut such a structure in half at the boundary. This
+does not happen here. In both catalogues these extended overdensities stay whole
+and are assigned to the same structures, so the cylindrical FoF follows them
+across adjacent bins instead of breaking them at the panel edges.
 
-    \subsection{Coding with Listings}
-	
-		Since \inlinecode{minted} requires additional installations and can be complex in some desktop \TeX\ editors, you can use the \inlinecode{listings} package instead, which provides a simpler way to include code.
-		
-		\begin{code}
-			\lstinputlisting[language=python]{example.py}
-			\label{lst:example2}
-            \caption{Python code example with listings.}
-		\end{code}
-		
-		While \inlinecode{listings} is a simpler and widely supported package for code formatting, \inlinecode{minted} offers a more modern and powerful approach. It leverages the Pygments syntax highlighter to deliver superior coloring, language support, and styling options. One of its key advantages is the ability to easily switch between built-in color styles.
-		
-		In contrast, \inlinecode{listings} requires manual setup for colors, fonts, and formatting rules.
-		For users who prefer fine-tuned customization, the styling options for \inlinecode{listings} are organized in \inlinecode{rho.cls} file and can be modified at any time to suit individual preferences.
+However, having a closer look at the panels, one might notice that the detected
+groups are slightly more extended than the Tempel groups. This is a sign of
+over-merging, whose causes we discuss quantitatively later in
+Discussion.
 
-	\subsection{Inline Code*}
-	
-		As shown in this template, inline code has a custom style for improved visual appeal. To use it, simply add \inlinecode{\inlinecode{}} command and place your code inside the braces.
+\begin{figure*}[p]
+    \centering
+    \placefig[width=\textwidth]{figures/Galaxy_distribution_and_groups_in_RA_Dec_detected_vs_Tempel_2014_per_redshift_bin.pdf}
+    \caption{Sky projection (RA--Dec) of the Tempel et al.\ catalogue (left
+    column) and the detected groups (right column), in four redshift bins of
+    width $\Delta z = 0.01$ (rows). Grouped galaxies are coloured by group
+    membership and sized by richness; field galaxies are grey.}
+    \label{fig:radec}
+\end{figure*}
 
-\section*{Numberless section}
-\addcontentsline{toc}{section}{Numberless section}
+% Flush the pending Fig. 4 float page first, then start 4.3 fresh on the
+% next page instead of splitting it across the float page.
+\clearpage
 
-    Declaring a numberless section automatically inserts a square symbol before the title. This unique feature is specific to first-level sections within this class.
-    
-    As this symbol also affects the table of contents and references titles, users who prefer to disable it may edit the section styling parameters in \inlinecode{rho.cls}.
+\subsection{Group richness distribution}
 
-\section{Bibliography}
-		
-	Bibliography management is handled by \inlinecode{biblatex}, with the default citation and reference style set to IEEE. The \inlinecode{citestyle=numeric-comp} option is enabled, allowing multiple citations to be grouped within a single bracket (e.g., \cite{davis2023signalflow,bell2022codefont}). The citation format can be customized directly in \inlinecode{rho.cls} to suit any preferred style.
+If the linking length is to be appropriate, the two catalogues should also agree
+in their group-size statistics. \figref{fig:richness} compares the richness
+distributions (the number of members per group) of the detected and Tempel
+catalogues, with groups of at least two members. The two distributions share the
+same steep shape. They do not match exactly, though: the detected catalogue lies
+slightly above Tempel across the whole range, and the excess grows at high
+richness, where it also reaches a marginally heavier tail. This small excess at
+high $N$ is the histogram-level trace of the over-merging measured later in
+Validation \& Assessment, not a shift toward lower richness.
 
-\section*{FAQ}
-\addcontentsline{toc}{section}{FAQ}
+\begin{figure}[t]
+    \centering
+    \placefig{figures/Group_Richness_Distribution.pdf}
+    \caption{Group richness distribution (members per group, $N \ge 2$) for the
+    detected catalogue (filled) and the Tempel et al.\ catalogue (step). The two
+    share the same steep shape, but the detected catalogue lies slightly above
+    Tempel and carries a marginally heavier high-$N$ tail, which points to mild
+    over-merging (an excess at low $N$ would mean fragmentation instead).}
+    \label{fig:richness}
+\end{figure}
 
-    \subsection*{How do I manage my references?}
-    \addcontentsline{toc}{subsection}{How do I manage my references?}
-        
-        To manage your references, I recommend using the tool \href{https://www.scribbr.es/citar/generador/folders/73QOXYsCwMRu4ifQaN65mx/lists/msTfx7GJjIAOUkufbISnA/}{scribbr}. You can simply enter the URL or create your own citation, and then export it to \LaTeX{} using the options in the three-dot menu.
-            
-        The generated citation can be copied and pasted into \inlinecode{rho.bib}, the file designated for bibliography management. You may rename this file, but if you do, remember to update the \inlinecode{\addbibresource} command in \inlinecode{rho.cls} under the biblatex section.
-    
-        \begin{note}
-            Some platforms, such as Google Scholar or scientific journals, provide citations directly in BibTeX format. Therefore, check if there is a ``how to cite this document'' section to streamline the citation process even further.
-        \end{note}
+\section{Validation \& Assessment}\label{sec:validation}
 
-        If you have any further questions, you can refer to the following page — \href{https://es.overleaf.com/learn/latex/Bibliography_management_with_biblatex}{Bibliography management with biblatex}.
-        
-    \subsection*{What should I do with the example files?}
-    \addcontentsline{toc}{subsection}{What should I do with the example files?}
+Validating the detected groups catalogue against Tempel et al.\ is a partition 
+comparison task; both catalogues partition the same set of galaxies into gravitationally bound groups, and
+so the question will be how closely these two partitions agree. We answer this question at three
+levels: 1) individual matched groups (by richness and by redshift), 2) the global
+partition, and the 3) network topology (clustering and degree distribution).
 
-        The template includes sample content — such as an example figure, bibliography entries, and the \inlinecode{example.py} script — to demonstrate how the layout and features work. Once you start customizing the document for your own use, feel free to delete all example files and entries you don’t need.
+\subsection{Completeness and purity by richness}
+For each Tempel group $T$ (with at least two members) we
+identify the detected group $D$ which shares the most galaxies with $T$ and
+compute
+\begin{equation}\label{eq:cp}
+    \mathrm{Completeness} = \frac{|T \cap D|}{|T|}, \qquad
+    \mathrm{Purity} = \frac{|T \cap D|}{|D|}.
+\end{equation}
+Completeness is the fraction of a reference group ($T$) that is
+recovered by a group $D$ from the detected catalogue, while purity is the
+fraction of the matched detected group that is genuine.
+In other words, completeness measures how many of the actual members of a Tempel group
+are recovered, while purity measures how many of
+the recovered members are actually true members of that Tempel group. A group
+with high completeness but low purity contains all the
+true members but also a large number of alien members. A group with high purity
+but low completeness contains only true members, but misses many of them.
 
-    \subsection*{How do I place equations easily?}
-    \addcontentsline{toc}{subsection}{How do I place equations easily?}
+Binned by richness (\tabref{tab:richness}), completeness is uniformly high
+($\gtrsim 0.97$) and shows no trend meaning that essentially every member of a Tempel group
+is recovered. Completeness is exactly 1 for 97.5\% of matched groups; the
+small fragmenting tail (2.5\%, completeness as low as 0.5) is what pulls
+the bin averages below unity. Purity, on the other hand, declines with richness through most of
+the distribution, from 0.82 for pairs down to a low of 0.74 in the 51--100 bin, before recovering
+to 0.81 and 0.88 in the two richest bins. That recovery is not a reversal of the trend, it is a
+small-number effect: the 101--300 and 301+ bins hold only five and one Tempel group respectively,
+so their averages are single-group values rather than statistics. The detected groups thus contain almost all the true
+members, but in the richest systems a considerable number of additional galaxies are also
+swept inside. Taking the total number of these extra galaxies across all detected groups, only about 12\%
+of them are galaxies that are ungrouped in the Tempel catalogue (field galaxies); the remaining 88\% belong to
+another Tempel group entirely, and this other-group share itself rises with richness (\tabref{tab:richness}),
+levelling off around three-quarters in the three richest bins. Over-merging is therefore mostly whole neighbouring groups being
+bridged into one detected structure, not scattered field galaxies leaking in.
+Rich groups sit in the densest environments, where it is easier for a single fixed linking length to
+bridge to neighbouring galaxies and structures. This decrease in purity reflects
+the bridging effect at higher densities and is not related to internal velocity dispersion of the groups as it would
+also affect the completeness.
 
-        For equations, we have two options: inline or on its own line. For inline equations, simply place a dollar sign (\$) at the beginning and end of the equation. However, if you want the equation to be displayed on its own line, you need to use the equation environment.
-        
-        If you find it challenging to write formulas directly in \LaTeX, you can use text editors like Word. In the equations menu, you can select \LaTeX\ in the conversion section and copy and paste the equation you wrote into one of these two environments.
+\begin{table}[H]
+    \caption{Completeness and purity of matched groups, binned by Tempel
+    group richness $N_T$.}
+    \label{tab:richness}
+    \centering
+    \begin{tabular}{lcccc}
+        \toprule
+        Richness $N_T$ & Groups & Completeness & Purity & Other-group share \\
+        \midrule
+        2          & 6223 & 0.995 & 0.824 & 0.556 \\
+        3--5     & 3404 & 0.992 & 0.805 & 0.554 \\
+        6--10    & 844  & 0.984 & 0.778 & 0.595 \\
+        11--50   & 410  & 0.984 & 0.757 & 0.609 \\
+        51--100  & 20   & 0.992 & 0.738 & 0.734 \\
+        101--300 & 5    & 0.974 & 0.811 & 0.772 \\
+        301+     & 1    & 0.996 & 0.879 & 0.732 \\
+        \bottomrule
+    \end{tabular}
+    \tabletext{Each row averages over the Tempel groups in that richness bin
+    (the count is in the Groups column). The last bin has just one group,
+    T548 (516 members); the two richest bins have only five and one group,
+    so those two rows are really single outcomes, not averages. Other-group
+    share is how much of a group's contamination comes from another Tempel
+    group rather than from field galaxies.}
+\end{table}
 
-    \subsection*{How do I change the paper size?}
-    \addcontentsline{toc}{subsection}{How do I change the paper size?}
+\subsection{Completeness and purity by redshift}
 
-        By default, this class was adapted for a4paper and test it with letterpaper. The following paper sizes are available in \LaTeX:
+\figref{fig:cpz} repeats the analysis for matched groups binned by mean group
+redshift. Completeness remains nearly constant at unity across the whole range (consistent
+with the global value of 0.98 in \tabref{tab:metrics}) and purity stays close to
+its mean of $\approx 0.79$ but moves slightly upward with redshift, from
+$\approx 0.78$ in the lower redshift bins to $\approx 0.85$ in the highest. This can be traced back to the
+bridging effect discussed above. Purity is related to local galaxy density, not richness, as
+richness itself shows no trend with redshift. The denser a region of the space is, the more likely it is
+that bridges form that connect two distinct groups. Within the volume-limited sample, the galaxy number density is
+highest near $z_{\min}$ and drops by roughly 40\% toward $z_{\max}$. This is
+most likely due to real large scale structures rather than a selection effect, since
+$M_{\mathrm{lim}}$ already removes the redshift dependence of the flux limit.
+Completeness and purity are sensitive to different failure modes.
+Completeness falls when true members of $T$ end up outside $D$, as a result of
+under-linking. Adding non-member galaxies to an already complete
+group still leaves completeness at 1, so over-linking affects purity but
+cannot lower completeness. In the connected-components clustering method, having more edges
+results only in merging components together, never splitting them, so this asymmetry is
+structural, not incidental. A constant, near-unity completeness across
+redshift therefore shows only that under-linking is not the issue here.
+The fixed comoving $r_\perp$ gathers essentially all true members
+inside the volume-limited range, consistent with the sky
+projection of \figref{fig:radec}.
 
-        \begin{itemize}
-            \item letterpaper (11 $\times$ 8.5 in)
-            \item legalpaper (14 $\times$ 8.5 in)
-            \item executivepaper (10.5 $\times$ 7.25 in)
-            \item a4paper (21 $\times$ 29.7 cm)
-            \item a5paper (21 $\times$ 14.8 cm)
-            \item b5paper (25 $\times$ 17.6 cm)
-       \end{itemize}
+\begin{figure}[t]
+    \centering
+    \placefig{figures/Completeness_and_Purity_by_Redshift_Bin.pdf}
+    \caption{Mean completeness and purity of matched groups as a function of
+    mean group redshift. Completeness is flat near unity and purity stays around
+    its mean with a mild rise toward higher redshift, so the fixed transverse
+    linking length works well enough across the whole depth of the sample.}
+    \label{fig:cpz}
+\end{figure}
 
-\section*{Contact me}
-\addcontentsline{toc}{section}{Contact me}
-    
-    Have questions, suggestions, or an idea for a new feature? Found a bug or working on a project you’d like to invite me to?  
-    
-    Feel free to reach out — I’d be happy to help, collaborate, or fix the issue.  Your feedback helps me improve my templates!
+\newpage
 
-    \AtBeginEnvironment{tabular}{\normalsize\sffamily\selectfont}
-    \begin{center}
-        \setlength{\tabcolsep}{3pt}
-        \begin{tabular}{cl}
-            \faEnvelope & \href{mailto:memo.notess1@gmail.com}{memo.notess1@gmail.com} \\
-            \faGlobe{} & \href{https://memonotess1.wixsite.com/memonotess}{memonotess.com} \\
-            \faInstagram{} & \href{https://www.instagram.com/memo.notess/}{@memo.notess}
+\subsection{Global partition metrics}
+The basis for the global partition comparison is the 41,430 galaxies that Tempel places in
+groups of at least 2 members (10,907 Tempel groups). These same galaxies fall into 9,739
+distinct detected groups.
+The remaining (75,042 - 41,430 = 33,612) galaxies are singletons that Tempel classifies
+as field galaxies. This is not a homogeneous set. Some of its galaxies are also left
+isolated by our method (genuine agreement), while others are linked into one of the
+detected groups (a false positive). Restricting the comparison
+to the Tempel-grouped galaxies therefore doesn't affect completeness, since completeness was never
+about field galaxies to begin with, but may slightly overstate
+pair precision, since field galaxies that are linked into a detected group fall outside the
+Tempel-grouped set, so they slip past the metrics unnoticed. Unlike the
+per-group purity discussed above, computed over the full sample, this
+restricted comparison cannot see mistakes involving field galaxies.
+\tabref{tab:metrics} reports two standard partition-comparison
+scores. The Adjusted Rand Index (ARI) measures the fraction of pairs which
+both partitions agree upon, either by placing them in the same group (True positives) or in different
+groups (True negatives). The adjusted part corrects this fraction for chance:
+the agreement expected from a random labelling with the same group sizes is
+subtracted and the result is rescaled, so guessing gains no score.
+Ranging [-1, 1], an ARI of 1 indicates perfect agreement (identical groups), 0
+indicates a totally random grouping and -1 indicates absolute disagreement as
+if they are intentionally set to have no overlapping. The Normalized Mutual
+Information (NMI) measures how much one partition tells about the other. Scaling
+[0, 1], an NMI of 1 means the two partitions are identical, while 0 means they are
+completely independent. The detected partition scores ARI $= 0.82$ and NMI $= 0.98$.
+
+Pair recall and pair precision derived from the pair confusion matrix make the
+asymmetry even more apparent. Pair recall asks: out of all the pairs of galaxies
+that belong in the same group in the Tempel catalogue, what percentage does our
+algorithm successfully find? This is 0.98, which means our catalogue
+is highly complete. Pair precision, on the other hand, asks: of all the galaxy pairs our
+algorithm claims were in the same group, what percentage are actually together in the Tempel
+catalogue. For this work it is 0.71. The other 0.29 are false positives.
+This 0.71 is visibly lower than the per-group purities of \tabref{tab:richness},
+which stay above 0.73 even in the lowest bin, but the two numbers describe the same mistakes with
+different weights. A group of $N$ members contributes $N(N-1)/2$ pairs, so the
+pair count grows quadratically with group size and the few largest, most
+contaminated detected groups dominate the pair precision, while the averages in
+\tabref{tab:richness} count every matched group once no matter its size. The 0.71
+quoted in the abstract is this pair-level number; everywhere else purity refers
+to the per-group value.
+This repeats the richness analysis conclusion stated above: the catalogue is highly
+complete but also over-merged in the richest systems. To distinguish between our results and 
+a random coincidence, we permute the detected labels 1000 times and recompute the ARI. This
+gives a null distribution centred at zero with a standard deviation of $5.7\times10^{-5}$. The
+observed value lies far outside of it ($z \approx 1.4\times10^4$), which confirms the agreement
+is not produced by chance.
+
+\begin{table}[t]
+    \caption{Global partition-comparison metrics between the detected and Tempel
+    catalogues, on the grouped subsample ($41{,}430$ galaxies).}
+    \label{tab:metrics}
+    \centering
+    \begin{tabular}{lc}
+        \toprule
+        Metric & Value \\
+        \midrule
+        Adjusted Rand Index (ARI)          & 0.824 \\
+        Normalized Mutual Information (NMI) & 0.983 \\
+        \midrule
+        Pair precision                     & 0.710 \\
+        Pair recall                        & 0.982 \\
+        \bottomrule
+    \end{tabular}
+    \tabletext{Above the midrule: partition-level scores. Below: pair-level scores.}
+\end{table}
+
+\subsection{Network topology}
+
+The full network constructed with the maximum fragmentation criterion ($r_{\mathrm{groups}}$)
+has 75,042 nodes and 95,310 edges; the network fragments into 37,500 connected components.
+The largest group spans 585 nodes (0.8\% of the total galaxy population), consistent
+with the sub-critical regime set by the susceptibility peak. The
+mean degree is $\langle k\rangle = 2.54$. We consider an Erd\H{o}s-R\'enyi null,
+a random graph with the same number of nodes and edges, with the edge probability of
+$p_{\mathrm{ER}} = 2E/[N(N-1)] = 3.4\times10^{-5}$. Its expected clustering
+coefficient is $p_{\mathrm{ER}}$. The measured transitivity, 0.646
+(\tabref{tab:clustering}), exceeds this value by four orders of magnitude. While that
+gap is real, it is weak on its own. Any graph built on spatial proximity
+is locally clustered, so even if no cosmology is involved, it will beat any structureless
+null in this regard.
+
+A sharper test is a geometric null. We build a fake catalogue with the same 75,042 points,
+scattered randomly. Their positions on the sky match the real footprint of the survey,
+not the full sky, and their comoving distances are drawn so the number density stays constant
+with depth.
+These points are linked by the same cylindrical criterion we introduced before, with the
+linking length selected using bisection methods to match the actual mean degree
+$\langle k\rangle = 2.54$. The process is repeated 9 more times (10 in total) to avoid
+random fluctuations. Averaging over these 10 iterations, this null has transitivity $0.45 \pm 0.002$
+and mean local clustering $0.32 \pm 0.002$ (\tabref{tab:clustering}). The actual galaxy network matches
+the null in mean local clustering (0.32) but exceeds it in transitivity (0.646 against
+0.45, by a factor of 1.4, far outside the $\pm 0.002$ error limit).
+This excess is confined to the high-degree, dense environments that dominate
+transitivity, namely the richest groups and cluster cores.
+Gravitational clustering gathers galaxies into extra closed triangles that cannot
+be produced by a uniform null. The same clustering is observed in the linking lengths. The
+real network reaches $\langle k\rangle = 2.54$ at $0.54\,h^{-1}$ Mpc, which is less
+than half the $\approx 1.3\,h^{-1}$ Mpc required by the uniform null to reach the same
+mean degree.
+
+\begin{table}[H]
+    \caption{Clustering of the FoF network against an Erd\H{o}s-R\'enyi null
+    and a matched-density geometric null.}
+    \label{tab:clustering}
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        Quantity & FoF network & ER null & Geometric null \\
+        \midrule
+        Transitivity          & 0.646 & $3.4\times10^{-5}$ & 0.45 \\
+        Mean local clustering & 0.322 & $3.4\times10^{-5}$ & 0.32 \\
+        \bottomrule
+    \end{tabular}
+    \tabletext{The geometric null places $75{,}042$ points uniformly within the
+    survey footprint and volume, linked at matched mean degree $\langle k\rangle
+    = 2.54$; values are means over ten independent realisations, with a
+    scatter of $\pm 0.002$ on both the transitivity and the mean local
+    clustering.}
+\end{table}
+
+\newpage
+
+\subsection{Degree distribution}
+
+\figref{fig:degree} shows the degree distribution $P(k)$ of the same network on
+semi-logarithmic and double-logarithmic axes, and also plots the Poisson curve
+expected from an Erd\H{o}s-R\'enyi graph of the same mean degree.
+
+On the semi-logarithmic
+plot (left), the distribution deviates from the null at both ends. Field nodes of degree zero
+make up 34.9\% of galaxies, $4.4\times$ larger than a Poisson expectation of 7.9\%.
+At the other end, its heavy tail reaches $k_{\max} = 43$, which is populated by the hub galaxies:
+central, massive ones sitting at the core of a cluster. As the dashed curve crashing to
+$10^{-34}$ by $k=40$ demonstrates, a Poisson graph with $\langle k\rangle
+= 2.54$ is highly unlikely to produce a node with 43 links by chance.
+At high $k$, the null graph sits tens of orders
+of magnitude below the data. Because probability must sum up to unity, the
+over-population of both ends results in a depletion of the distribution near its mean
+(\tabref{tab:depletion}). Near $\langle k\rangle$ at $k=3$, the probability for the data is only 37\% of the Poisson
+expectation. this is the most depleted point, and the ratio does not return to parity
+until $k=6$. Therefore galaxies with degrees near the $\langle k\rangle$ are quite rare which means
+most of the galaxies are either isolated or placed in a dense group, with only a few placed in between.
+
+The double-logarithmic panel (right) shows that the tail does not follow a pure power law; instead
+it is concave and truncated at $k_{\max}$. The situation arises because the degree is
+bounded by the number of galaxies that can occupy a single linking cylinder. Finite sample
+size and luminosity selection also contribute, but at the linking length used in this work
+($r_{\mathrm{groups}}$), the geometric constraint dominates. The network is heavy-tailed but it is not
+scale-free because it is the linking cylinder's finite volume that sets the maximum degree.
+
+\begin{figure*}[t]
+    \centering
+    \placefig[width=\textwidth]{figures/Degree_Distribution.pdf}
+    \caption{Degree distribution $P(k)$ of the FoF network on semi-logarithmic
+    (left) and double-logarithmic (right) axes. The dashed curve (left panel
+    only) is the Poisson law of an Erd\H{o}s-R\'enyi graph of the same mean degree.
+    The data exceed
+    the null at both ends (a 34.9\% isolated fraction and a heavy tail to
+    $k_{\max} = 43$), and the tail is concave and truncated instead of
+    following a pure power law.}
+    \label{fig:degree}
+\end{figure*}
+
+\begin{table}[H]
+    \caption{Data-to-Poisson ratio of $P(k)$ near $\langle k\rangle = 2.54$.}
+    \label{tab:depletion}
+    \centering
+    {\setlength\tabcolsep{18pt}
+    \begin{tabular}{lccc}
+        \toprule
+        $k$ & Data $P(k)$ & Poisson $P(k)$ & Ratio \\
+        \midrule
+        0 & 0.349 & 0.079 & 4.43 \\
+        1 & 0.213 & 0.200 & 1.06 \\
+        2 & 0.123 & 0.254 & 0.48 \\
+        3 & 0.080 & 0.215 & 0.37 \\
+        4 & 0.056 & 0.137 & 0.41 \\
+        5 & 0.041 & 0.069 & 0.59 \\
+        6 & 0.030 & 0.029 & 1.00 \\
+        \bottomrule
+    \end{tabular}}
+    \tabletext{Ratios below 1 mark depletion; above 1, excess.}
+\end{table}
+
+\subsection{Internal structure of the richest groups}
+
+Three structural metrics are computed for each of the top eight richest detected groups,
+defined as:
+\begin{align}\label{eq:metrics}
+    \text{Edge density} &= \frac{2E}{N(N-1)}, \\
+    \text{Transitivity} &= \frac{3 N_\triangle}{N_\wedge}, \\
+    \text{Diameter} &= \max_{i,j} d(i,j),
+\end{align}
+where $E$ is the number of internal edges, $N$ is the group's richness, $N_\triangle$ is
+the number of triangles, $N_\wedge$ is the number of connected triples, and $d(i,j)$ is the
+shortest path length between nodes $i$ and $j$.
+Edge density measures how tightly a group's members are connected internally relative to a complete
+graph (all nodes connected). Transitivity measures how often two connected neighbours of a node are
+connected themselves, useful for capturing local
+clustering. Diameter is the longest shortest path between any two of its members, measuring how spread
+out that group is in terms of links (not actual physical distance).
+
+\tabref{tab:groups} lists the top eight richest groups individually.
+The eight groups show a consistent noticeable pattern: as the group size decreases,
+the internal edge density rises from 0.02 for the largest group to 0.08 for the
+smallest. The transitivity, though, stays in the range 0.54 -- 0.64
+throughout. Still, even the richest groups are far from compact. Diameter values of 16
+to 36 links for groups with only a few hundred members are the signature of elongated, sparsely
+connected structures. This is the inevitable byproduct of single-linkage clustering and a
+direct consequence of its sensitivity to bridging. Group G133,
+with 585 members and a diameter of 22, is the largest connected component
+in the network, and Group G1017, with a diameter of 36 across 226 members, is the most
+filamentary group. Our richest group (G133) and
+Tempel's richest group in this sample (T548, with 516 members) are compared side by side in
+\figref{fig:richest_comparison}, where both of the graphs are drawn using our network's edges with $r_{\mathrm{groups}}$
+instead of Tempel's redshift-dependent linking length. Neither of the graphs looks like a
+compact, clique-like blob; instead, both of them are made of dense knots joined by thin
+bridges. This is the same bridging sensitivity that drives the over-merging in \tabref{tab:richness}
+and \tabref{tab:metrics}.
+
+Tempel's eight richest groups in this sample are also printed in
+\tabref{tab:tempel_groups}, for further comparison. The rising pattern in edge density
+with decreasing richness behaves differently here, from 0.026 for the richest group
+(516 members) up to a peak of 0.140 for the T619 group with 117 members. The trend here
+is noisier than what we saw in \tabref{tab:groups}. Our detected groups are single
+connected components by construction, and therefore their density decreases with
+richness, but Tempel's groups split into several pieces when built
+using our linking length, so their measured density is affected by edges from one
+large piece with a few small leftover ones rather than the richness alone.
+None of Tempel's groups form a single connected component (a component that holds all the members inside it) when built with our
+linking length, but in every case the largest connected component holds at least 90\% of the
+group's members; for the largest group (T548), 514 of 516 galaxies are recovered in that giant one-piece component.
+
+% Both richest-group tables as one full-width float, side by side, so they
+% sit together at the top of a page instead of competing for column space
+% (which either stacks them in one column or strands the other column's
+% text short). Table numbering and \tabref targets are unaffected: each
+% minipage still issues its own \caption/\label.
+\begin{table*}[t]
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \caption{Internal structure of the eight richest detected groups: number of
+        members $N$, internal edge density, transitivity, and diameter.}
+        \label{tab:groups}
+        \begin{tabular}{rrccc}
+            \toprule
+            Group & $N$ & Density & Transitivity & Diameter \\
+            \midrule
+            G133  & 585 & 0.021 & 0.561 & 22 \\
+            G4    & 302 & 0.038 & 0.542 & 17 \\
+            G0    & 301 & 0.047 & 0.579 & 18 \\
+            G1017 & 226 & 0.040 & 0.615 & 36 \\
+            G242  & 156 & 0.046 & 0.635 & 19 \\
+            G262  & 154 & 0.064 & 0.594 & 17 \\
+            G251  & 142 & 0.070 & 0.612 & 16 \\
+            G10   & 141 & 0.084 & 0.629 & 16 \\
+            \bottomrule
         \end{tabular}
-    \end{center}
-
-\section*{Github Repository}
-\addcontentsline{toc}{section}{Github Repository}
-
-    Visit the repository to access the source code, track ongoing development, report issues, and stay up to date with the latest changes.
-
-    \begin{center}
-        \setlength{\tabcolsep}{3pt}
-        \begin{tabular}{cl}
-             \faGithub &  \url{https://github.com/MemoJimenez/Rho-class}\\
+        \tabletext{Group G133 is the giant connected component.}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \caption{Tempel's eight richest groups in this sample, shown as their
+        induced subgraph under our own cylindrical network rather than Tempel's
+        own linking rule.}
+        \label{tab:tempel_groups}
+        \begin{tabular}{rrccc}
+            \toprule
+            Tempel group & $N$ & Density & Largest piece & Pieces \\
+            \midrule
+            T548  & 516 & 0.026 & 514 & 3 \\
+            T73   & 252 & 0.051 & 250 & 3 \\
+            T52   & 237 & 0.071 & 236 & 2 \\
+            T619  & 117 & 0.140 & 115 & 3 \\
+            T607  & 115 & 0.100 & 113 & 3 \\
+            T696  & 103 & 0.105 & 94  & 2 \\
+            T1649 & 99  & 0.138 & 97  & 2 \\
+            T1701 & 90  & 0.134 & 89  & 2 \\
+            \bottomrule
         \end{tabular}
-    \end{center}
+        \tabletext{``Pieces'' is the number of connected components the group
+        splits into under our network; ``Largest piece'' is the size of the
+        biggest one.}
+    \end{minipage}
+\end{table*}
 
-\section*{Supporting}
-\addcontentsline{toc}{section}{Supporting}
+To track the Group G1017's bridging behavior, we colour its members by
+their original Tempel membership instead of our own detected labels
+(\figref{fig:group1017_composition}). The results highlight a key finding: Its
+226 members are from 16 different Tempel groups, 97 of its members come from a single
+Tempel group (T1649), with more than 100 members from other smaller groups plus 10 field galaxies contributing.
+This is not an occasional 2-3 neighbours merging, but a clear sign of overmerging due to bridging.
 
-    Enjoyed this document class? Check out tau-class, my very first \LaTeX{} template.
+\begin{figure*}[p]
+    \centering
+    \placefig[width=\textwidth]{figures/Richest_Group_Comparison.pdf}
+    \caption{Induced subgraphs of our richest detected group (G133, left; 585
+    members) and Tempel's richest group in this sample (T548, right; 516
+    members), both drawn using our own network's edges. Node positions use a
+    force-directed (Kamada--Kawai) layout, not physical coordinates. Neither
+    is a single compact cluster; both are made of dense knots joined by thin
+    bridges, which is what single-linkage bridging looks like.}
+    \label{fig:richest_comparison}
+    \vspace{1.5em}
+    \centering
+    \placefig[width=\textwidth]{figures/Group_1017_Tempel_Composition.pdf}
+    \caption{Detected group G1017, coloured by each galaxy's original Tempel
+    membership rather than our own detected label. Each colour is one
+    distinct Tempel group; grey marks field galaxies Tempel leaves
+    ungrouped. The 16 separate colour clumps show that this single detected
+    group is really a patchwork of independent structures bridged together.}
+    \label{fig:group1017_composition}
+\end{figure*}
 
-    \begin{center}
-        \setlength{\tabcolsep}{3pt}
-        \begin{tabular}{cl}
-             \faLink &  \href{https://es.overleaf.com/latex/templates/tau-class-lab-report-template/chhshmhxstsq}{https://es.overleaf.com/latex/templates/tau-class}\\
-        \end{tabular}
-    \end{center}
-    
-    \subsection*{Any contributions are welcome!}
-    \addcontentsline{toc}{subsection}{Any contributions are welcome!}
-    
-        Coffee keeps me awake and helps me create better \LaTeX\ templates. If you wish to support my work, you can do so through PayPal: 
+\section{Discussion}\label{sec:discussion}
 
-        \begin{center}
-            \setlength{\tabcolsep}{3pt}
-            \begin{tabular}{cl}
-                 \faPaypal & \textbf{\url{https://www.paypal.me/GuillermoJimeenez}}\\
-            \end{tabular}
-            \vskip9pt
-            Enjoy writing with rho-class!
-        \end{center}
+In this project we have answered three separate
+questions. The first question is whether our network is able to choose a sensible
+linking length on its own, and it is. The fragmentation peaks at
+$r_{\mathrm{groups}} = 0.54\,h^{-1}$ Mpc, way below the percolation
+threshold at $1.34\,h^{-1}$ Mpc. This value was obtained without
+a hint from the reference catalogue, with one caveat: the cylinder
+shape $S = 10$ is taken from Tempel's own construction, so the scale of the
+linking volume is internal to the network but its shape is not.
+When this value is expressed as the dimensionless $b = 0.144$,
+it falls below the classical value $b = 0.2$ that was calibrated
+against $N$-body simulations decades ago \cite{davis1985, berlind2002}, and
+it also sits just above the effective $b \approx 0.113$--0.115 that Tempel et
+al.\ use for the same redshift interval.
+
+The second question is what kind of catalogue this scale actually
+produces. Validation \& Assessment answered this at every level we tested. The catalogue
+is nearly complete, and its one downside, the loss of purity, always goes
+in the same direction.
+Completeness is essentially perfect, being exactly 1 for 97.5\% of the
+matched groups, while purity falls from 0.82 to a low of about 0.74 in the
+well-populated bins, with growing richness.
+Of the contaminating members, 88\% belong to other Tempel groups while the other
+12\% come from the field. Analysis at the group level agrees too.
+Tempel's richest groups survive our network more than 90\% intact
+(\tabref{tab:tempel_groups}), while G1017 collects sixteen of their
+groups into one object (\figref{fig:group1017_composition}). The reason
+behind all of these numbers is our slightly longer linking length that recovers
+true groups whole and most of the time ignores the field galaxies. It fails in crowded
+regions, where it merges neighbours that should have stayed apart. This is a fundamental
+bridging weakness that the single-linkage method has always had, and it explains most of the gap between
+our ARI of 0.82 and a perfect score. Whether the fixed stretch factor makes
+it worse we cannot check without scanning $S$, which we did not do.
+
+The third and last question, independent of any catalogue comparison, is what the
+graph itself says about how galaxies are distributed in space. Against the
+Erd\H{o}s-R\'enyi null, the outcome is one-sided. An Erd\H{o}s-R\'enyi graph with the same mean
+degree puts 90\% of its nodes into one giant component while our network
+puts 0.8\% there, and the real network's clustering beats the random expectation by four
+orders of magnitude. The
+geometric null makes this a fair and meaningful comparison. A large share of this
+clustering, however, is not due to gravity. Random points filling the same volume,
+linked at the same mean degree, already produce a transitivity of 0.45, because 
+neighbours of a point in 3D space are likely to be close to each other as well.
+But our network still
+surpasses this number by a factor of 1.4. It also reaches the same mean
+degree with a linking length less than half as long (0.54 against roughly $1.3\,h^{-1}$ Mpc).
+Neither of these two excesses can come from a set of
+uniform points, which means gravitational clustering is the only explanation.
+The degree distribution also agrees: 34.9\% of galaxies are isolated where a
+Poisson law predicts 7.9\%, the tail goes up to $k_{\max} = 43$ while near
+the mean the distribution is depleted to 37\% of the Poisson value. This means that
+a galaxy is usually either alone in a void or buried in a dense core. The geometry forces
+the tail to stop where the linking cylinder simply has no room for more
+neighbours.
+
+Our method has clear limitations. One unlucky pair is all it takes for
+single linkage to merge two groups and cause a loss in purity. The fixed stretch
+factor is another. Fixed at $S = 10$ throughout the entire redshift range, it
+fails to follow the changes in velocity dispersions from small to large systems.
+The single transverse linking length is only defensible for small redshift values like our 
+$0.02 \le z \le
+0.06$ as the redshift-binned metrics also confirm, but a deeper sample that spans a wider redshift range
+would need a
+redshift-dependent linking length. Groups near the survey boundary also lose some members to
+the footprint; no correction was applied for this. The K-corrections and
+extinction corrections skipped in the sample selection belong to this list
+too. Both stay near the 0.1 mag level at these redshifts, and about 5\% of
+the retained galaxies sit within 0.1 mag of the absolute magnitude cut, so
+the population whose membership in the sample could change is limited to a
+few percent at the faint end.
+
+% Start Conclusion on a fresh page, and flush the pending Fig. 8/9 float
+% page first so it no longer straddles the Discussion/Conclusion boundary.
+\clearpage
+
+\section{Conclusion}
+
+A galaxy group catalogue was built for the SDSS DR10 Main Galaxy Sample in
+which the only free parameter of the FoF method is set by the
+network. Treating the FoF construction as a random geometric graph, we scanned
+the linking length in search of the group scale. The percolation
+transition we located marks the formation of structures far larger than the
+groups we were seeking. The
+linking length was then set at the maximum fragmentation. The catalogue built
+there matches the Tempel et al.\ partition at an ARI of 0.82 and an NMI of 0.98,
+with a permutation test that places the detected catalogue about $10^4$ standard deviations
+above the random null.
+Almost the entire remaining disagreement can then be traced back to a single
+systematic effect, the bridging of neighbouring groups in the densest regions of the
+survey.
+
+The network view also gave us more than the linking length. Comparing the
+graph against random and geometric nulls separated the clustering that comes
+from spatial geometry from the real gravitational binding of the galaxies. The
+degree distribution turned the qualitative picture of voids and clusters
+into numbers, and looking deeper into individual rich groups showed where a
+catalogue built around single linkage goes wrong and why. Natural follow-ups for this
+work are adding a scan of the stretch factor and a redshift-dependent linking
+length for deeper volumes. Applying a correction for the survey boundary could also
+be helpful. These gaps do not change the main result, though. For this sample
+the group scale was derived from the network itself; only the shape of the
+linking cylinder was borrowed from outside.
 
 %----------------------------------------------------------
+
+% Column break: start References at the top of the right column instead of
+% stacking it under Conclusion in the left one.
+\newpage
 
 \printbibliography
 
